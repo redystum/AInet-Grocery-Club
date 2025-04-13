@@ -6,7 +6,8 @@
                 <div class="flex-shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center">
                         <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 w-8 rounded-full">
-                        <span class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
+                        <span
+                            class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
                     </a>
                 </div>
 
@@ -19,7 +20,8 @@
                     <a href="#"
                        class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">Contacts</a>
                     <a href="#"
-                       class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">About us</a>
+                       class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">About
+                        us</a>
                 </div>
             </div>
 
@@ -33,7 +35,9 @@
                 </div>
 
                 <div class="lg:hidden">
-                    <button class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none" id="mobileSearchButton">
+                    <button
+                        class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
+                        id="mobileSearchButton">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -48,7 +52,8 @@
                         @auth
                             <img class="h-8 w-8 rounded-full flex items-center justify-center"
                                  src="{{ asset('storage/users/' . auth()->user()->photo) }}" alt="Account"/>
-                            <span class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
+                            <span
+                                class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
                         @endauth
                         <i class="hidden md:inline fas fa-chevron-down text-xs text-gray-500 dark:text-neutral-400"></i>
                     </div>
@@ -58,18 +63,21 @@
                          class="absolute right-0 mt-2 w-56 origin-top-right bg-white dark:bg-neutral-800 rounded-xl shadow-lg ring-1 ring-indigo-300 dark:ring-indigo-700 ring-opacity-5 focus:outline-none transform opacity-0 scale-95 transition duration-200 ease-out z-10 pointer-events-none">
                         <div class="py-1">
                             @auth
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                <a href="#"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
                             @endauth
 
                             @guest
-                                <a href="{{ route("login")  }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                <a href="{{ route("login")  }}"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Sign in
                                 </a>
-                                <a href="{{ route("register") }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                <a href="{{ route("register") }}"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-user-plus mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Register
                                 </a>
@@ -82,10 +90,15 @@
             <!-- Mobile menu button -->
             <div class="md:hidden flex items-center ml-2">
                 <button
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" id="mobileMenuButton">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                    id="mobileMenuButton">
                     <span class="sr-only">Open main menu</span>
-                    <i class="fas fa-bars block h-6 w-6" id="openMobileDropdown"></i>
-                    <i class="fas fa-times hidden h-6 w-6" id="closeMobileDropdown"></i>
+                    <span id="openMobileDropdown" class="block">
+                        <i class="fas fa-bars h-6 w-6"></i>
+                    </span>
+                    <span id="closeMobileDropdown" class="hidden">
+                        <i class="fas fa-times h-6 w-6"></i>
+                    </span>
                 </button>
             </div>
         </div>
@@ -104,13 +117,15 @@
     <!-- Mobile menu -->
     <div class="hidden md:hidden" id="mobileMenu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 dark:bg-indigo-700">Home</a>
+            <a href="#"
+               class="block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 dark:bg-indigo-700">Home</a>
             <a href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">Products</a>
             <a href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">Contacts</a>
             <a href="#"
-               class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">About us</a>
+               class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">About
+                us</a>
         </div>
 
         <div class="pt-4 pb-3 border-t border-gray-200 dark:border-neutral-700">
@@ -126,8 +141,10 @@
                 </div>
                 <div class="ml-3">
                     @auth
-                        <div class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
+                        <div
+                            class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
+                        <div
+                            class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
                     @else
                         <div class="text-base font-medium text-gray-800 dark:text-neutral-100">Guest</div>
                         <div class="text-sm font-medium text-gray-500 dark:text-neutral-400">Sign in to continue</div>
@@ -172,10 +189,8 @@
 
     menuBtn.addEventListener("click", () => {
         mobileMenu.classList.toggle("hidden");
-        closeIcon.classList.remove("hidden");
-        closeIcon.classList.add("block");
-        menuIcon.classList.remove("block");
-        menuIcon.classList.add("hidden");
+        closeIcon.classList.toggle("hidden");
+        menuIcon.classList.toggle("hidden");
     });
 
     // User dropdown toggle

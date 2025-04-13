@@ -14,11 +14,11 @@
 
 </head>
 
-<body>
+<body class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-100">
 
 <x-navbar/>
 
-<main>
+<main class="h-main">
     @yield('content')
 </main>
 
