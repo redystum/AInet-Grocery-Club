@@ -1,31 +1,69 @@
 @extends('layout')
 
 @section('content')
-    <div class="flex flex-1/2 h-full">
-        <div class="flex flex-col justify-center items-center w-full h-full">
-            <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-neutral-100">Login</h1>
-            <form action="{{ route('login') }}" method="POST" class="md:w-96 w-3/4 min-w-0">
-                @csrf
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-neutral-300">Email</label>
-                    <input type="email" name="email" id="email" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400">
+    <div class="flex min-h-screen">
+        <!-- Left Column - Form -->
+        <div class="w-full lg:w-1/2 flex flex-col justify-center p-8">
+            <div class="max-w-md mx-auto w-full">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-neutral-100 mb-2">Welcome Back</h1>
+                    <p class="text-gray-600 dark:text-neutral-400">Sign in to access your account</p>
                 </div>
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-neutral-300">Password</label>
-                    <input type="password" name="password" id="password" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400">
-                </div>
-                <button type="submit"
-                        class="w-full bg-blue-500 dark:bg-blue-600 text-white py-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700 transition duration-200">
-                    Login
-                </button>
-            </form>
-        </div>
 
-        <div class="flex-col justify-center items-center w-full hidden lg:flex"></div>
+                <form action="{{ route('login') }}" method="POST" class="space-y-6">
+                    @csrf
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Email
+                            Address*</label>
+                        <input type="email" name="email" id="email" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500"
+                               placeholder="your@email.com">
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password"
+                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Password*</label>
+                        <input type="password" name="password" id="password" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500"
+                               placeholder="••••••••">
+                        <div class="flex justify-end mt-1">
+                            <a href="#"
+                               class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Forgot
+                                password?</a>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me Checkbox -->
+                    <div class="flex items-center">
+                        <input type="checkbox" name="remember" id="remember"
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800">
+                        <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-neutral-300">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                        Sign In
+                    </button>
+
+                    <!-- Registration Link -->
+                    <p class="text-center text-sm text-gray-600 dark:text-neutral-400">
+                        Don't have an account? <a href="{{ route('register') }}"
+                                                  class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">Sign
+                            up</a>
+                    </p>
+                </form>
+
+            </div>
+        </div>
 
         <img src="{{ asset('assets/loginImage.png') }}" alt="Login Image"
              class="h-screen fixed right-0 -z-10 opacity-30 lg:opacity-50 xl:opacity-100 transition-opacity min-w-fit dark:opacity-20 dark:lg:opacity-30 dark:xl:opacity-40"/>
+
     </div>
 @endsection

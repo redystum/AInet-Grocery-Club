@@ -7,4 +7,4 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('login', function () {return view('pages.login');})->name('login');
-Route::get('register', function () {})->name('register');
+Route::get('register', function () {return view('pages.register');})->name('register');
