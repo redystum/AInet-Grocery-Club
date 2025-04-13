@@ -1,0 +1,8 @@
+*.sqlite*
+
+# To havy images/pdfs folders, extract the images.zip to have them
+categories_images
+null_images
+photos
+products_photos
+receipts
