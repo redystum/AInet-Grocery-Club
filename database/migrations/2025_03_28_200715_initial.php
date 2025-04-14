@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->enum('type', ['member', 'board', 'employee']);  // regular member, board member (adm), employee
-            $table->boolean('blocked')->default(false);         // true if the user is blocked                        
+            $table->boolean('blocked')->default(false);         // true if the user is blocked
             $table->enum('gender', ['M', 'F']);                 // Male, Female
             $table->string('photo')->nullable();
             $table->string('nif', 9)->nullable();                      // only for members
@@ -96,7 +96,7 @@ return new class extends Migration
             $table->decimal('total_items', 9, 2);   // Total (only for items in the order)
             $table->decimal('shipping_cost', 9, 2); // Shipping cost
             $table->decimal('total', 9, 2);         // Total (items + shipping cost)
-            $table->string('nif', 9)->nullable();   
+            $table->string('nif', 9)->nullable();
             $table->string('delivery_address');
             $table->string('pdf_receipt')->nullable();
             $table->string('cancel_reason')->nullable();
@@ -143,7 +143,7 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('products');
             $table->bigInteger('registered_by_user_id')->unsigned();
             $table->foreign('registered_by_user_id')->references('id')->on('users');
-            $table->enum('status', ['requested', 'completed'])->default('requested');  
+            $table->enum('status', ['requested', 'completed'])->default('requested');
             $table->integer('quantity');
             $table->json('custom')->nullable();
             $table->timestamps();
@@ -163,9 +163,9 @@ return new class extends Migration
         DB::statement("DROP VIEW IF EXISTS view_product_stock_logs");
 
         if (DB::getDriverName() === 'sqlite') {
-            DB::statement('        
+            DB::statement('
                 CREATE VIEW view_product_stock_logs AS
-                SELECT 
+                SELECT
                     "supply_order" AS log_type,
                     "S-" ||  supply_orders.id AS log_id,
                     supply_orders.product_id,
@@ -178,7 +178,7 @@ return new class extends Migration
                 FROM supply_orders
                 WHERE supply_orders.status = "completed"
                 UNION
-                SELECT 
+                SELECT
                     "stock_adjustment" AS log_type,
                     "A-" ||  stock_adjustments.id AS log_id,
                     stock_adjustments.product_id,
@@ -190,7 +190,7 @@ return new class extends Migration
                     stock_adjustments.updated_at
                 FROM stock_adjustments
                 UNION
-                SELECT 
+                SELECT
                     "order" AS log_type,
                     "O-" ||  items_orders.id AS log_id,
                     items_orders.product_id,
@@ -203,11 +203,11 @@ return new class extends Migration
                 FROM items_orders INNER JOIN orders ON items_orders.order_id = orders.id
                 WHERE orders.status = "completed"
                 ORDER BY created_at DESC
-            ');            
+            ');
         } else {
-            DB::statement('        
+            DB::statement('
                 CREATE VIEW view_product_stock_logs AS
-                SELECT 
+                SELECT
                     "supply_order" AS log_type,
                     CONCAT("S-", supply_orders.id) AS log_id,
                     supply_orders.product_id,
@@ -220,7 +220,7 @@ return new class extends Migration
                 FROM supply_orders
                 WHERE supply_orders.status = "completed"
                 UNION
-                SELECT 
+                SELECT
                     "stock_adjustment" AS log_type,
                     CONCAT("A-", stock_adjustments.id) AS log_id,
                     stock_adjustments.product_id,
@@ -232,7 +232,7 @@ return new class extends Migration
                     stock_adjustments.updated_at
                 FROM stock_adjustments
                 UNION
-                SELECT 
+                SELECT
                     "order" AS log_type,
                     CONCAT("O-", items_orders.id) AS log_id,
                     items_orders.product_id,
@@ -249,12 +249,22 @@ return new class extends Migration
         }
     }
 
-    
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists("cards");
+        Schema::dropIfExists("settings");
+        Schema::dropIfExists("settings_shipping_costs");
+        Schema::dropIfExists("categories");
+        Schema::dropIfExists("products");
+        Schema::dropIfExists("orders");
+        Schema::dropIfExists("items_orders");
+        Schema::dropIfExists("operations");
+        Schema::dropIfExists("supply_orders");
+        Schema::dropIfExists("stock_adjustments");
+        Schema::dropIfExists("view_product_stock_logs");
     }
 };

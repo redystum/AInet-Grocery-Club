@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-    <div class="flex min-h-screen">
+    <div class="flex min-h-full">
         <!-- Left Column - Form -->
         <div class="w-full lg:w-1/2 flex flex-col justify-center p-8">
             <div class="max-w-md mx-auto w-full">
@@ -18,8 +18,14 @@
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Email
                             Address*</label>
                         <input type="email" name="email" id="email" required
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500"
-                               placeholder="your@email.com">
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
+                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
+                               dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
+                               @error('email') border-red-500 dark:border-red-500 @enderror"
+                               placeholder="your@email.com" value="{{ old('email') }}">
+                        @error('email')
+                        <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Password Field -->
@@ -27,8 +33,17 @@
                         <label for="password"
                                class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Password*</label>
                         <input type="password" name="password" id="password" required
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500"
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
+                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
+                               dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
+                                 @error('email') border-red-500 dark:border-red-500 @enderror"
                                placeholder="••••••••">
+                        @error('password')
+                        <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('email')
+                        <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
                         <div class="flex justify-end mt-1">
                             <a href="#"
                                class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Forgot
@@ -38,8 +53,8 @@
 
                     <!-- Remember Me Checkbox -->
                     <div class="flex items-center">
-                        <input type="checkbox" name="remember" id="remember"
-                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800">
+                        <input type="checkbox" name="remember" id="remember" @checked(old('remember'))
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800">
                         <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-neutral-300">
                             Remember me
                         </label>
@@ -47,7 +62,7 @@
 
                     <!-- Submit Button -->
                     <button type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                            class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
                         Sign In
                     </button>
 
