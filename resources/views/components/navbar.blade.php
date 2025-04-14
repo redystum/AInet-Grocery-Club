@@ -61,7 +61,7 @@
                     <!-- Dropdown menu -->
                     <div id="dropdown"
                          class="absolute right-0 mt-2 w-56 origin-top-right bg-white dark:bg-neutral-800 rounded-xl shadow-lg ring-1 ring-indigo-300 dark:ring-indigo-700 ring-opacity-5 focus:outline-none transform opacity-0 scale-95 transition duration-200 ease-out z-10 pointer-events-none">
-                        <div class="py-1">
+                        <div class="">
                             @auth
                                 <a href="#"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
@@ -72,12 +72,12 @@
 
                             @guest
                                 <a href="{{ route("login")  }}"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                   class="flex items-center rounded-t-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Sign in
                                 </a>
                                 <a href="{{ route("register") }}"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                   class="flex items-center rounded-b-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-user-plus mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Register
                                 </a>
