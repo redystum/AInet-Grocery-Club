@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -52,6 +54,12 @@ class UserController extends Controller
             return back()->withErrors([
                 'terms' => 'You must accept the terms and conditions.',
             ])->onlyInput('terms');
+        }
+
+        if ($request['photo']) {
+            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
+            $request['photo']->storeAs('users', $filename, 'public');
+            $request['photo'] = $filename;
         }
 
         $user = User::create($request);
