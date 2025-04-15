@@ -6,14 +6,18 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
 
-    public function show_login()
+    public function show_login(): Factory|View|Application|RedirectResponse
     {
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
@@ -21,7 +25,7 @@ class UserController extends Controller
         return view('pages.login');
     }
 
-    public function show_register()
+    public function show_register(): Factory|View|Application|RedirectResponse
     {
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
@@ -29,7 +33,7 @@ class UserController extends Controller
         return view('pages.register');
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): RedirectResponse
     {
         $request->validated();
 
@@ -46,7 +50,7 @@ class UserController extends Controller
         ])->onlyInput('email', 'remember');
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): RedirectResponse
     {
         $request = $request->validated();
 
@@ -69,7 +73,7 @@ class UserController extends Controller
         return redirect()->route('home');
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
         $request->session()->invalidate();
