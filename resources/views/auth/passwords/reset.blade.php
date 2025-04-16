@@ -6,12 +6,13 @@
         <div class="w-full lg:w-1/2 flex flex-col justify-center p-8">
             <div class="max-w-md mx-auto w-full">
                 <div class="text-center mb-8">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-neutral-100 mb-2">Welcome Back</h1>
-                    <p class="text-gray-600 dark:text-neutral-400">Sign in to access your account</p>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-neutral-100 mb-2">Reset Password</h1>
+                    <p class="text-gray-600 dark:text-neutral-400">Enter your new password to reset your account</p>
                 </div>
 
-                <form action="{{ route('login') }}" method="POST" class="space-y-6">
+                <form action="{{ route('password.update') }}" method="POST" class="space-y-6">
                     @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
 
                     <!-- Email Field -->
                     <div>
@@ -22,7 +23,7 @@
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
                                dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
                                @error('email') border-red-500 dark:border-red-500 @enderror"
-                               placeholder="your@email.com" value="{{ old('email') }}">
+                               placeholder="your@email.com" value="{{ $email ?? old('email') }}">
                         @error('email')
                         <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                         @enderror
@@ -31,54 +32,46 @@
                     <!-- Password Field -->
                     <div>
                         <label for="password"
-                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Password*</label>
+                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">New Password*</label>
                         <input type="password" name="password" id="password" required
                                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
                                dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
-                                 @error('email') border-red-500 dark:border-red-500 @enderror"
+                               @error('password') border-red-500 dark:border-red-500 @enderror"
                                placeholder="••••••••">
                         @error('password')
                         <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                         @enderror
-                        @error('email')
-                        <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
-                        @enderror
-                        <div class="flex justify-end mt-1">
-                            <a href="{{ route('password.request') }}"
-                               class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Forgot
-                                password?</a>
-                        </div>
                     </div>
 
-                    <!-- Remember Me Checkbox -->
-                    <div class="flex items-center">
-                        <input type="checkbox" name="remember" id="remember" @checked(old('remember'))
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800">
-                        <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-neutral-300">
-                            Remember me
-                        </label>
+                    <!-- Confirm Password Field -->
+                    <div>
+                        <label for="password_confirmation"
+                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Confirm Password*</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
+                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
+                               dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500"
+                               placeholder="••••••••">
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit"
                             class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-                        Sign In
+                        Reset Password
                     </button>
 
-                    <!-- Registration Link -->
+                    <!-- Back to Login Link -->
                     <p class="text-center text-sm text-gray-600 dark:text-neutral-400">
-                        Don't have an account? <a href="{{ route('register') }}"
-                                                  class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">Sign
-                            up</a>
+                        Remembered your password? <a href="{{ route('login') }}"
+                                                     class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">Sign
+                            in</a>
                     </p>
                 </form>
-
             </div>
         </div>
 
-        <img src="{{ asset('assets/loginImage.png') }}" alt="Login Image"
+        <img src="{{ asset('assets/resetImage.png') }}" alt="Reset Password Image"
              class="h-screen fixed right-0 -z-10 opacity-30 lg:opacity-50 xl:opacity-100 transition-opacity min-w-fit dark:opacity-20 dark:lg:opacity-30 dark:xl:opacity-40"/>
-
     </div>
 @endsection

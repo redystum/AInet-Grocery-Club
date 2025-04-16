@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
+
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
@@ -26,6 +29,17 @@ Route::get('login', [AuthController::class, 'show_login'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('register', [AuthController::class, 'show_register'])->name('register');
 Route::post('register', [AuthController::class, 'register'])->name('register');
+
+/*--------------------------------------------------------------------------
+| Pssword reset routes
+|---------------------------------------------------------------------------
+| Routes for password reset functionality.
+|
+*/
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 /*--------------------------------------------------------------------------
 | Authenticated routes
