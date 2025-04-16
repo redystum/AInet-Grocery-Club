@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -37,7 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
 });
 
-
+/*--------------------------------------------------------------------------
+| Admin routes
+|---------------------------------------------------------------------------
+| Routes that are accessible only to authenticated users with admin role.
+|
+*/
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
 
 

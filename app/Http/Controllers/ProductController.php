@@ -1,17 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Certifique-se de ter o modelo Product
-use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        // Busca todos os produtos do banco de dados
-        $products = Product::all();
+        // Busca todas as categorias com os produtos relacionados
+        $categories = Category::with('products')->get();
 
-        // Retorna a view com os produtos
-        return view('pages.products', compact('products'));
+        return view('pages.products', compact('categories'));
     }
 }
