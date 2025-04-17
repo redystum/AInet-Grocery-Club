@@ -39,6 +39,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
     Route::get('orders', [OrderController::class, 'index'])->name('orders');
+    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
 });

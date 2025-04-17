@@ -3,37 +3,87 @@
 @section('title', ' - Order History')
 
 @section('content')
+
+    @if($orders->count() == 0)
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-4">No Orders Found</h2>
+                <p class="text-neutral-600 dark:text-neutral-400">You have not placed any orders yet.</p>
+
+                <hr class="my-4 border-neutral-200 dark:border-neutral-600">
+
+                <a href="{{ route('profile') }}" class="mr-4">
+                    <button
+                        class="mt-4 px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Go Back
+                    </button>
+                </a>
+                <a href="#">
+                    <button
+                        class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-shopping-cart mr-2"></i> Start Shopping
+                    </button>
+                </a>
+            </div>
+        </div>
+    @else
+
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Order History</h1>
             <div class="flex items-center space-x-4">
+                <!-- Items Per Page Selector -->
                 <div class="relative">
                     <select
+                        onchange="updateQueryParam('per_page', this.value)"
                         class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option>All Orders</option>
-                        <option>Last 30 Days</option>
-                        <option>Last 6 Months</option>
-                        <option>Last Year</option>
+                        <option value="5" {{ request('per_page', 10) == 5 ? 'selected' : '' }}>Show 5 per page</option>
+                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>Show 10 per page</option>
+                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>Show 20 per page</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>Show 50 per page</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>Show 100 per page</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
+
+                <!-- Date Range Selector -->
                 <div class="relative">
                     <select
+                        onchange="updateQueryParam('date_range', this.value)"
                         class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option>Order by Date</option>
-                        <option>Last 30 Days</option>
-                        <option>Last 6 Months</option>
-                        <option>Last Year</option>
+                        <option value="">All Orders</option>
+                        <option value="30" {{ request('date_range') == '30' ? 'selected' : '' }}>Last 30 Days</option>
+                        <option value="180" {{ request('date_range') == '180' ? 'selected' : '' }}>Last 6 Months</option>
+                        <option value="365" {{ request('date_range') == '365' ? 'selected' : '' }}>Last Year</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
-                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+
+                <!-- Order By Selector -->
+                <div class="relative">
+                    <select
+                        onchange="updateQueryParam('sort', this.value)"
+                        class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Order by newest</option>
+                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Order by oldest</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Order by price (low to high)</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Order by price (high to low)</option>
+                        <option value="status" {{ request('sort') == 'status' ? 'selected' : '' }}>Order by status</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- Export Button with current filters -->
+                <a href="{{ route('orders.export', request()->query()) }}"
+                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                     <i class="fas fa-download mr-2"></i> Export
-                </button>
+                </a>
             </div>
         </div>
 
@@ -70,7 +120,7 @@
                 <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700"
                        id="ordersTable">
                 @foreach($orders as $order)
-                    <tr class="order-row transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer"
+                    <tr class="orderRow transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer"
                         data-order="order-{{ $order->id }}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
@@ -132,7 +182,7 @@
                         </td>
                     </tr>
                     <!-- Details (Collapsible) -->
-                    <tr class="order-details hidden" id="order-{{ $order->id }}">
+                    <tr class="orderDetails hidden" id="order-{{ $order->id }}">
                         <td colspan="6" class="bg-neutral-50 dark:bg-neutral-700/30 px-6 py-4">
                             <div class="border-t border-neutral-200 dark:border-neutral-600 pt-4">
                                 <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-100 mb-4">
@@ -206,7 +256,7 @@
                                             </span>
                                         </div>
                                         <div
-                                            class="flex justify-between mb-1 mt-2 pt-2 border-t border-neutral-200 dark:border-neutral-600 mt-4">
+                                            class="flex justify-between mb-1 pt-2 border-t border-neutral-200 dark:border-neutral-600 mt-4">
                                             <span class="text-sm text-neutral-600 dark:text-neutral-300">
                                                 Subtotal
                                             </span>
@@ -265,28 +315,47 @@
         <!-- Pagination -->
         <div class="mt-8 flex items-center justify-between">
             <div class="text-sm text-neutral-500 dark:text-neutral-400">
-                Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span
-                    class="font-medium">12</span> orders
+                Showing
+                <span class="font-medium">{{ $orders->firstItem() }}</span>
+                to
+                <span class="font-medium">{{ $orders->lastItem() }}</span>
+                of
+                <span class="font-medium">{{ $orders->total() }}</span>
+                orders
             </div>
+
             <div class="flex space-x-2">
-                <button
-                    class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 disabled:opacity-50"
-                    disabled>
-                    Previous
-                </button>
-                <button
-                    class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700">
-                    Next
-                </button>
+                @if ($orders->onFirstPage())
+                    <span class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 opacity-50 cursor-not-allowed">
+                        Previous
+                    </span>
+                @else
+                    <a href="{{ $orders->previousPageUrl() }}"
+                       class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                        Previous
+                    </a>
+                @endif
+
+                @if ($orders->hasMorePages())
+                    <a href="{{ $orders->nextPageUrl() }}"
+                       class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                        Next
+                    </a>
+                @else
+                    <span class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 opacity-50 cursor-not-allowed">
+                        Next
+                    </span>
+                @endif
             </div>
+
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Get all order rows and details
-            const orderRows = document.querySelectorAll('.order-row');
-            const orderDetails = document.querySelectorAll('.order-details');
+            const orderRows = document.querySelectorAll('.orderRow');
+            const orderDetails = document.querySelectorAll('.orderDetails');
 
             // Add click event to each order row
             orderRows.forEach(row => {
@@ -306,7 +375,7 @@
                         if (detail.id !== orderId && !detail.classList.contains('hidden')) {
                             detail.classList.add('hidden');
                             // Remove active class from other rows
-                            const otherRow = document.querySelector(`.order-row[data-order="${detail.id}"]`);
+                            const otherRow = document.querySelector(`.orderRow[data-order="${detail.id}"]`);
                             if (otherRow) {
                                 otherRow.classList.remove('bg-neutral-100', 'dark:bg-neutral-700');
                             }
@@ -316,13 +385,33 @@
             });
 
             // Prevent event propagation when clicking on action buttons
-            const actionButtons = document.querySelectorAll('.order-row button, .order-row a');
+            const actionButtons = document.querySelectorAll('.orderRow button, .orderRow a');
             actionButtons.forEach(button => {
                 button.addEventListener('click', function (e) {
                     e.stopPropagation();
                 });
             });
         });
+
+        function updateQueryParam(key, value) {
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+
+            // Reset to first page when changing filters
+            if (key !== 'page') {
+                params.delete('page');
+            }
+
+            if (value) {
+                params.set(key, value);
+            } else {
+                params.delete(key);
+            }
+
+            window.location.href = `${url.pathname}?${params.toString()}`;
+        }
     </script>
+
+    @endif
 
 @endsection
