@@ -127,7 +127,7 @@
                             <div class="flex justify-between items-center mt-1">
                                 <p class="font-medium">{{ $lastOrder->items_count }}
                                     Item{{ $lastOrder->items_count > 1 ? "s":"" }}</p>
-                                <p class="font-bold">-€{{ number_format($lastOrder->total) }}</p>
+                                <p class="font-bold">-€{{ number_format($lastOrder->total, 2) }}</p>
                             </div>
                             <p class="text-xs opacity-70 mt-1"
                                title="{{ $lastOrder->created_at }}">{{ $lastOrder->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}</p>
@@ -206,7 +206,7 @@
                                     {{ $order->items_count }} item{{ $order->items_count > 1 ? "s":"" }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                    €{{ number_format($order->total) }}
+                                    €{{ number_format($order->total, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($order->status == 'completed')
@@ -227,7 +227,8 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                    <a href="#"><i class="fas fa-receipt mr-1"></i> Details</a>
+                                    <a href="{{ route('orders.receipt', $order->id) }}"><i class="fas fa-receipt mr-1"></i>
+                                        Receipt</a>
                                 </td>
                             </tr>
                         @endforeach
