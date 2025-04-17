@@ -66,4 +66,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'member_id', 'id')->with('items')->latest()->take(5);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'member_id', 'id')->with('products');
+    }
 }

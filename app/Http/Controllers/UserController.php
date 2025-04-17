@@ -20,6 +20,6 @@ class UserController extends Controller
             unset($order->items);
         }
         $lastOrder = $user->lastOrders->last();
-        return view('pages.profile', compact('user', 'lastOrder'));
+        return view('pages.user.profile', compact('user', 'lastOrder'));
     }
 }

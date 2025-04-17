@@ -107,7 +107,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-sm opacity-80">Current Balance</p>
-                            <p class="text-2xl font-bold">€{{ $user->card->balance }}</p>
+                            <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
                         </div>
                         @if($user->card->deleted_at == null)
                             <div
@@ -127,7 +127,7 @@
                             <div class="flex justify-between items-center mt-1">
                                 <p class="font-medium">{{ $lastOrder->items_count }}
                                     Item{{ $lastOrder->items_count > 1 ? "s":"" }}</p>
-                                <p class="font-bold">-€{{ $lastOrder->total }}</p>
+                                <p class="font-bold">-€{{ number_format($lastOrder->total) }}</p>
                             </div>
                             <p class="text-xs opacity-70 mt-1"
                                title="{{ $lastOrder->created_at }}">{{ $lastOrder->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}</p>
@@ -156,7 +156,7 @@
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Recent Purchases</h2>
-                    <a href="#"
+                    <a href="{{ route('orders') }}"
                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                         View All <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -206,7 +206,7 @@
                                     {{ $order->items_count }} item{{ $order->items_count > 1 ? "s":"" }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                    €{{ $order->total }}
+                                    €{{ number_format($order->total) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($order->status == 'completed')
