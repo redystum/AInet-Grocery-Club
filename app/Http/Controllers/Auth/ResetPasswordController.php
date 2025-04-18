@@ -2,7 +2,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordResetSuccessNotification;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,8 +33,15 @@ class ResetPasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))->with('resetPwd', true)
-            : back()->withErrors(['email' => [__($status)]]);
+        if ($status === Password::PASSWORD_RESET) {
+            $user = User::where('email', $request->email)->first();
+            if ($user) {
+                Mail::to($user->email)->send(new PasswordResetSuccessNotification($user));
+            }
+
+            return redirect()->route('login')->with('status', __($status))->with('resetPwd', true);
+        }
+
+        return back()->withErrors(['email' => [__($status)]]);
     }
 }
