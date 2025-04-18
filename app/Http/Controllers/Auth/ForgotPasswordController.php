@@ -9,7 +9,7 @@ class ForgotPasswordController extends Controller
 {
     public function showLinkRequestForm()
     {
-        return view('auth.passwords.email'); // View para solicitar o link de redefinição
+        return view('pages.auth.passwords.email');
     }
 
     public function sendResetLinkEmail(Request $request)
@@ -21,7 +21,7 @@ class ForgotPasswordController extends Controller
         );
 
         return $status === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
+            ? back()->with('status', __($status))
             : back()->withErrors(['email' => __($status)]);
     }
 }

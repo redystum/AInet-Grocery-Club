@@ -24,7 +24,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
         }
-        return view('pages.login');
+        return view('pages.auth.login');
     }
 
     public function show_register(): Factory|View|Application|RedirectResponse
@@ -32,7 +32,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
         }
-        return view('pages.register');
+        return view('pages.auth.register');
     }
 
     public function login(LoginRequest $request): RedirectResponse

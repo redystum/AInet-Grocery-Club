@@ -1,41 +1,37 @@
 <?php
 
-namespace App\Mail;
+namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Jenssegers\Agent\Agent;
 use Stevebauman\Location\Facades\Location;
 
-class NewLoginNotification extends Mailable
+class ResetPassword extends Notification
 {
-    use Queueable, SerializesModels;
+    use Queueable;
 
     private string $appName;
     private string $loginTime;
     private string $ipAddress;
-    private string $userName;
     private array $deviceInfo;
     private string $loginLocation;
-    private string $userPhoto;
     private string $logoUrl;
+    private string $token;
 
     /**
-     * Create a new message instance.
+     * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($token)
     {
+        $this->token = $token;
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
         $this->ipAddress = app()->isProduction() ? request()->ip() : "194.210.216.34";
-        $this->userName = auth()->user()->name;
-        $this->userPhoto = auth()->user()->photo ?: "anonymous.png";
         $this->logoUrl = asset('assets/logo.jpg');
 
-        // Parse device info using Jenssegers Agent
         $agent = new Agent();
         $this->deviceInfo = [
             'device' => $agent->device() ?: 'Unknown Device',
@@ -54,42 +50,53 @@ class NewLoginNotification extends Mailable
     }
 
     /**
-     * Get the message envelope.
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
      */
-    public function envelope(): Envelope
+    public function via(object $notifiable): array
     {
-        return new Envelope(
-            subject: 'New Login Detected on ' . $this->appName,
-        );
+        return ['mail'];
     }
 
     /**
-     * Get the message content definition.
+     * Get the mail representation of the notification.
      */
-    public function content(): Content
+    public function toMail(object $notifiable): MailMessage
     {
-        return new Content(
-            view: 'emails.pages.newLogin',
-            with: [
+        $url = url(route('password.reset', [
+            'token' => $this->token,
+            'email' => $notifiable->getEmailForPasswordReset(),
+        ], false));
+
+        $userName = $notifiable->name;
+        $userPhoto = $notifiable->photo ?: "anonymous.png";
+
+        return (new MailMessage)
+            ->subject('Reset Your Password')
+            ->view('emails.pages.resetPassword', [
+                'url' => $url,
+                'expirationTime' => 1, // 1 hour
                 'appName' => $this->appName,
                 'loginTime' => $this->loginTime,
                 'ipAddress' => $this->ipAddress,
-                'userName' => $this->userName,
+                'userName' => $userName,
                 'deviceInfo' => $this->deviceInfo,
-                'userPhoto' => $this->userPhoto,
+                'userPhoto' => $userPhoto,
                 'loginLocation' => $this->loginLocation,
                 'logoUrl' => $this->logoUrl,
-            ],
-        );
+            ]);
     }
 
     /**
-     * Get the attachments for the message.
+     * Get the array representation of the notification.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<string, mixed>
      */
-    public function attachments(): array
+    public function toArray(object $notifiable): array
     {
-        return [];
+        return [
+            //
+        ];
     }
 }

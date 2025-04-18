@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <img src="{{ asset('assets/resetImage.png') }}" alt="Reset Password Image"
+        <img src="{{ asset('assets/loginImage.png') }}" alt="Reset Password Image"
              class="h-screen fixed right-0 -z-10 opacity-30 lg:opacity-50 xl:opacity-100 transition-opacity min-w-fit dark:opacity-20 dark:lg:opacity-30 dark:xl:opacity-40"/>
     </div>
 @endsection
