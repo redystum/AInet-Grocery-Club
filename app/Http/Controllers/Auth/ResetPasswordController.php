@@ -39,7 +39,7 @@ class ResetPasswordController extends Controller
                 Mail::to($user->email)->send(new PasswordResetSuccessNotification($user));
             }
 
-            return redirect()->route('login')->with('status', __($status))->with('resetPwd', true);
+            return redirect()->route('login')->with('status', __($status));
         }
 
         return back()->withErrors(['email' => [__($status)]]);

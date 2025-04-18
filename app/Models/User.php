@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\AccountActivation;
 use App\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\URL;
 
 class User extends Authenticatable
 {
@@ -61,6 +63,17 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $verificationUrl = URL::temporarySignedRoute(
+            'activation',
+            now()->addMinutes(60),
+            ['id' => $this->id, 'hash' => sha1($this->email)]
+        );
+
+        $this->notify(new AccountActivation($verificationUrl));
     }
 
     public function card()

@@ -26,13 +26,13 @@ class NewLoginNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($user)
     {
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
         $this->ipAddress = app()->isProduction() ? request()->ip() : "194.210.216.34";
-        $this->userName = auth()->user()->name;
-        $this->userPhoto = auth()->user()->photo ?: "anonymous.png";
+        $this->userName = $user->name;
+        $this->userPhoto = $user->photo ?: "anonymous.png";
         $this->logoUrl = asset('assets/logo.jpg');
 
         // Parse device info using Jenssegers Agent

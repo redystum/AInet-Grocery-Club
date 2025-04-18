@@ -10,7 +10,7 @@
                     <p class="text-gray-600 dark:text-neutral-400">Sign in to access your account</p>
                 </div>
 
-                @if (session('resetPwd') && session('status'))
+                @if (session('status'))
                     <div
                         class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
                         <div class="flex items-start">
