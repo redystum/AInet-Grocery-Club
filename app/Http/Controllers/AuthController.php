@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Mail\NewLoginNotification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -42,6 +44,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+
+            Mail::to(Auth::user()->email)->send(new NewLoginNotification());
             return redirect()->route('home')->with('success', 'Logged in successfully.');
         }
 
