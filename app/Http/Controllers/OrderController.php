@@ -12,7 +12,7 @@ class OrderController extends Controller
     {
         $request->validated();
 
-        $orders = $this->getOrderWithFilters();
+        $orders = $this->getOrderWithFilters($request);
 
         foreach ($orders as $order) {
             $total_items = 0;
@@ -54,7 +54,7 @@ class OrderController extends Controller
     {
         $request->validated();
 
-        $orders = $this->getOrderWithFilters();
+        $orders = $this->getOrderWithFilters($request);
 
         // create a zip file with all the receipts
         $zip = new ZipArchive();
@@ -74,16 +74,16 @@ class OrderController extends Controller
         return response()->download($zip_path)->deleteFileAfterSend(true);
     }
 
-    private function getOrderWithFilters()
+    private function getOrderWithFilters(OrderFilterRequest $request)
     {
         $query = auth()->user()->orders()->with(['products']);
 
-        if (request('date_range')) {
-            $days = (int)request('date_range');
+      if ($request->input('date_range')) {
+            $days = (int)$request->input('date_range');
             $query->where('created_at', '>=', now()->subDays($days));
         }
 
-        switch (request('sort', 'newest')) {
+        switch ($request->input('sort', 'newest')) {
             case 'oldest':
                 $query->orderBy('created_at');
                 break;
@@ -100,8 +100,8 @@ class OrderController extends Controller
                 $query->orderByDesc('created_at');
         }
 
-        $perPage = request('per_page', 5);
+        $perPage = $request->input('per_page', 5);
         return $query->paginate($perPage)
-            ->appends(request()->query());
+            ->appends($request->only(['date_range', 'sort', 'per_page']));
     }
 }
