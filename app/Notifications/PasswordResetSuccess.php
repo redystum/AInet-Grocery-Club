@@ -1,38 +1,33 @@
 <?php
 
-namespace App\Mail;
+namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Jenssegers\Agent\Agent;
 use Stevebauman\Location\Facades\Location;
 
-class PasswordResetSuccessNotification extends Mailable
+class PasswordResetSuccess extends Notification
 {
-    use Queueable, SerializesModels;
+    use Queueable;
 
     private string $appName;
     private string $loginTime;
     private string $ipAddress;
-    private string $userName;
     private array $deviceInfo;
     private string $loginLocation;
-    private string $userPhoto;
     private string $logoUrl;
 
     /**
-     * Create a new message instance.
+     * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct()
     {
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
         $this->ipAddress = app()->isProduction() ? request()->ip() : "194.210.216.34";
-        $this->userName = $user->name;
-        $this->userPhoto = $user->photo ?: "anonymous.png";
         $this->logoUrl = asset('assets/logo.jpg');
 
         // Parse device info using Jenssegers Agent
@@ -54,42 +49,43 @@ class PasswordResetSuccessNotification extends Mailable
     }
 
     /**
-     * Get the message envelope.
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
      */
-    public function envelope(): Envelope
+    public function via(object $notifiable): array
     {
-        return new Envelope(
-            subject: 'Your password has been updated',
-        );
+        return ['mail'];
     }
 
     /**
-     * Get the message content definition.
+     * Get the mail representation of the notification.
      */
-    public function content(): Content
+    public function toMail(object $notifiable): MailMessage
     {
-        return new Content(
-            view: 'emails.pages.passwordResetSuccess',
-            with: [
+        return (new MailMessage)
+            ->subject('Your password has been updated')
+            ->view('emails.pages.passwordResetSuccess', [
                 'appName' => $this->appName,
                 'loginTime' => $this->loginTime,
                 'ipAddress' => $this->ipAddress,
-                'userName' => $this->userName,
+                'userName' => $notifiable->name,
                 'deviceInfo' => $this->deviceInfo,
-                'userPhoto' => $this->userPhoto,
+                'userPhoto' => $notifiable->photo ?: "anonymous.png",
                 'loginLocation' => $this->loginLocation,
                 'logoUrl' => $this->logoUrl,
-            ],
-        );
+            ]);
     }
 
     /**
-     * Get the attachments for the message.
+     * Get the array representation of the notification.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<string, mixed>
      */
-    public function attachments(): array
+    public function toArray(object $notifiable): array
     {
-        return [];
+        return [
+            //
+        ];
     }
 }

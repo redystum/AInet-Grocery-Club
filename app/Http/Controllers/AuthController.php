@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Mail\NewLoginNotification;
 use App\Models\User;
+use App\Notifications\NewLogin;
 use App\Notifications\Welcome;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
@@ -14,7 +14,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -53,7 +52,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            Mail::to(Auth::user()->email)->send(new NewLoginNotification(Auth::user()));
+            Auth::user()->notify(new NewLogin());
             return redirect()->route('home')->with('success', 'Logged in successfully.');
         }
 
@@ -98,7 +97,7 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        if (!hash_equals((string)$hash, sha1($user->getEmailForVerification()))) {
             return redirect()->route('home')->withErrors(['email' => 'Invalid activation link.']);
         }
 
