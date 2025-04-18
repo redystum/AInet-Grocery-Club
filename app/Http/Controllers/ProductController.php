@@ -10,30 +10,76 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        //Inicializa a query para os produtos
+        // Inicializa a query para todos os produtos
         $query = Product::query();
 
-        //Filtro de busca por nome
-        if($request->has('search') && $request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+        // Filtro de desconto (apenas se solicitado)
+        if ($request->has('discount_only') && $request->discount_only) {
+            $query->where('discount', '>', 0);
         }
 
-        // Filtro por faixa de preço
-        if ($request->has('price_range') && $request->price_range) {
-            [$min, $max] = explode('-', $request->price_range);
-            $query->whereBetween('price', [(float)$min, (float)$max]);
-        }
-
-        //busca todas as categorias com os produtos filtrados
-        $categories = Category::with(['products' => function ($query) use ($request) {
-            if ($request->has('search') && $request->search) {
-                $query->where('name', 'like', '%' . $request->search . '%');
+        // Ordenação
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'name_asc':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('name', 'desc');
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'discount_desc':
+                    $query->orderBy('discount', 'desc');
+                    break;
             }
-        }])->get();
+        } else {
+            // Ordenação padrão: maior desconto
+            $query->orderBy('discount', 'desc');
+        }
 
-        //Obtem os produtos filtrados
+        // Busca todas as categorias
+        $categories = Category::all();
+
+        // Obtém os produtos filtrados
         $products = $query->get();
 
         return view('pages.products', compact('categories', 'products'));
+    }
+
+    public function category(Request $request, $categoryId)
+    {
+        // Busca a categoria específica
+        $category = Category::with('products')->findOrFail($categoryId);
+
+        // Ordenação
+        $query = $category->products();
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'name_asc':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('name', 'desc');
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'discount_desc':
+                    $query->orderBy('discount', 'desc');
+                    break;
+            }
+        }
+
+        $products = $query->get();
+
+        return view('pages.category', compact('category', 'products'));
     }
 }

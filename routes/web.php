@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
 |
 */
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/category/{id}', [ProductController::class, 'category'])->name('products.category');
 
 
 
