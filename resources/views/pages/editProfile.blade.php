@@ -25,7 +25,8 @@
                 <div class="flex flex-col md:flex-row items-center gap-6">
                     <!-- Current Photo -->
                     <div class="relative">
-                        <div class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                        <div
+                            class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
                             <img id="profilePreview"
                                  src="{{ $user->photo ? asset('storage/users/' . $user->photo) : asset('storage/users/anonymous.png') }}"
                                  alt="Current Profile Photo"
@@ -41,7 +42,8 @@
                     <div class="flex-1">
                         <div class="space-y-4">
                             <div>
-                                <label for="photo" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                <label for="photo"
+                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                                     Upload new photo
                                 </label>
                                 <input type="file" name="photo" id="photo"
@@ -52,6 +54,7 @@
                                        file:bg-blue-50 dark:file:bg-blue-900/20 file:text-blue-700 dark:file:text-blue-400
                                        hover:file:bg-blue-100 dark:hover:file:bg-blue-900/30
                                        cursor-pointer">
+                                <input type="hidden" name="remove_photo" id="removePhotoFlag" value="0">
                                 @error('photo')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
@@ -87,7 +90,8 @@
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="email"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Email Address *
                         </label>
                         <input type="email" name="email" id="email" required
@@ -103,7 +107,8 @@
 
                     <!-- Gender -->
                     <div>
-                        <label for="gender" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="gender"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Gender *
                         </label>
                         <select name="gender" id="gender" required
@@ -111,7 +116,8 @@
                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                 dark:text-neutral-100 @error('gender') border-red-500 dark:border-red-500 @enderror">
                             <option value="M" {{ old('gender', $user->gender) == 'M' ? 'selected' : '' }}>Male</option>
-                            <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female</option>
+                            <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female
+                            </option>
                         </select>
                         @error('gender')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -143,7 +149,8 @@
                 <div class="space-y-6">
                     <!-- Delivery Address -->
                     <div>
-                        <label for="default_delivery_address" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="default_delivery_address"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Default Delivery Address
                         </label>
                         <textarea name="default_delivery_address" id="default_delivery_address" rows="3"
@@ -159,17 +166,30 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Payment Method -->
                         <div>
-                            <label for="default_payment_type" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            <label for="default_payment_type"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                                 Default Payment Method
                             </label>
                             <select name="default_payment_type" id="default_payment_type"
                                     class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                     focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                     dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
-                                <option value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>None selected</option>
-                                <option value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>Visa</option>
-                                <option value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>PayPal</option>
-                                <option value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>MB WAY</option>
+                                <option
+                                    value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
+                                    None selected
+                                </option>
+                                <option
+                                    value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
+                                    Visa
+                                </option>
+                                <option
+                                    value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
+                                    PayPal
+                                </option>
+                                <option
+                                    value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
+                                    MB WAY
+                                </option>
                             </select>
                             @error('default_payment_type')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -178,7 +198,8 @@
 
                         <!-- Payment Reference -->
                         <div>
-                            <label for="default_payment_reference" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            <label for="default_payment_reference"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                                 Payment Reference
                             </label>
                             <input type="text" name="default_payment_reference" id="default_payment_reference"
@@ -202,7 +223,8 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label for="current_password" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="current_password"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Current Password
                         </label>
                         <input type="password" name="current_password" id="current_password"
@@ -216,7 +238,8 @@
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="password"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             New Password
                         </label>
                         <input type="password" name="password" id="password" minlength="8"
@@ -231,7 +254,8 @@
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="password_confirmation"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Confirm New Password
                         </label>
                         <input type="password" name="password_confirmation" id="password_confirmation" minlength="8"
@@ -258,11 +282,13 @@
 
     <script>
         // Profile photo preview
+        const removePhotoInput = document.getElementById('removePhotoFlag');
         document.getElementById('photo').addEventListener('change', function (e) {
             const [file] = e.target.files;
             if (file) {
                 const preview = document.getElementById('profilePreview');
                 preview.src = URL.createObjectURL(file);
+                removePhotoInput.value = '0';
             }
         });
 
@@ -271,16 +297,7 @@
             const preview = document.getElementById('profilePreview');
             preview.src = "{{ asset('storage/users/anonymous.png') }}";
             document.getElementById('photo').value = '';
-
-            // Add hidden field to indicate photo removal
-            if (!document.getElementById('remove_photo_flag')) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'remove_photo';
-                input.id = 'remove_photo_flag';
-                input.value = '1';
-                document.querySelector('form').appendChild(input);
-            }
+            removePhotoInput.value = '1';
         });
     </script>
 @endsection

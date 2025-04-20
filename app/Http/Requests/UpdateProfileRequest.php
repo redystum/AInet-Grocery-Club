@@ -34,6 +34,7 @@ class UpdateProfileRequest extends FormRequest
             'default_delivery_address' => 'nullable|string|max:255',
             'default_payment_type' => 'nullable|string|in:Visa,PayPal,MB WAY',
             'default_payment_reference' => 'nullable|string|max:255',
+            'remove_photo' => 'nullable|string|in:0,1',
         ];
     }
 }

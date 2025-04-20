@@ -62,6 +62,14 @@ class UserController extends Controller
             $toUpdate['photo'] = $filename;
         }
 
+        if ($request->has('remove_photo') && $request->input('remove_photo') == '1') {
+            $oldPhoto = $user->photo;
+            if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
+                Storage::disk('public')->delete('users/' . $oldPhoto);
+            }
+            $toUpdate['photo'] = null;
+        }
+
         if ($request->has('password') && $request->input('password') !== null) {
             if (Hash::check($request->input('current_password'), $user->password)) {
                 $toUpdate['password'] = Hash::make($request->input('password'));
