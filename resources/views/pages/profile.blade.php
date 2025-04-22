@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="container mx-auto px-4 py-8 bg-red-700 max-w-6xl">
         <!-- Profile Header Section -->
         <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
             <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
