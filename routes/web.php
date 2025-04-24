@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,12 @@ Route::get('/', function () {
     return view('pages.home');
 })->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::name('product.')->prefix('product/{product}')->group(function () {
+    Route::get('/', [ProductController::class, 'show'])->name('show');
+    Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
+
+});
 
 
 /*--------------------------------------------------------------------------

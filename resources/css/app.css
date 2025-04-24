@@ -14,3 +14,9 @@
 @utility h-main {
     height: calc(100dvh - 64px);
 }
+
+@utility appearance-textfield {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+}
+
