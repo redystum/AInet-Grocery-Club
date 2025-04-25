@@ -20,7 +20,10 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        return view('pages.product', compact('product', 'delivery_prices', 'random_products'));
+        // TODO: replce this with the custom column
+        $images = [$product->photo, '00015_fwX1WtXAEt.jpg', '00189_4b5cPthvBR.jpg', $product->photo];
+
+        return view('pages.product', compact('product', 'delivery_prices', 'random_products', 'images'));
     }
 
 }

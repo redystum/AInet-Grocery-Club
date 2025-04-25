@@ -13,44 +13,34 @@
         </div>
 
         <!-- Main Product Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Product Images -->
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden">
                 <!-- Main Image -->
                 <div class="relative overflow-hidden">
                     <img src="{{ asset('storage/products/' . $product->photo) }}" alt="{{ $product->name }}"
+                         id="mainImage"
                          class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
 
                     <!-- Discount Badge -->
                     @if($product->discount)
                         <div
                             class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
-                            -{{ $product->discount }}%
+                            - {{ number_format(($product->discount / $product->price) * 100) }}%
                         </div>
                     @endif
                 </div>
 
                 <!-- Thumbnail Gallery -->
-                <div class="grid grid-cols-4 gap-2 p-4 items-center">
-                    <div class="border-2 border-blue-500 rounded-lg overflow-hidden">
-                        <img src="{{ asset('storage/products/' . $product->photo) }}" alt="Thumbnail 1"
-                             class="w-full h-24 object-cover cursor-pointer">
-                    </div>
-                    <div
-                        class="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden hover:border-blue-500 transition-colors">
-                        <img src="{{ asset('storage/products/' . $product->photo) }}" alt="Thumbnail 2"
-                             class="w-full h-24 object-cover cursor-pointer">
-                    </div>
-                    <div
-                        class="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden hover:border-blue-500 transition-colors">
-                        <img src="{{ asset('storage/products/' . $product->photo) }}" alt="Thumbnail 3"
-                             class="w-full h-24 object-cover cursor-pointer">
-                    </div>
-                    <div
-                        class="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden hover:border-blue-500 transition-colors">
-                        <img src="{{ asset('storage/products/' . $product->photo) }}" alt="Thumbnail 4"
-                             class="w-full h-24 object-cover cursor-pointer">
-                    </div>
+                <div class="flex flex-wrap justify-center gap-2 p-3 items-center">
+                    @foreach($images as $index => $image)
+                        <div class="{{ $index === 0 ? 'border-2 border-blue-500' : 'border border-neutral-200 dark:border-neutral-700 hover:border-blue-500' }} rounded-lg overflow-hidden transition-colors w-24 h-24">
+                            <img src="{{ asset('storage/products/' . $image) }}"
+                                 alt="Thumbnail {{ $index + 1 }}"
+                                 class="w-full h-full object-cover cursor-pointer thumbnailImage"
+                                 onclick="changeMainImage(this);">
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -60,14 +50,15 @@
                 <div class="items-center">
                     <a href="#"
                        class="text-blue-600 dark:text-blue-400 text-sm font-medium">{{ $product->category->name }}</a>
-                    <h1 class="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mt-2   ">{{ $product->name }}</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mt-2">{{ $product->name }}</h1>
                 </div>
 
                 <div class="mt-2 mb-6">
                     @if($product->stock > 0)
                         <span class="w-2 h-2 inline-block bg-green-500 rounded-full mr-2"></span>
-                        <span class="text-green-600 dark:text-green-400 text-sm font-medium">In Stock
-                            ({{ $product->stock }})</span>
+                        <span class="text-green-600 dark:text-green-400 text-sm font-medium">
+                            In Stock ({{ $product->stock }})
+                        </span>
                     @else
                         <span class="w-2 h-2 inline-block bg-red-500 rounded-full mr-2"></span>
                         <span class="text-red-600 dark:text-red-400 text-sm font-medium">Out of Stock</span>
@@ -76,26 +67,30 @@
 
                 <!-- Pricing -->
                 <div class="mb-6">
+                    <span id="originalPrice"
+                          class="text-4xl font-bold text-blue-600 dark:text-blue-400">€{{ number_format($product->price, 2) }}</span>
+
                     @if($product->discount)
-                        <div class="flex items-center">
+                        <div class="flex items-center @if($product->discount_min_qty > 1) hidden @endif"
+                             id="finalDiscountPrice">
                             <span
-                                class="text-4xl font-bold text-red-600">€{{ number_format($product->price * (1 - $product->discount/100), 2) }}</span>
+                                class="text-4xl font-bold text-blue-600 dark:text-blue-400">€{{ number_format($product->price - $product->discount, 2) }}</span>
                             <span
                                 class="ml-3 text-lg text-neutral-500 dark:text-neutral-400 line-through">€{{ number_format($product->price, 2) }}</span>
                             <span
                                 class="ml-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 px-2 py-1 rounded-full text-xs font-medium">
-                                Save {{ $product->discount }}%
+                                - {{ number_format(($product->discount / $product->price) * 100) }}%
                             </span>
                         </div>
 
-                        <!-- Bulk Discount Notice -->
-                        <div
-                            class="mt-2 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 p-3 rounded-lg text-sm">
-                            <i class="fas fa-tags mr-2"></i> Buy 5 or more and save an extra 5%!
-                        </div>
-                    @else
-                        <span
-                            class="text-4xl font-bold text-blue-600 dark:text-blue-400">€{{ number_format($product->price, 2) }}</span>
+                        @if($product->discount_min_qty > 1)
+                            <div
+                                class="mt-2 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 p-3 rounded-lg text-sm">
+                                <i class="fas fa-tags mr-2"></i> Buy {{ $product->discount_min_qty }}
+                                or more and save an extra €{{ number_format($product->discount, 2) }}
+                                ({{ number_format(($product->discount / $product->price) * 100) }}%)!
+                            </div>
+                        @endif
                     @endif
                 </div>
 
@@ -112,13 +107,14 @@
                         <div
                             class="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-lg overflow-hidden bg-white dark:bg-neutral-700">
                             <button id="minus"
-                                class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
+                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity" id="quantity"
+                            <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity"
+                                   id="quantity"
                                    class="appearance-textfield w-12 text-center border-0 bg-transparent text-neutral-800 dark:text-neutral-200 focus:ring-0">
                             <button id="plus"
-                                class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
+                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -126,7 +122,7 @@
                         <!-- Add to Cart Button -->
                         <button
                             class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
-                            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                            <i class="fas fa-shopping-cart mr-2"></i> <span class="block md:hidden lg:block">Add to Cart</span>
                         </button>
 
                         <!-- Wishlist Button -->
@@ -171,8 +167,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Related Product 1 -->
                 @foreach($random_products as $randomProduct)
-                    <div
-                        class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+                    <a href="{{ route('product.show', $randomProduct->id) }}"
+                       class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                         <div class="relative h-48 overflow-hidden">
                             <img src="{{ asset('storage/products/' . $randomProduct->photo) }}"
                                  alt="{{ $randomProduct->name }}"
@@ -180,7 +176,7 @@
                             @if($randomProduct->discount)
                                 <div
                                     class="absolute top-4 right-4 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold">
-                                    -{{ $randomProduct->discount }}%
+                                    - {{ number_format(($randomProduct->discount / $randomProduct->price) * 100) }}%
                                 </div>
                             @endif
                         </div>
@@ -190,7 +186,7 @@
                                 <div>
                                     @if($randomProduct->discount)
                                         <span
-                                            class="text-red-600 font-bold">€{{ number_format($randomProduct->price * (1 - $randomProduct->discount/100), 2) }}</span>
+                                            class="text-blue-600 dark:text-blue-400 font-bold">€{{ number_format($randomProduct->price - $randomProduct->discount, 2) }}</span>
                                         <span
                                             class="ml-2 text-neutral-500 dark:text-neutral-400 text-sm line-through">€{{ number_format($randomProduct->price, 2) }}</span>
                                     @else
@@ -202,7 +198,7 @@
                                     class="text-green-600 dark:text-green-400 text-xs font-medium">{{ $randomProduct->stock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -214,19 +210,54 @@
             const minusButton = document.getElementById('minus');
             const plusButton = document.getElementById('plus');
 
+            const originalPrice = document.getElementById('originalPrice');
+            const finalDiscountPrice = document.getElementById('finalDiscountPrice');
+            const discountMinQty = {{ $product->discount_min_qty ?? 999999999 }};
+
             minusButton.addEventListener('click', function () {
                 let currentValue = parseInt(quantityInput.value);
                 if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
+                    currentValue--;
+                    quantityInput.value = currentValue;
+                }
+
+                if (currentValue >= discountMinQty) {
+                    finalDiscountPrice.classList.remove('hidden');
+                    originalPrice.classList.add('hidden');
+                } else {
+                    finalDiscountPrice.classList.add('hidden');
+                    originalPrice.classList.remove('hidden');
                 }
             });
 
             plusButton.addEventListener('click', function () {
                 let currentValue = parseInt(quantityInput.value);
                 if (currentValue < {{ $product->stock }}) {
-                    quantityInput.value = currentValue + 1;
+                    currentValue++;
+                    quantityInput.value = currentValue;
+                }
+
+                if (currentValue >= discountMinQty) {
+                    finalDiscountPrice.classList.remove('hidden');
+                    originalPrice.classList.add('hidden');
+                } else {
+                    finalDiscountPrice.classList.add('hidden');
+                    originalPrice.classList.remove('hidden');
                 }
             });
+
         });
+
+        function changeMainImage(element) {
+            document.getElementById('mainImage').src = element.src;
+
+            document.querySelectorAll('.thumbnailImage').forEach(thumb => {
+                thumb.parentElement.classList.remove('border-2', 'border-blue-500');
+                thumb.parentElement.classList.add('border', 'border-neutral-200', 'dark:border-neutral-700', 'hover:border-blue-500');
+            });
+
+            element.parentElement.classList.remove('border', 'border-neutral-200', 'dark:border-neutral-700', 'hover:border-blue-500');
+            element.parentElement.classList.add('border-2', 'border-blue-500');
+        }
     </script>
 @endsection
