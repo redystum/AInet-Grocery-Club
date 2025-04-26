@@ -6,7 +6,7 @@
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Product Header with Back Button -->
         <div class="mb-6">
-            <a href="{{ url()->previous() }}"
+            <a href="{{ route('home') }}"
                class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Products
             </a>
