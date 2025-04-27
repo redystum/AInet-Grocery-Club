@@ -2,84 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Http\Requests\CatalogFilterRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    public function index(CatalogFilterRequest $request)
     {
-        // Inicializa a query para todos os produtos
+        $request->validated();
+
         $query = Product::query();
 
-        // Filtro de desconto (apenas se solicitado)
-        if ($request->has('discount_only') && $request->discount_only) {
-            $query->where('discount', '>', 0);
+        $sort = $request->input('sort', 'discount_desc');
+
+        switch ($sort) {
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            default:
+                $query->orderBy('discount', 'desc');
+                break;
         }
 
-        // Ordenação
-        if ($request->has('sort')) {
-            switch ($request->sort) {
-                case 'name_asc':
-                    $query->orderBy('name', 'asc');
-                    break;
-                case 'name_desc':
-                    $query->orderBy('name', 'desc');
-                    break;
-                case 'price_asc':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('price', 'desc');
-                    break;
-                case 'discount_desc':
-                    $query->orderBy('discount', 'desc');
-                    break;
-            }
-        } else {
-            // Ordenação padrão: maior desconto
-            $query->orderBy('discount', 'desc');
+        if ($request->has('category')) {
+            $category = $request->input('category');
+            $query->where('category_id', $category);
         }
 
-        // Busca todas as categorias
         $categories = Category::all();
 
-        // Obtém os produtos filtrados
-        $products = $query->get();
+        $products = $query->paginate(24);
 
-        return view('pages.products', compact('categories', 'products'));
-    }
+        $totalProducts = Product::count();
 
-    public function category(Request $request, $categoryId)
-    {
-        // Busca a categoria específica
-        $category = Category::with('products')->findOrFail($categoryId);
-
-        // Ordenação
-        $query = $category->products();
-        if ($request->has('sort')) {
-            switch ($request->sort) {
-                case 'name_asc':
-                    $query->orderBy('name', 'asc');
-                    break;
-                case 'name_desc':
-                    $query->orderBy('name', 'desc');
-                    break;
-                case 'price_asc':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('price', 'desc');
-                    break;
-                case 'discount_desc':
-                    $query->orderBy('discount', 'desc');
-                    break;
-            }
-        }
-
-        $products = $query->get();
-
-        return view('pages.category', compact('category', 'products'));
+        return view('pages.products', compact('categories', 'products', 'totalProducts'));
     }
 }
