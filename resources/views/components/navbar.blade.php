@@ -7,7 +7,7 @@
                     <a href="{{ route('home') }}" class="flex items-center">
                         <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 w-8 rounded-full">
                         <span
-                            class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
+                                class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
                     </a>
                 </div>
 
@@ -43,8 +43,8 @@
 
                 <div class="lg:hidden">
                     <button
-                        class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
-                        id="mobileSearchButton">
+                            class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
+                            id="mobileSearchButton">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -65,7 +65,7 @@
                                  @endif
                                  alt="Account"/>
                             <span
-                                class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
+                                    class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
                         @endauth
                         <i class="hidden md:inline fas fa-chevron-down text-xs text-gray-500 dark:text-neutral-400"></i>
                     </div>
@@ -80,6 +80,13 @@
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
+                                @if(auth()->user()->isBoard())
+                                    <a href="{{ route('board.index') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                        <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                        Management
+                                    </a>
+                                @endif
                                 <a href="#"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
@@ -112,8 +119,8 @@
             <!-- Mobile menu button -->
             <div class="md:hidden flex items-center ml-2">
                 <button
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                    id="mobileMenuButton">
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                        id="mobileMenuButton">
                     <span class="sr-only">Open main menu</span>
                     <span id="openMobileDropdown" class="block">
                         <i class="fas fa-bars h-6 w-6"></i>
@@ -164,9 +171,9 @@
                 <div class="ml-3">
                     @auth
                         <div
-                            class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
+                                class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
                         <div
-                            class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
+                                class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
                     @else
                         <div class="text-base font-medium text-gray-800 dark:text-neutral-100">Guest</div>
                         <div class="text-sm font-medium text-gray-500 dark:text-neutral-400">Sign in to continue</div>
@@ -180,6 +187,13 @@
                         <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Your Profile
                     </a>
+                    @if(auth()->user()->isBoard())
+                        <a href="{{ route('board.index') }}"
+                           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                            <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                            Management
+                        </a>
+                    @endif
                     <a href="#"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-sign-out-alt mr-3 text-indigo-500 dark:text-indigo-400"></i>

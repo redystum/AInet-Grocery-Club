@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Products Catalog')
 
@@ -327,20 +327,20 @@
             window.location.href = `${url.pathname}?${params.toString()}`;
         }
 
-        document.getElementById('sidebarSort').addEventListener('change', function() {
+        document.getElementById('sidebarSort').addEventListener('change', function () {
             updateQueryParam('sort', this.value);
         });
 
         // Category link functionality
         document.querySelectorAll('.categoryLink').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 updateQueryParam('category', this.dataset.category);
             });
         });
 
         // Reset filters
-        document.getElementById('resetFilters')?.addEventListener('click', function(e) {
+        document.getElementById('resetFilters')?.addEventListener('click', function (e) {
             e.preventDefault();
             const url = new URL(window.location.href);
             window.location.href = `${url.pathname}?category=all&sort=discount_desc&page=1`;
@@ -348,7 +348,7 @@
 
         // Pagination links functionality
         document.querySelectorAll('.paginationLink').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 if (!this.classList.contains('cursor-not-allowed')) {
                     updateQueryParam('page', this.dataset.page);
@@ -357,7 +357,7 @@
         });
 
         // Manual page input functionality
-        document.getElementById('pageInput')?.addEventListener('change', function() {
+        document.getElementById('pageInput')?.addEventListener('change', function () {
             const page = this.value;
             const lastPage = parseInt("{{ $products->lastPage() }}");
 

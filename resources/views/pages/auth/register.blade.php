@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('content')
 
@@ -13,7 +13,7 @@
 
                 @if (session('success'))
                     <div
-                        class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
+                            class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-0.5">
                                 <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
@@ -37,7 +37,7 @@
                         <div class="flex flex-col items-center mb-6">
                             <div class="relative mb-4">
                                 <div
-                                    class="group w-32 h-32 rounded-full bg-gray-200 dark:bg-neutral-700 overflow-hidden border-4 border-white dark:border-neutral-800 shadow-lg relative">
+                                        class="group w-32 h-32 rounded-full bg-gray-200 dark:bg-neutral-700 overflow-hidden border-4 border-white dark:border-neutral-800 shadow-lg relative">
                                     <img id="profilePreview" src="{{ asset('storage/users/anonymous.png') }}"
                                          alt="Profile Preview" class="w-full h-full object-cover">
                                     <div id="removeImage"
@@ -155,7 +155,7 @@
                             <details class="group"
                                      @if(old('default_delivery_address') || old('nif') || old('default_payment_type')) open @endif>
                                 <summary
-                                    class="flex items-center justify-between cursor-pointer text-gray-700 dark:text-neutral-300">
+                                        class="flex items-center justify-between cursor-pointer text-gray-700 dark:text-neutral-300">
                                     <h2 class="text-lg font-semibold">Additional Information (Optional)</h2>
                                     <i class="fas fa-chevron-down text-gray-500 group-open:rotate-180 transition-transform"></i>
                                 </summary>
@@ -208,15 +208,15 @@
                                                     Select...
                                                 </option>
                                                 <option
-                                                    value="Visa" {{ old('default_payment_type') == 'Visa' ? 'selected' : '' }}>
+                                                        value="Visa" {{ old('default_payment_type') == 'Visa' ? 'selected' : '' }}>
                                                     Visa
                                                 </option>
                                                 <option
-                                                    value="PayPal" {{ old('default_payment_type') == 'PayPal' ? 'selected' : '' }}>
+                                                        value="PayPal" {{ old('default_payment_type') == 'PayPal' ? 'selected' : '' }}>
                                                     PayPal
                                                 </option>
                                                 <option
-                                                    value="MB WAY" {{ old('default_payment_type') == 'MB WAY' ? 'selected' : '' }}>
+                                                        value="MB WAY" {{ old('default_payment_type') == 'MB WAY' ? 'selected' : '' }}>
                                                     MB Way
                                                 </option>
                                             </select>
@@ -234,7 +234,7 @@
                             <div class="flex items-center h-5">
                                 <input type="checkbox" name="terms" id="terms" required
                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800"
-                                    @checked(old('terms'))>
+                                        @checked(old('terms'))>
                             </div>
                             <div class="ml-3">
                                 <label for="terms" class="block text-sm text-gray-700 dark:text-neutral-300">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -55,6 +56,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('notEmployee')->group(function () {
         Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
         Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
+    });
+
+    Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
+        Route::get('/', function () {
+            return view('pages.admin.dash');
+        })->name('index');
+
+        Route::get('/stock', [StockController::class, 'index'])->name('stock');
     });
 });
 
