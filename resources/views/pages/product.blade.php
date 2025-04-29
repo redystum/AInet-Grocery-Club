@@ -111,7 +111,7 @@
                                 <i class="fas fa-minus"></i>
                             </button>
                             <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity"
-                                   id="quantity"
+                                   id="quantity" autocomplete="off"
                                    class="appearance-textfield w-12 text-center border-0 bg-transparent text-neutral-800 dark:text-neutral-200 focus:ring-0">
                             <button id="plus"
                                     class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
