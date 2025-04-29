@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\isBoard;
+use App\Http\Middleware\isEmployee;
+use App\Http\Middleware\isMember;
+use App\Http\Middleware\isNotEmployee;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,7 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'board' => isBoard::class,
+            'member' => isMember::class,
+            'employee' => isEmployee::class,
+            'notEmployee' => isNotEmployee::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -57,6 +57,21 @@ class User extends Authenticatable
         ];
     }
 
+    public function isEmployee(): bool
+    {
+        return $this->type === 'employee';
+    }
+
+    public function isBoard(): bool
+    {
+        return $this->type === 'board';
+    }
+
+    public function isMember(): bool
+    {
+        return $this->type === 'member';
+    }
+
     public function card()
     {
         return $this->hasOne(Card::class, 'id', 'id');
