@@ -76,6 +76,21 @@ class User extends Authenticatable
         $this->notify(new AccountActivation($verificationUrl));
     }
 
+    public function isEmployee(): bool
+    {
+        return $this->type === 'employee';
+    }
+
+    public function isBoard(): bool
+    {
+        return $this->type === 'board';
+    }
+
+    public function isMember(): bool
+    {
+        return $this->type === 'member';
+    }
+
     public function card()
     {
         return $this->hasOne(Card::class, 'id', 'id');

@@ -50,6 +50,11 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 */
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
+
+    Route::middleware('notEmployee')->group(function () {
+        Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+        Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
+    });
 });
 
 
