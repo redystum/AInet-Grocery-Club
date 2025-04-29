@@ -13,8 +13,10 @@
 
                 <!-- Navigation links -->
                 <div class="hidden md:ml-10 md:flex items-center space-x-8">
-                    <a href="#"
-                       class="text-indigo-600 dark:text-indigo-400 px-3 py-2 text-sm font-medium border-b-2 border-indigo-600 dark:border-indigo-400">Home</a>
+                    <a href="{{ route('home') }}"
+                       class="{{ Route::currentRouteName() === 'home' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        Home
+                    </a>
                     <a href="#"
                        class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">Products</a>
                     <a href="#"
