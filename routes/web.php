@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ProductController;
+
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -12,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
-
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
@@ -56,6 +57,15 @@ Route::middleware('auth')->group(function () {
         Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
     });
 });
+
+/*--------------------------------------------------------------------------
+| Admin routes
+|---------------------------------------------------------------------------
+| Routes that are accessible only to authenticated users with admin role.
+|
+*/
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
 
 
 /*!--------------------------------------------------------------------------
