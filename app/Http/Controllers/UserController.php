@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
+use App\Notifications\PasswordResetSuccess;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -80,10 +79,9 @@ class UserController extends Controller
 
         $user->update($toUpdate);
 
-        // TODO: PasswordResetSuccess() on other branch waiting for pr merge
-//        if (array_key_exists('password', $toUpdate)) {
-//            $user->notify(new (PasswordResetSuccess()));
-//        }
+        if (array_key_exists('password', $toUpdate)) {
+            $user->notify(new PasswordResetSuccess());
+        }
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
