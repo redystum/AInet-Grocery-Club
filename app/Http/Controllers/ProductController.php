@@ -21,7 +21,7 @@ class ProductController extends Controller
             ->get();
 
         // TODO: replce this with the custom column
-        $images = [$product->photo, '00015_fwX1WtXAEt.jpg', '00189_4b5cPthvBR.jpg', $product->photo];
+        $images = [$product->photo, $random_products->first()->photo, $random_products->last()->photo, $product->photo];
 
         return view('pages.product', compact('product', 'delivery_prices', 'random_products', 'images'));
     }

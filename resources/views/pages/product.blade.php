@@ -214,6 +214,26 @@
             const finalDiscountPrice = document.getElementById('finalDiscountPrice');
             const discountMinQty = {{ $product->discount_min_qty ?? 999999999 }};
 
+            const maxVal = {{ $product->stock }};
+
+            // on lostfocus, verify if the value is less than 1 or greater than the stock
+            quantityInput.addEventListener('blur', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 1) {
+                    quantityInput.value = 1;
+                } else if (currentValue > maxVal) {
+                    quantityInput.value = maxVal;
+                }
+
+                if (currentValue >= discountMinQty) {
+                    finalDiscountPrice.classList.remove('hidden');
+                    originalPrice.classList.add('hidden');
+                } else {
+                    finalDiscountPrice.classList.add('hidden');
+                    originalPrice.classList.remove('hidden');
+                }
+            });
+
             minusButton.addEventListener('click', function () {
                 let currentValue = parseInt(quantityInput.value);
                 if (currentValue > 1) {
@@ -232,7 +252,7 @@
 
             plusButton.addEventListener('click', function () {
                 let currentValue = parseInt(quantityInput.value);
-                if (currentValue < {{ $product->stock }}) {
+                if (currentValue < maxVal) {
                     currentValue++;
                     quantityInput.value = currentValue;
                 }
