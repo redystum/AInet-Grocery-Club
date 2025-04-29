@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Notifications\NewLogin;
+use App\Notifications\Welcome;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -35,7 +37,16 @@ class AuthController extends Controller
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+            if (Auth::user()->email_verified_at === null) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Please verify your email address before logging in.',
+                ])->onlyInput('email', 'remember');
+            }
+
             $request->session()->regenerate();
+
+            Auth::user()->notify(new NewLogin());
             return redirect()->route('home')->with('success', 'Logged in successfully.');
         }
 
@@ -46,25 +57,25 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): RedirectResponse
     {
-        $request = $request->validated();
+        $request->validated();
 
-        if (!$request['terms']) {
+        if (!$request->only('terms')) {
             return back()->withErrors([
                 'terms' => 'You must accept the terms and conditions.',
             ])->onlyInput('terms');
         }
 
-        if ($request['photo']) {
-            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
-            $request['photo']->storeAs('users', $filename, 'public');
-            $request['photo'] = $filename;
+        if ($request->hasFile('photo')) {
+            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('users', $filename, 'public');
+            $request->merge(['photo' => $filename]);
         }
 
-        $user = User::create($request);
+        $user = User::create($request->validated());
 
-        Auth::login($user);
+        $user->sendEmailVerificationNotification();
 
-        return redirect()->route('home');
+        return back()->with('success', 'Registration successful. Please check your email to activate your account.');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -74,5 +85,24 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home')->with('success', 'Logged out successfully.');
+    }
+
+    public function activate(Request $request, $id, $hash): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        if (!hash_equals((string)$hash, sha1($user->getEmailForVerification()))) {
+            return redirect()->route('home')->withErrors(['email' => 'Invalid activation link.']);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('login')->with('success', 'Your account is already activated.');
+        }
+
+        $user->markEmailAsVerified();
+
+        $user->notify(new Welcome());
+
+        return redirect()->route('login')->with('status', 'Your account has been activated successfully.');
     }
 }

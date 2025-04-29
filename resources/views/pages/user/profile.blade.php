@@ -33,7 +33,7 @@
                                 <i class="fas fa-crown mr-1"></i>
                                 Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
                             </span>
-                            <a href="#"
+                            <a href="{{ route('profile.edit') }}"
                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                                 <i class="fas fa-edit mr-2"></i> Edit Profile
                             </a>
@@ -43,65 +43,87 @@
             </div>
         </div>
 
-        <!-- User Details Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Account Details -->
-            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Account Details</h2>
-                    <a href="#"
-                       class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                        <i class="fas fa-edit mr-1"></i> Edit
-                    </a>
-                </div>
+        @if(!auth()->user()->isEmployee())
 
-                <div class="space-y-4">
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Account Type</span>
-                        <span
-                            class="font-medium text-neutral-800 dark:text-neutral-200">{{ ucfirst($user->type) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Status</span>
-                        @if($user->blocked)
-                            <span class="font-medium text-red-600 dark:text-red-400">Blocked</span>
-                        @elseif($user->deleted_at != null)
-                            <span class="font-medium text-red-600 dark:text-red-400">Deleted</span>
-                        @else
-                            <span class="font-medium text-green-600 dark:text-green-400">Active</span>
-                        @endif
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Gender</span>
-                        <span
-                            class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->gender == "M" ? "Male" : "Female" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">NIF</span>
-                        <span
-                            class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->nif ?? "Not Defined" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Default Delivery</span>
-                        <span
-                            class="font-medium text-right max-w-xs text-neutral-800 dark:text-neutral-200">{{ $user->default_delivery_address ?? "Not Defined" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Payment Method</span>
-                        <span
-                            class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Payment Reference</span>
-                        <span
-                            class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
+            @if(session('success'))
+                <div
+                    class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-semibold text-green-800 dark:text-green-200">
+                                Success!
+                            </h3>
+                            <div class="mt-1 text-green-700 dark:text-green-300">
+                                <p>{{ session('success') }}</p>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
-            <!-- Virtual Card Section -->
-            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Virtual Card</h2>
+            <!-- User Details Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Account Details -->
+                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Account Details</h2>
+                        <a href="{{ route('profile.edit') }}"
+                           class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                            <i class="fas fa-edit mr-1"></i> Edit
+                        </a>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Account Type</span>
+                            <span
+                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ ucfirst($user->type) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Status</span>
+                            @if($user->blocked)
+                                <span class="font-medium text-red-600 dark:text-red-400">Blocked</span>
+                            @elseif($user->deleted_at != null)
+                                <span class="font-medium text-red-600 dark:text-red-400">Deleted</span>
+                            @else
+                                <span class="font-medium text-green-600 dark:text-green-400">Active</span>
+                            @endif
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Gender</span>
+                            <span
+                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->gender == "M" ? "Male" : "Female" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">NIF</span>
+                            <span
+                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->nif ?? "Not Defined" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Default Delivery</span>
+                            <span
+                                class="font-medium text-right max-w-xs text-neutral-800 dark:text-neutral-200">{{ $user->default_delivery_address ?? "Not Defined" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Payment Method</span>
+                            <span
+                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">Payment Reference</span>
+                            <span
+                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Virtual Card Section -->
+                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Virtual Card</h2>
 
                 <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-5 text-white mb-6">
                     <div class="flex justify-between items-start">
@@ -139,17 +161,17 @@
                     @endif
                 </div>
 
-                <div class="flex justify-between">
-                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                        <i class="fas fa-plus mr-2"></i> Add Funds
-                    </button>
-                    <button
-                        class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
-                        <i class="fas fa-history mr-2"></i> View All
-                    </button>
+                    <div class="flex justify-between">
+                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-plus mr-2"></i> Add Funds
+                        </button>
+                        <button
+                            class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
+                            <i class="fas fa-history mr-2"></i> View All
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- Recent Purchases Section -->
         @if($lastOrder != null)
