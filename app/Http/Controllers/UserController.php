@@ -21,7 +21,7 @@ class UserController extends Controller
             foreach ($order->items as $item) {
                 $total_items += $item->quantity;
             }
-            $order->items_count = $total_items;
+            $order->setAttribute('items_count', $total_items);
             unset($order->items);
         }
         $lastOrder = $user->lastOrders->last();

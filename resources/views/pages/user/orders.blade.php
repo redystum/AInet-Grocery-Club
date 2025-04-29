@@ -307,6 +307,10 @@
                                                 class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                                             <i class="fas fa-redo mr-2"></i> Reorder
                                         </button>
+                                        <button
+                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                                            <i class="fas fa-cancel mr-2"></i> Cancel
+                                        </button>
                                         <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
                                             <button
                                                     class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
