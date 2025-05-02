@@ -367,6 +367,18 @@
 
                 // Toggle current menu
                 menu.classList.toggle('hidden');
+                
+                // Position the menu correctly
+                if (!menu.classList.contains('hidden')) {
+                    // Get button position
+                    const buttonRect = this.getBoundingClientRect();
+                    
+                    // Ensure the menu is positioned relative to the viewport
+                    menu.style.position = 'fixed';
+                    menu.style.top = buttonRect.bottom + 'px';
+                    menu.style.right = (window.innerWidth - buttonRect.right) + 'px';
+                    menu.style.zIndex = '100'; // Higher z-index to appear on top
+                }
             });
         });
 
