@@ -8,7 +8,7 @@
             wire:keydown.enter="selectItem"
             wire:keydown.arrow-down.prevent="incrementIndex"
             wire:keydown.arrow-up.prevent="decrementIndex"
-            wire:keydown.tab="resetSelection"
+            wire:keydown.tab.prevent="incrementIndex"
             placeholder="Search products & categories..."
             class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 dark:border-neutral-700
             focus:outline-none focus:border-1 focus:border-indigo-500 text-sm bg-white dark:bg-neutral-800

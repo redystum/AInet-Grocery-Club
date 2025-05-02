@@ -113,6 +113,10 @@ class SearchDropdown extends Component
         if ($this->selectedIndex >= 0 && $this->selectedIndex < count($this->results)) {
             return redirect()->to($this->results[$this->selectedIndex]['url']);
         }
+
+        if ($this->selectedIndex === -1 && count($this->results) === 1) {
+            return redirect()->to($this->results[0]['url']);
+        }
     }
 
     // Reset selection and return focus to search input
