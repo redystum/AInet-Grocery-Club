@@ -8,6 +8,11 @@ class Category extends Model
 {
     use HasFactory;
 
+    public function getImage()
+    {
+        return $this->image ? asset('storage/categories/' . $this->image) : asset('storage/categories/category_no_image.png');
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);
