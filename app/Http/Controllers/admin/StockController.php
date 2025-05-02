@@ -76,4 +76,36 @@ class StockController extends Controller
 
         return view('pages.admin.stock.index', compact('categories', 'products'));
     }
+
+    public function restockAuto()
+    {
+        $products = Product::whereColumn('stock', '<=', 'stock_lower_limit')->get();
+
+        foreach ($products as $product) {
+            $restock = $product->stock_upper_limit - $product->stock;
+            $product->setAttribute('restock', $restock);
+        }
+
+        return view('pages.admin.stock.restock', compact('products'));
+    }
+
+    public function restockAutoConfirm(Request $request)
+    {
+        $request->validate([
+            'restock_data' => 'required|json',
+        ]);
+
+        $restockData = json_decode($request->input('restock_data'), true);
+        foreach ($restockData as $productId => $restock) {
+            if (!is_numeric($restock)) {
+                return redirect()->route('board.restock.auto')->withErrors(['restock_data' => 'Invalid restock data.']);
+            }
+            Product::findOrFail($productId);
+        }
+
+        // TODO: Create supply orders
+        dd($restockData);
+
+        return redirect()->route('board.stock')->with('success', 'Products restocked successfully.');
+    }
 }
