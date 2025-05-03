@@ -15,7 +15,8 @@
                 <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
                     <i class="fas fa-plus mr-2"></i> Add New Product
                 </button>
-                <a href="{{ route("board.restock.auto") }}" class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
+                <a href="{{ route("board.restock.auto") }}"
+                   class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
                     <i class="fas fa-boxes-stacked mr-2"></i> Restock necessary
                 </a>
             </div>
@@ -50,28 +51,50 @@
 
                 <div>
                     <label for="stock-status"
-                           class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Stock Status</label>
+                           class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Stock
+                        Status</label>
                     <select id="stock-status" autocomplete="off"
                             class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                         <option value="">All</option>
-                        <option value="in_stock" {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
-                        <option value="low_stock" {{ request('stock_status') == 'low_stock' ? 'selected' : '' }}>Low Stock</option>
-                        <option value="out_of_stock" {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+                        <option value="in_stock" {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>In
+                            Stock
+                        </option>
+                        <option value="low_stock" {{ request('stock_status') == 'low_stock' ? 'selected' : '' }}>Low
+                            Stock
+                        </option>
+                        <option value="out_of_stock" {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>
+                            Out of Stock
+                        </option>
                     </select>
                 </div>
 
                 <div>
-                    <label for="order-by" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Order By</label>
+                    <label for="order-by" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Order
+                        By</label>
                     <select id="order-by" autocomplete="off"
                             class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
-                        <option value="stock_low_high" {{ request('order_by') == 'stock_low_high' ? 'selected' : '' }}>Stock Low-High</option>
-                        <option value="stock_high_low" {{ request('order_by') == 'stock_high_low' ? 'selected' : '' }}>Stock High-Low</option>
-                        <option value="name_asc" {{ request('order_by') == 'name_asc' ? 'selected' : '' }}>Name A-Z</option>
-                        <option value="name_desc" {{ request('order_by') == 'name_desc' ? 'selected' : '' }}>Name Z-A</option>
-                        <option value="category_asc" {{ request('order_by') == 'category_asc' ? 'selected' : '' }}>Category A-Z</option>
-                        <option value="category_desc" {{ request('order_by') == 'category_desc' ? 'selected' : '' }}>Category Z-A</option>
-                        <option value="price_high_low" {{ request('order_by') == 'price_high_low' ? 'selected' : '' }}>Price High-Low</option>
-                        <option value="price_low_high" {{ request('order_by') == 'price_low_high' ? 'selected' : '' }}>Price Low-High</option>
+                        <option value="stock_low_high" {{ request('order_by') == 'stock_low_high' ? 'selected' : '' }}>
+                            Stock Low-High
+                        </option>
+                        <option value="stock_high_low" {{ request('order_by') == 'stock_high_low' ? 'selected' : '' }}>
+                            Stock High-Low
+                        </option>
+                        <option value="name_asc" {{ request('order_by') == 'name_asc' ? 'selected' : '' }}>Name A-Z
+                        </option>
+                        <option value="name_desc" {{ request('order_by') == 'name_desc' ? 'selected' : '' }}>Name Z-A
+                        </option>
+                        <option value="category_asc" {{ request('order_by') == 'category_asc' ? 'selected' : '' }}>
+                            Category A-Z
+                        </option>
+                        <option value="category_desc" {{ request('order_by') == 'category_desc' ? 'selected' : '' }}>
+                            Category Z-A
+                        </option>
+                        <option value="price_high_low" {{ request('order_by') == 'price_high_low' ? 'selected' : '' }}>
+                            Price High-Low
+                        </option>
+                        <option value="price_low_high" {{ request('order_by') == 'price_low_high' ? 'selected' : '' }}>
+                            Price Low-High
+                        </option>
                     </select>
                 </div>
             </div>
@@ -169,7 +192,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="relative inline-block text-left">
                                     <button type="button"
-                                            class="inline-flex justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                                            class="cursor-pointer inline-flex justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
                                             id="menu-button-{{ $product->id }}" aria-expanded="false"
                                             aria-haspopup="true">
                                         <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
@@ -178,9 +201,9 @@
                                     <div class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          id="menu-{{ $product->id }}" role="menu" aria-orientation="vertical"
                                          aria-labelledby="menu-button-{{ $product->id }}" tabindex="-1">
-                                        <div class="py-1" role="none">
+                                        <div role="none">
                                             <a href="#"
-                                               class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                               class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                role="menuitem">
                                                 <i class="fas fa-eye mr-3 text-neutral-400"></i>
                                                 View Details
@@ -191,12 +214,12 @@
                                                 <i class="fas fa-edit mr-3 text-blue-400"></i>
                                                 Edit Product
                                             </a>
-                                            <button type="button"
-                                                    class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                            <a href="{{ route('board.restock.product', $product->id) }}"
+                                                    class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                     role="menuitem">
                                                 <i class="fas fa-boxes mr-3 text-green-400"></i>
                                                 Restock
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -291,28 +314,28 @@
         }
 
         // Filter and Sort functionality
-        document.getElementById('search').addEventListener('change', function() {
+        document.getElementById('search').addEventListener('change', function () {
             updateURLParams({
                 ...getCurrentParams(),
                 search: this.value
             });
         });
 
-        document.getElementById('category').addEventListener('change', function() {
+        document.getElementById('category').addEventListener('change', function () {
             updateURLParams({
                 ...getCurrentParams(),
                 category: this.value
             });
         });
 
-        document.getElementById('stock-status').addEventListener('change', function() {
+        document.getElementById('stock-status').addEventListener('change', function () {
             updateURLParams({
                 ...getCurrentParams(),
                 stock_status: this.value
             });
         });
 
-        document.getElementById('order-by').addEventListener('change', function() {
+        document.getElementById('order-by').addEventListener('change', function () {
             updateURLParams({
                 ...getCurrentParams(),
                 order_by: this.value
@@ -321,7 +344,7 @@
 
         // Pagination functionality
         document.querySelectorAll('.paginationLink').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 if (!this.classList.contains('cursor-not-allowed')) {
                     updateURLParams({
@@ -332,7 +355,7 @@
             });
         });
 
-        document.getElementById('pageInput').addEventListener('change', function() {
+        document.getElementById('pageInput').addEventListener('change', function () {
             const page = this.value;
             const lastPage = parseInt("{{ $products->lastPage() }}");
 
@@ -353,7 +376,7 @@
 
         // Dropdown menu functionality - Fixed version
         document.querySelectorAll('[id^="menu-button-"]').forEach(button => {
-            button.addEventListener('click', function(e) {
+            button.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const menuId = 'menu-' + this.id.split('-')[2];
                 const menu = document.getElementById(menuId);
@@ -367,12 +390,12 @@
 
                 // Toggle current menu
                 menu.classList.toggle('hidden');
-                
+
                 // Position the menu correctly
                 if (!menu.classList.contains('hidden')) {
                     // Get button position
                     const buttonRect = this.getBoundingClientRect();
-                    
+
                     // Ensure the menu is positioned relative to the viewport
                     menu.style.position = 'fixed';
                     menu.style.top = buttonRect.bottom + 'px';
@@ -382,11 +405,18 @@
             });
         });
 
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function() {
+        function hideAllMenus() {
             document.querySelectorAll('[id^="menu-"]').forEach(menu => {
                 menu.classList.add('hidden');
             });
+        }
+
+        document.addEventListener('click', function () {
+            hideAllMenus();
         });
+
+        document.addEventListener('scroll', function () {
+            hideAllMenus();
+        })
     </script>
 @endsection

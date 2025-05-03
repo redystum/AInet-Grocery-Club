@@ -66,9 +66,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
-            Route::post('auto', [StockController::class, 'restockAutoConfirm'])->name('auto.confirm');
+            Route::post('auto', [StockController::class, 'restockConfirm'])->name('confirm');
             Route::get('{product}', [StockController::class, 'restock'])->name('product');
-            Route::post('{product}', [StockController::class, 'restockConfirm'])->name('product.confirm');
         });
     });
 });

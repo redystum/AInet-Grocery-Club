@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StockFilterRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SupplyOrder;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
@@ -89,23 +90,44 @@ class StockController extends Controller
         return view('pages.admin.stock.restock', compact('products'));
     }
 
-    public function restockAutoConfirm(Request $request)
+    public function restockConfirm(Request $request)
     {
         $request->validate([
             'restock_data' => 'required|json',
         ]);
 
         $restockData = json_decode($request->input('restock_data'), true);
-        foreach ($restockData as $productId => $restock) {
-            if (!is_numeric($restock)) {
+        foreach ($restockData as $productId => $quantity) {
+            if (!is_numeric($quantity)) {
                 return redirect()->route('board.restock.auto')->withErrors(['restock_data' => 'Invalid restock data.']);
             }
             Product::findOrFail($productId);
         }
 
-        // TODO: Create supply orders
-        dd($restockData);
+        foreach ($restockData as $productId => $quantity) {
+            SupplyOrder::create([
+                'product_id' => $productId,
+                'registered_by_user_id' => auth()->id(),
+                'status' => 'requested',
+                'quantity' => $quantity,
+                'custom' => null,
+            ]);
+        }
 
         return redirect()->route('board.stock')->with('success', 'Products restocked successfully.');
+    }
+
+    public function restock(Product $product)
+    {
+        if ($product->stock >= $product->stock_upper_limit) {
+            return redirect()->route('board.stock')->withErrors(['product' => 'Product is already fully stocked.']);
+        }
+
+        $restock = $product->stock_upper_limit - $product->stock;
+        $product->setAttribute('restock', $restock);
+
+        $products = collect([$product]); // just to use the same page
+
+        return view('pages.admin.stock.restock', compact('products'));
     }
 }
