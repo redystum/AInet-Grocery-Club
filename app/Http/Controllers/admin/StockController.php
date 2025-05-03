@@ -114,7 +114,11 @@ class StockController extends Controller
             ]);
         }
 
-        return redirect()->route('board.stock')->with('success', 'Products restocked successfully.');
+        return redirect()->route('board.stock')->with('toast',[
+            'title' => 'Success',
+            'message' => 'Supply order created successfully.',
+            'type' => 'success',
+        ]);
     }
 
     public function restock(Product $product)
