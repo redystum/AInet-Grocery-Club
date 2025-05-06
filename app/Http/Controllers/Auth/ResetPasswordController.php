@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\PasswordResetSuccess;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class ResetPasswordController extends Controller
 {
@@ -35,7 +36,7 @@ class ResetPasswordController extends Controller
         if ($status === Password::PASSWORD_RESET) {
             $user = User::where('email', $request->email)->first();
             if ($user) {
-                $user->notify(new PasswordResetSuccess());
+                $user->notify(new PasswordResetSuccess);
             }
 
             return redirect()->route('login')->with('status', __($status));

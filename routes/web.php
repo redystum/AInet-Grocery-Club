@@ -1,11 +1,10 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
-
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -19,6 +18,11 @@ Route::get('/', function () {
 })->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::name('product.')->prefix('product/{product}')->group(function () {
+    Route::get('/', [ProductController::class, 'show'])->name('show');
+    Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
+
+});
 
 /*--------------------------------------------------------------------------
 | Guest routes
@@ -67,8 +71,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
 
-
-
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE
 !---------------------------------------------------------------------------
@@ -76,9 +78,10 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 ! user without credentials.
 !
 !*/
-if (!app()->isProduction()) {
+if (! app()->isProduction()) {
     Route::get('force_login/{user}', function ($user) {
         auth()->loginUsingId($user);
+
         return redirect()->back();
     })->name('force_login');
 

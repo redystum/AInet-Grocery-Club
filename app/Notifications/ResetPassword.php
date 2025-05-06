@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Jenssegers\Agent\Agent;
@@ -14,11 +13,17 @@ class ResetPassword extends Notification
     use Queueable;
 
     private string $appName;
+
     private string $loginTime;
+
     private string $ipAddress;
+
     private array $deviceInfo;
+
     private string $loginLocation;
+
     private string $logoUrl;
+
     private string $token;
 
     /**
@@ -29,10 +34,10 @@ class ResetPassword extends Notification
         $this->token = $token;
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
-        $this->ipAddress = app()->isProduction() ? request()->ip() : "194.210.216.34";
+        $this->ipAddress = app()->isProduction() ? request()->ip() : '194.210.216.34';
         $this->logoUrl = asset('assets/logo.jpg');
 
-        $agent = new Agent();
+        $agent = new Agent;
         $this->deviceInfo = [
             'device' => $agent->device() ?: 'Unknown Device',
             'platform' => $agent->platform() ?: 'Unknown OS',
@@ -45,7 +50,7 @@ class ResetPassword extends Notification
         $this->loginLocation = $location ? implode(', ', array_filter([
             $location->cityName,
             $location->regionName,
-            $location->countryName
+            $location->countryName,
         ])) : 'Location unavailable';
     }
 
@@ -70,7 +75,7 @@ class ResetPassword extends Notification
         ], false));
 
         $userName = $notifiable->name;
-        $userPhoto = $notifiable->photo ?: "anonymous.png";
+        $userPhoto = $notifiable->photo ?: 'anonymous.png';
 
         return (new MailMessage)
             ->subject('Reset Your Password')
