@@ -66,8 +66,8 @@
                             <select name="gender" id="gender" required
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300
                                         dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-neutral-800 dark:text-neutral-100
-                                        @error('gender') border-red-500 dark:border-red-500 @enderror cursor-pointer">
+                                        dark:bg-neutral-800 dark:text-neutral-100 cursor-pointer
+                                        @error('gender') border-red-500 dark:border-red-500 @enderror">
                                 <option value="" disabled {{ old('gender') == '' ? 'selected' : '' }}>Select...
                                 </option>
                                 <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Male</option>
