@@ -10,6 +10,26 @@
                     <p class="text-gray-600 dark:text-neutral-400">Sign in to access your account</p>
                 </div>
 
+                @if (session('status'))
+                    <div
+                        class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-0.5">
+                                <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-semibold text-green-800 dark:text-green-200">
+                                    Success!
+                                </h3>
+                                <div class="mt-1 text-green-700 dark:text-green-300">
+                                    <p>{{ session('status') }}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <form action="{{ route('login') }}" method="POST" class="space-y-6">
                     @csrf
 
@@ -45,7 +65,7 @@
                         <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                         @enderror
                         <div class="flex justify-end mt-1">
-                            <a href="#"
+                            <a href="{{ route('password.request') }}"
                                class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Forgot
                                 password?</a>
                         </div>
@@ -69,8 +89,8 @@
                     <!-- Registration Link -->
                     <p class="text-center text-sm text-gray-600 dark:text-neutral-400">
                         Don't have an account? <a href="{{ route('register') }}"
-                                                  class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">Sign
-                            up</a>
+                                                  class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                            Sign up</a>
                     </p>
                 </form>
 
