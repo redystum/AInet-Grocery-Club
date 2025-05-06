@@ -7,37 +7,37 @@
                     <a href="{{ route('home') }}" class="flex items-center">
                         <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 w-8 rounded-full">
                         <span
-                            class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
+                                class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
                     </a>
                 </div>
 
                 <!-- Navigation links -->
                 <div class="hidden md:ml-10 md:flex items-center space-x-8">
-                    <a href="#"
-                       class="text-indigo-600 dark:text-indigo-400 px-3 py-2 text-sm font-medium border-b-2 border-indigo-600 dark:border-indigo-400">Home</a>
+                    <a href="{{ route('home') }}"
+                       class="{{ Route::currentRouteName() === 'home' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        Home
+                    </a>
                     <a href="{{ route('products.index') }}"
-                       class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">Products</a>
-                    <a href="#"
-                       class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">Contacts</a>
-                    <a href="#"
-                       class="text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition duration-300">About
-                        us</a>
+                       class="{{ Route::currentRouteName() === 'products.index' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        Products
+                    </a>
+                    <a href="#{{-- {{ route('contacts') }}--}}"
+                       class="{{ Route::currentRouteName() === 'contacts' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        Contacts
+                    </a>
+                    <a href="#{{-- {{ route('about') }}--}}"
+                       class="{{ Route::currentRouteName() === 'about' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        Contacts
+                    </a>
                 </div>
             </div>
 
-            <!-- Search bar and user dropdown -->
+            <!-- Search button and user dropdown -->
             <div class="flex items-center space-x-4">
-                <div class="hidden lg:block relative">
-                    <input type="text"
-                           class="w-40 lg:w-56 pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400"
-                           placeholder="Search...">
-                    <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 dark:text-neutral-500 text-sm"></i>
-                </div>
-
-                <div class="lg:hidden">
+                <div>
                     <button
-                        class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
-                        id="mobileSearchButton">
+                            class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
+                            id="searchButton">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -58,7 +58,7 @@
                                  @endif
                                  alt="Account"/>
                             <span
-                                class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
+                                    class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
                         @endauth
                         <i class="hidden md:inline fas fa-chevron-down text-xs text-gray-500 dark:text-neutral-400"></i>
                     </div>
@@ -105,8 +105,8 @@
             <!-- Mobile menu button -->
             <div class="md:hidden flex items-center ml-2">
                 <button
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                    id="mobileMenuButton">
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                        id="mobileMenuButton">
                     <span class="sr-only">Open main menu</span>
                     <span id="openMobileDropdown" class="block">
                         <i class="fas fa-bars h-6 w-6"></i>
@@ -118,14 +118,9 @@
             </div>
         </div>
 
-        <!-- Mobile search bar -->
-        <div class="hidden lg:hidden px-2 py-2" id="mobileSearchBar">
-            <div class="relative">
-                <input type="text"
-                       class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400"
-                       placeholder="Search...">
-                <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 dark:text-neutral-500 text-sm"></i>
-            </div>
+        <!-- Search bar -->
+        <div class="hidden px-2 py-2" id="searchBar">
+            <livewire:search-dropdown />
         </div>
     </div>
 
@@ -157,9 +152,9 @@
                 <div class="ml-3">
                     @auth
                         <div
-                            class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
+                                class="text-base font-medium text-gray-800 dark:text-neutral-100">{{ auth()->user()->name }}</div>
                         <div
-                            class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
+                                class="text-sm font-medium text-gray-500 dark:text-neutral-400">{{ auth()->user()->email }}</div>
                     @else
                         <div class="text-base font-medium text-gray-800 dark:text-neutral-100">Guest</div>
                         <div class="text-sm font-medium text-gray-500 dark:text-neutral-400">Sign in to continue</div>
@@ -168,12 +163,17 @@
             </div>
             <div class="mt-3 px-2 space-y-1">
                 @auth
-                    <a href="#"
+                    <a href="{{ route('profile') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400"></i>
-                        Your Profile
+                        Profile
                     </a>
                     <a href="#"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                        <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                        Cart
+                    </a>
+                    <a href="{{ route('logout') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-sign-out-alt mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Sign out
@@ -233,11 +233,58 @@
         }
     });
 
-    // Mobile search toggle
-    const mobileSearchBtn = document.getElementById('mobileSearchButton');
-    const mobileSearchBar = document.getElementById('mobileSearchBar');
+    const searchBtn = document.getElementById('searchButton');
+    const searchBar = document.getElementById('searchBar');
 
-    mobileSearchBtn.addEventListener('click', function () {
-        mobileSearchBar.classList.toggle('hidden');
+    searchBtn.addEventListener('click', function () {
+        searchBar.classList.toggle('hidden');
+        document.getElementById('searchInput').focus();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.ctrlKey && event.key === 'k') {
+            event.preventDefault();
+            searchBar.classList.toggle('hidden');
+            document.getElementById('searchInput').focus();
+        }
+    });
+
+    // Search dropdown functionality
+    const searchInput = document.getElementById('searchInput');
+    let searchDropdown = document.getElementById('searchDropdown');
+
+    // Show dropdown when focus
+    searchInput.addEventListener('focus', function () {
+        if (searchInput.value.length > 0) {
+            searchDropdown.classList.remove('opacity-0');
+            searchDropdown.classList.remove('scale-95');
+            searchDropdown.classList.remove('pointer-events-none');
+            searchDropdown.classList.add('opacity-100');
+            searchDropdown.classList.add('scale-100');
+            searchDropdown.classList.add('pointer-events-auto');
+            searchInput.classList.remove('rounded-b-xl');
+            searchInput.classList.add('rounded-b-none');
+            searchInput.classList.add('dark:!border-b-neutral-700');
+            searchInput.classList.add('!border-b-gray-300');
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+        searchDropdown = document.getElementById('searchDropdown')
+        if (searchInput && searchDropdown) {
+            if (!searchDropdown.contains(event.target) && !searchInput.contains(event.target)) {
+                searchDropdown.classList.add('opacity-0');
+                searchDropdown.classList.add('scale-95');
+                searchDropdown.classList.add('pointer-events-none');
+                searchDropdown.classList.remove('opacity-100');
+                searchDropdown.classList.remove('scale-100');
+                searchDropdown.classList.remove('pointer-events-auto');
+                searchInput.classList.remove('rounded-b-none');
+                searchInput.classList.add('rounded-b-xl');
+                searchInput.classList.remove('dark:!border-b-neutral-700');
+                searchInput.classList.remove('!border-b-gray-300');
+            }
+        }
     });
 </script>

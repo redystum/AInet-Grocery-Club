@@ -14,6 +14,11 @@ class Category extends Model
         'image',
         'custom',
     ];
+  
+    public function getImage()
+    {
+        return $this->image ? asset('storage/categories/' . $this->image) : asset('storage/categories/category_no_image.png');
+    }
 
     public function products()
     {
