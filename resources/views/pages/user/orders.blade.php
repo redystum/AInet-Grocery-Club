@@ -187,7 +187,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
                                     <button
-                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mr-3">
+                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mr-3 cursor-pointer">
                                         <i class="fas fa-receipt"></i> Receipt
                                     </button>
                                 </a>
@@ -304,16 +304,16 @@
 
                                     <div class="mt-6 flex justify-end space-x-3">
                                         <button
-                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                             <i class="fas fa-redo mr-2"></i> Reorder
                                         </button>
                                         <button
-                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                             <i class="fas fa-cancel mr-2"></i> Cancel
                                         </button>
                                         <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
                                             <button
-                                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer">
                                                 <i class="fas fa-receipt mr-2"></i> Download Receipt
                                             </button>
                                         </a>
