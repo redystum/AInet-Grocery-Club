@@ -23,7 +23,7 @@
                     <i class="fas fa-home mr-2"></i> Go to Homepage
                 </a>
                 <button onclick="window.history.back()"
-                        class="px-6 py-3 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-medium rounded-lg transition-colors">
+                        class="px-6 py-3 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-medium rounded-lg transition-colors cursor-pointer">
                     <i class="fas fa-arrow-left mr-2"></i> Go Back
                 </button>
             </div>
