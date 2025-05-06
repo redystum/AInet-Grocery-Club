@@ -66,7 +66,7 @@
                             <select name="gender" id="gender" required
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300
                                         dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-neutral-800 dark:text-neutral-100
+                                        dark:bg-neutral-800 dark:text-neutral-100 cursor-pointer
                                         @error('gender') border-red-500 dark:border-red-500 @enderror">
                                 <option value="" disabled {{ old('gender') == '' ? 'selected' : '' }}>Select...
                                 </option>
@@ -212,7 +212,7 @@
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
                         <input type="checkbox" name="terms" id="terms" required
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800 cursor-pointer"
                             @checked(old('terms'))>
                     </div>
                     <div class="ml-3">
@@ -228,7 +228,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg cursor-pointer">
                     Create Account
                 </button>
 
