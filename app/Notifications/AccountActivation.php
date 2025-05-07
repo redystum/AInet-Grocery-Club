@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -12,7 +11,9 @@ class AccountActivation extends Notification
     use Queueable;
 
     private string $appName;
+
     private string $logoUrl;
+
     private string $url;
 
     /**
@@ -41,7 +42,7 @@ class AccountActivation extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $userName = $notifiable->name;
-        $userPhoto = $notifiable->photo ?: "anonymous.png";
+        $userPhoto = $notifiable->photo ?: 'anonymous.png';
 
         return (new MailMessage)
             ->subject('Account Activation')

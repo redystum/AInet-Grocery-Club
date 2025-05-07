@@ -18,14 +18,19 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-
     public function show_login(): Factory|View|Application|RedirectResponse
     {
+        if (Auth::check()) {
+            return redirect()->route('home')->with('success', 'You are already logged in.');
+        }
         return view('pages.auth.login');
     }
 
     public function show_register(): Factory|View|Application|RedirectResponse
     {
+        if (Auth::check()) {
+            return redirect()->route('home')->with('success', 'You are already logged in.');
+        }
         return view('pages.auth.register');
     }
 
@@ -39,6 +44,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             if (Auth::user()->email_verified_at === null) {
                 Auth::logout();
+
                 return back()->withErrors([
                     'email' => 'Please verify your email address before logging in.',
                 ])->onlyInput('email', 'remember');
