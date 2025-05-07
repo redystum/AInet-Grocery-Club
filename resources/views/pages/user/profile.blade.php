@@ -3,6 +3,7 @@
 @section('title', ' - Profile')
 
 @section('content')
+    @use('App\Models\Order')
 
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Profile Header Section -->
@@ -34,10 +35,10 @@
                                 Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
                             </span>
                             @unless(auth()->user()->isEmployee())
-                            <a href="{{ route('profile.edit') }}"
-                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                <i class="fas fa-edit mr-2"></i> Edit Profile
-                            </a>
+                                <a href="{{ route('profile.edit') }}"
+                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                    <i class="fas fa-edit mr-2"></i> Edit Profile
+                                </a>
                             @endunless
                         </div>
                     </div>
@@ -233,20 +234,20 @@
                                         €{{ number_format($order->total, 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($order->status == 'completed')
+                                        @if($order->status == Order::STATUS_COMPLETED)
                                             <span
                                                     class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
-                                                Delivered
+                                                <i class="fas fa-check mr-1"></i> Delivered
                                             </span>
-                                        @elseif($order->status == 'pending')
+                                        @elseif($order->status == Order::STATUS_PENDING)
                                             <span
                                                     class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
-                                                Pending
+                                                <i class="fas fa-clock mr-1"></i> Pending
                                             </span>
-                                        @elseif($order->status == 'canceled')
+                                        @elseif($order->status == Order::STATUS_CANCELED)
                                             <span
                                                     class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200">
-                                                Canceled
+                                                <i class="fas fa-times mr-1"></i> Canceled
                                             </span>
                                         @endif
                                     </td>
