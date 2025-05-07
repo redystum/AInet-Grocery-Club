@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderFilterRequest;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use ZipArchive;
 
 class OrderController extends Controller
@@ -23,8 +24,8 @@ class OrderController extends Controller
                 $total_discount += $item->discount * $item->quantity;
             }
 
-            $order->items_count = $total_items;
-            $order->total_discount = $total_discount;
+            $order->setAttribute("items_count", $total_items);
+            $order->setAttribute("total_discount", $total_discount);
         }
 
         return view('pages.user.orders', compact('orders'));
@@ -32,22 +33,20 @@ class OrderController extends Controller
 
     public function receipt(Order $order)
     {
-        {
-            if ($order->member_id != auth()->user()->id) {
-                abort(404);
-            }
-
-            $path = storage_path('app/private/receipts/' . $order->pdf_receipt);
-            if (!file_exists($path)) {
-                abort(404);
-            }
-
-            $headers = [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $order->pdf_receipt . '"',
-            ];
-            return response()->file($path, $headers);
+        if ($order->member_id != auth()->user()->id) {
+            abort(404);
         }
+
+        $path = storage_path('app/private/receipts/' . $order->pdf_receipt);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $order->pdf_receipt . '"',
+        ];
+        return response()->file($path, $headers);
     }
 
     public function export(OrderFilterRequest $request)
@@ -74,11 +73,91 @@ class OrderController extends Controller
         return response()->download($zip_path)->deleteFileAfterSend(true);
     }
 
+    public function cancel(Order $order)
+    {
+        if ($order->member_id != auth()->user()->id) {
+            abort(404);
+        }
+
+        $total_items = 0;
+        $total_discount = 0; // in cents
+
+        foreach ($order->items as $item) {
+            $total_items += $item->quantity;
+            $total_discount += $item->discount * $item->quantity;
+        }
+
+        $order->setAttribute("items_count", $total_items);
+        $order->setAttribute("total_discount", $total_discount);
+
+        return view('pages.user.cancel_order', compact('order'));
+    }
+
+    public function cancelConfirm(Order $order, Request $request)
+    {
+        if ($order->member_id != auth()->user()->id) {
+            abort(404);
+        }
+
+        if ($order->status != Order::STATUS_PENDING) {
+            return redirect()->route('orders')->with('toast', [
+                'title' => 'Error',
+                'message' => 'You cannot cancel this order',
+                'type' => 'error',
+            ]);
+        }
+
+        $request->validate([
+            'reason' => 'required|int|in:0,1,2,3,4,5',
+            'details' => 'nullable|string|max:255',
+        ]);
+
+        $reason = $request->input('reason');
+
+        $reason_text = '';
+        if ($reason == 5) {
+            $request->validate([
+                'details' => 'required|string|max:255',
+            ]);
+        }
+
+        switch ($reason) {
+            case 1:
+                $reason_text = 'Found cheaper elsewhere - ';
+                break;
+            case 2:
+                $reason_text = 'Changed my mind - ';
+                break;
+            case 3:
+                $reason_text = 'Shipping takes too long - ';
+                break;
+            case 4:
+                $reason_text = 'Ordered by mistake - ';
+                break;
+        }
+
+        $reason_text .= $request->input('details');
+
+        // TODO: employee have to accept the cancellation, use the custom field for pending concalation, and cannot cancel again after cancel refused
+
+        $order->update([
+            'status' => Order::STATUS_CANCELED,
+            'cancel_reason' => $reason_text,
+        ]);
+
+        return redirect()->route('orders')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Order canceled successfully',
+            'type' => 'success',
+        ]);
+    }
+
+
     private function getOrderWithFilters(OrderFilterRequest $request)
     {
         $query = auth()->user()->orders()->with(['products']);
 
-      if ($request->input('date_range')) {
+        if ($request->input('date_range')) {
             $days = (int)$request->input('date_range');
             $query->where('created_at', '>=', now()->subDays($days));
         }

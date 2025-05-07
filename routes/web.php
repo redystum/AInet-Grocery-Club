@@ -57,17 +57,23 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
 
-    Route::get('orders', [OrderController::class, 'index'])->name('orders');
-    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
-    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::get('orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
+
+    Route::name('orders')->prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::get('export', [OrderController::class, 'export'])->name('.export');
+
+        Route::prefix('{order}')->group(function () {
+            Route::get('receipt', [OrderController::class, 'receipt'])->name('.receipt');
+            Route::get('cancel', [OrderController::class, 'cancel'])->name('.cancel');
+            Route::post('cancel/confirm', [OrderController::class, 'cancelConfirm'])->name('.cancel.confirm');
+        });
+    });
 
     Route::middleware('notEmployee')->group(function () {
         Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
         Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
     });
 });
-
 
 
 /*!--------------------------------------------------------------------------

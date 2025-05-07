@@ -4,6 +4,8 @@
 
 @section('content')
 
+    @use ("App\Models\Order")
+
     @if($orders->count() == 0)
         <div class="container mx-auto px-4 py-8 max-w-6xl">
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
@@ -167,20 +169,20 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($order->status == 'completed')
+                                @if($order->status == Order::STATUS_COMPLETED)
                                     <span
                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
-                                        Delivered
+                                        <i class="fas fa-check mr-1"></i> Delivered
                                     </span>
-                                @elseif($order->status == 'pending')
+                                @elseif($order->status == Order::STATUS_PENDING)
                                     <span
                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
-                                        Pending
+                                        <i class="fas fa-clock mr-1"></i> Pending
                                     </span>
-                                @elseif($order->status == 'canceled')
+                                @elseif($order->status == Order::STATUS_CANCELED)
                                     <span
                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200">
-                                        Canceled
+                                        <i class="fas fa-times mr-1"></i> Canceled
                                     </span>
                                 @endif
                             </td>
@@ -210,13 +212,6 @@
                                                     <img src="{{ asset('storage/products/' . $item->product->photo) }}"
                                                          alt="{{ $item->product->name }}"
                                                          class="w-16 h-16 object-cover rounded-lg border border-neutral-200 dark:border-neutral-600">
-                                                    @if($item->discount > 0)
-                                                        <div
-                                                                class="absolute -top-2 -right-2 bg-red-400 border border-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                                            -{{ number_format(($item->discount / $item->product->price) * 100) }}
-                                                            %
-                                                        </div>
-                                                    @endif
                                                 </div>
 
                                                 <div class="flex-1 min-w-0">
@@ -226,6 +221,13 @@
                                                     <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                                                         Quantity: <span class="font-medium">{{ $item->quantity }}</span>
                                                     </p>
+                                                    @if($item->discount > 0)
+                                                        <div
+                                                                class="text-green-600 dark:text-green-400 text-xs mt-1">
+                                                            Discount:
+                                                            {{ number_format(($item->discount / $item->product->price) * 100) }}%
+                                                        </div>
+                                                    @endif
                                                 </div>
 
                                                 <div class="flex flex-col items-end">
@@ -238,7 +240,7 @@
                                                         €{{ number_format($item->product->price - $item->discount, 2) }}
                                                     </div>
                                                     @if($item->discount > 0)
-                                                        <div class="text-xs text-red-500 dark:text-red-400 mt-1">
+                                                        <div class="text-xs text-green-600 dark:text-green-400 mt-1">
                                                             <span class="font-medium">Saved
                                                                 €{{ number_format($item->discount * $item->quantity, 2) }}</span>
                                                         </div>
@@ -303,19 +305,19 @@
                                     </div>
 
                                     <div class="mt-6 flex justify-end space-x-3">
-                                        <button
-                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
+                                        <a href="#"
+                                           class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                             <i class="fas fa-redo mr-2"></i> Reorder
-                                        </button>
-                                        <button
-                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
-                                            <i class="fas fa-cancel mr-2"></i> Cancel
-                                        </button>
-                                        <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
-                                            <button
-                                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer">
-                                                <i class="fas fa-receipt mr-2"></i> Download Receipt
-                                            </button>
+                                        </a>
+                                        @if($order->status == Order::STATUS_PENDING)
+                                            <a href="{{ route('orders.cancel', $order->id) }}"
+                                               class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
+                                                <i class="fas fa-cancel mr-2"></i> Cancel
+                                            </a>
+                                        @endif
+                                        <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
+                                           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer">
+                                            <i class="fas fa-receipt mr-2"></i> Download Receipt
                                         </a>
                                     </div>
                                 </div>
