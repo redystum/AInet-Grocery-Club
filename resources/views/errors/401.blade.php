@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="min-h-screen flex flex-col items-center justify-center bg-neutral-50 dark:bg-neutral-900 p-4">
+    <div class="h-full flex flex-col items-center justify-center bg-neutral-50 dark:bg-neutral-900 p-4">
         <div class="max-w-md w-full bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-8 text-center">
 
             <div class="mx-auto w-24 h-24 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-6">
