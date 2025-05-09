@@ -60,6 +60,13 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('board.supplies') }}"
+                   class="flex items-center p-3 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 group transition-colors">
+                    <i class="fas fa-parachute-box mr-3 text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300"></i>
+                    <span class="whitespace-nowrap transition-all duration-300">Supplies</span>
+                </a>
+            </li>
+            <li>
                 <a href="#"
                    class="flex items-center p-3 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 group transition-colors">
                     <i class="fas fa-receipt mr-3 text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300"></i>

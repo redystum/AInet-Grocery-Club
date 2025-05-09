@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\StockController;
+use App\Http\Controllers\admin\SupplyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -69,6 +70,7 @@ Route::middleware('auth')->group(function () {
             Route::post('auto', [StockController::class, 'restockConfirm'])->name('confirm');
             Route::get('{product}', [StockController::class, 'restock'])->name('product');
         });
+        Route::get('/supplies', [SupplyController::class, 'index'])->name('supplies');
     });
 });
 
