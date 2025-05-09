@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\SupplyOrder;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -44,7 +45,7 @@ class SupplyOrdersTable extends Component
 
     public function gotoPage($page)
     {
-        $this->setPage((int) $page);
+        $this->setPage((int)$page);
     }
 
     public function render()
@@ -106,8 +107,27 @@ class SupplyOrdersTable extends Component
         $supplyOrders = $query->paginate(50);
 
         foreach ($supplyOrders as $supplyOrder) {
-            $delivered_at = json_decode($supplyOrder->custom, true)['delivered_at'] ?? "-";
-            $supplyOrder->setAttribute('delivered_at', $delivered_at);
+            $custom = json_decode($supplyOrder->custom, true);
+            if ($custom == null) {
+                $supplyOrder->setAttribute('delivered_at', "-");
+                continue;
+            }
+
+            $delivered_at = $custom['delivered_at'] ?? null;
+            if ($delivered_at != null) {
+                $delivered_at = Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
+                $supplyOrder->setAttribute('delivered_at', $delivered_at);
+                continue;
+            }
+
+            $delivered_at = $custom['expected_delivery_date'] ?? null;
+            if ($delivered_at != null) {
+                $delivered_at = "Expected: " . Carbon::parse($supplyOrder->created_at)->format('d/m/Y H:i:s');
+                $supplyOrder->setAttribute('delivered_at', $delivered_at);
+                continue;
+            }
+
+            $supplyOrder->setAttribute('delivered_at', '-');
         }
 
         return view('livewire.supply-orders-table', [

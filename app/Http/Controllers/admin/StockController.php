@@ -105,16 +105,23 @@ class StockController extends Controller
         }
 
         foreach ($restockData as $productId => $quantity) {
+            $random_date = now()->addDays(rand(2, 5));
+
+            $custom = json_encode([
+                'expected_delivery_date' => $random_date,
+                'delivered_at' => null,
+            ]);
+
             SupplyOrder::create([
                 'product_id' => $productId,
                 'registered_by_user_id' => auth()->id(),
                 'status' => 'requested',
                 'quantity' => $quantity,
-                'custom' => null,
+                'custom' => $custom,
             ]);
         }
 
-        return redirect()->route('board.stock')->with('toast',[
+        return redirect()->route('board.stock')->with('toast', [
             'title' => 'Success',
             'message' => 'Supply order created successfully.',
             'type' => 'success',
