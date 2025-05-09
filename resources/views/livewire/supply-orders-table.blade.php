@@ -6,7 +6,7 @@
             <p class="text-neutral-600 dark:text-neutral-400">Manage your pending and received supply orders</p>
         </div>
         <div class="flex gap-3">
-            <button class="px-4 cursor-pointer rpy-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
+            <button class="px-4 cursor-pointer py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
                 <i class="fas fa-file-export mr-2"></i> Export
             </button>
         </div>
@@ -114,7 +114,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->created_at }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->custom ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->delivered_at }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->quantity }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($order->status == \App\Models\SupplyOrder::STATUS_COMPLETED)

@@ -103,7 +103,12 @@ class SupplyOrdersTable extends Component
             $query->whereYear('created_at', now()->year);
         }
 
-        $supplyOrders = $query->paginate(100);
+        $supplyOrders = $query->paginate(50);
+
+        foreach ($supplyOrders as $supplyOrder) {
+            $delivered_at = json_decode($supplyOrder->custom, true)['delivered_at'] ?? "-";
+            $supplyOrder->setAttribute('delivered_at', $delivered_at);
+        }
 
         return view('livewire.supply-orders-table', [
             'supplyOrders' => $supplyOrders,
