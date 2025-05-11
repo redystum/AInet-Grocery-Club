@@ -48,7 +48,7 @@
                 <label for="orderBy" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Order
                     By</label>
                 <select id="orderBy" wire:model.live="orderBy"
-                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                        class="w-full cursor-pointer px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                     <option value="date_asc">Date Recent-Old</option>
                     <option value="date_desc">Date Old-Recent</option>
                     <option value="quantity_low_high">Quantity Low-High</option>
@@ -62,7 +62,7 @@
                 <label for="dateRange" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Date
                     Range</label>
                 <select id="dateRange" wire:model.live="dateRange"
-                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                        class="w-full cursor-pointer px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                     <option value="">All Time</option>
                     <option value="today">Today</option>
                     <option value="week">This Week</option>
@@ -127,7 +127,7 @@
                             <div x-data="{ open: false }" @click.away="open = false" @scroll.window="open = false"
                                  class="relative">
                                 <button @click.stop="open = !open"
-                                        class="inline-flex justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                                        class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
                                         aria-expanded="false" aria-haspopup="true">
                                     <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
                                 </button>
@@ -145,20 +145,20 @@
                                         <a href="#"
                                            class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                            role="menuitem">
-                                            <i class="fas fa-eye mr-3 text-neutral-400"></i>
-                                            View Details
+                                            <i class="fas fa-receipt mr-3 text-neutral-400"></i>
+                                            Download Invoice
                                         </a>
                                         <a href="#"
                                            class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                            role="menuitem">
                                             <i class="fas fa-edit mr-3 text-blue-400"></i>
-                                            Edit Product
+                                            Edit Order
                                         </a>
                                         <a href="{{ route('board.restock.product', $order->id) }}"
                                            class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                            role="menuitem">
-                                            <i class="fas fa-boxes mr-3 text-green-400"></i>
-                                            Restock
+                                            <i class="fas fa-cancel mr-3 text-red-400"></i>
+                                            Cancel Order
                                         </a>
                                     </div>
                                 </div>
@@ -187,14 +187,14 @@
                 <!-- First Page Link -->
                 <button wire:click="gotoPage(1)"
                         @if($supplyOrders->currentPage() === 1) disabled @endif
-                        class="px-3 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->currentPage() === 1 ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        class="px-3 @unless($supplyOrders->currentPage() === 1) cursor-pointer @endunless py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->currentPage() === 1 ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-angle-double-left"></i>
                 </button>
 
                 <!-- Previous Page Link -->
                 <button wire:click="previousPage"
                         @if($supplyOrders->onFirstPage()) disabled @endif
-                        class="px-3 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        class="px-3 @unless($supplyOrders->onFirstPage()) cursor-pointer @endunless py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-angle-left"></i>
                 </button>
 
@@ -212,15 +212,15 @@
 
                 <!-- Next Page Link -->
                 <button wire:click="nextPage"
-                        @if(!$supplyOrders->hasMorePages()) disabled @endif
-                        class="px-3 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ !$supplyOrders->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        @unless($supplyOrders->hasMorePages()) disabled @endunless
+                        class="px-3 @if($supplyOrders->hasMorePages()) cursor-pointer @endif py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ !$supplyOrders->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-angle-right"></i>
                 </button>
 
                 <!-- Last Page Link -->
                 <button wire:click="gotoPage({{ $supplyOrders->lastPage() }})"
                         @if($supplyOrders->currentPage() === $supplyOrders->lastPage()) disabled @endif
-                        class="px-3 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->currentPage() === $supplyOrders->lastPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        class="px-3 py-1 @unless($supplyOrders->currentPage() === $supplyOrders->lastPage()) disabled @endunless rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->currentPage() === $supplyOrders->lastPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-angle-double-right"></i>
                 </button>
 
