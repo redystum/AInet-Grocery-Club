@@ -55,8 +55,6 @@
                     <option value="quantity_high_low">Quantity High-Low</option>
                     <option value="name_asc">Name A-Z</option>
                     <option value="name_desc">Name Z-A</option>
-                    <option value="price_high_low">Price High-Low</option>
-                    <option value="price_low_high">Price Low-High</option>
                 </select>
             </div>
 

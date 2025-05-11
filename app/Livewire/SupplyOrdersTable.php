@@ -67,41 +67,35 @@ class SupplyOrdersTable extends Component
         // Apply ordering
         switch ($this->orderBy) {
             case 'date_desc':
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('supply_orders.created_at', 'desc'); // Specify table name
                 break;
             case 'date_asc':
-                $query->orderBy('created_at', 'asc');
+                $query->orderBy('supply_orders.created_at'); // Specify table name
                 break;
-            case 'stock_low_high':
-                $query->orderBy('quantity', 'asc');
+            case 'quantity_low_high':
+                $query->orderBy('quantity');
                 break;
-            case 'stock_high_low':
+            case 'quantity_high_low':
                 $query->orderBy('quantity', 'desc');
                 break;
             case 'name_asc':
                 $query->join('products', 'products.id', '=', 'supply_orders.product_id')
-                    ->orderBy('products.name', 'asc');
+                    ->orderBy('products.name');
                 break;
             case 'name_desc':
                 $query->join('products', 'products.id', '=', 'supply_orders.product_id')
                     ->orderBy('products.name', 'desc');
                 break;
-            case 'price_low_high':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high_low':
-                $query->orderBy('price', 'desc');
-                break;
         }
 
         if ($this->dateRange == 'today') {
-            $query->whereDate('created_at', today());
+            $query->whereDate('supply_orders.created_at', today());
         } elseif ($this->dateRange == 'week') {
-            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            $query->whereBetween('supply_orders.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
         } elseif ($this->dateRange == 'month') {
-            $query->whereMonth('created_at', now()->month);
+            $query->whereMonth('supply_orders.created_at', now()->month);
         } elseif ($this->dateRange == 'year') {
-            $query->whereYear('created_at', now()->year);
+            $query->whereYear('supply_orders.created_at', now()->year);
         }
 
         $supplyOrders = $query->paginate(50);
