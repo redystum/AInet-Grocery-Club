@@ -6,6 +6,7 @@ use App\Models\SupplyOrder;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
 
 class SupplyOrdersTable extends Component
 {
@@ -16,30 +17,62 @@ class SupplyOrdersTable extends Component
     public $dateRange = '';
     public $tab = 'pending';
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'orderBy' => ['except' => 'date_asc'],
-        'dateRange' => ['except' => ''],
-        'tab' => ['except' => 'pending'],
+    protected $validOrderByOptions = [
+        'date_desc', 'date_asc', 'quantity_low_high', 'quantity_high_low', 'name_asc', 'name_desc'
     ];
+
+    protected $validDateRangeOptions = [
+        '', 'today', 'week', 'month', 'year'
+    ];
+
+    protected $validTabOptions = [
+        'pending', 'received', 'all', ''
+    ];
+
+    protected function rules()
+    {
+        return [
+            'search' => 'nullable|string|max:100',
+            'orderBy' => ['required', Rule::in($this->validOrderByOptions)],
+            'dateRange' => ['nullable', Rule::in($this->validDateRangeOptions)],
+            'tab' => ['required', Rule::in($this->validTabOptions)],
+        ];
+    }
+
+    public function validateInputs()
+    {
+        $this->validateOnly('search');
+        $this->validateOnly('orderBy');
+        $this->validateOnly('dateRange');
+        $this->validateOnly('tab');
+    }
+
+    public function mount()
+    {
+        $this->validateInputs();
+    }
 
     public function updatedSearch()
     {
+        $this->validateOnly('search');
         $this->resetPage();
     }
 
     public function updatedOrderBy()
     {
+        $this->validateOnly('orderBy');
         $this->resetPage();
     }
 
     public function updatedDateRange()
     {
+        $this->validateOnly('dateRange');
         $this->resetPage();
     }
 
     public function updatedTab()
     {
+        $this->validateOnly('tab');
         $this->resetPage();
     }
 
@@ -50,11 +83,14 @@ class SupplyOrdersTable extends Component
 
     public function render()
     {
+        $this->validateInputs();
+
         $query = SupplyOrder::query();
 
         if ($this->search) {
-            $query->whereHas('product', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%');
+            $sanitizedSearch = e($this->search);
+            $query->whereHas('product', function ($q) use ($sanitizedSearch) {
+                $q->where('name', 'like', '%' . $sanitizedSearch . '%');
             });
         }
 
@@ -64,13 +100,12 @@ class SupplyOrdersTable extends Component
             $query->where('status', SupplyOrder::STATUS_COMPLETED);
         }
 
-        // Apply ordering
         switch ($this->orderBy) {
             case 'date_desc':
-                $query->orderBy('supply_orders.created_at', 'desc'); // Specify table name
+                $query->orderBy('supply_orders.created_at', 'desc');
                 break;
             case 'date_asc':
-                $query->orderBy('supply_orders.created_at'); // Specify table name
+                $query->orderBy('supply_orders.created_at');
                 break;
             case 'quantity_low_high':
                 $query->orderBy('quantity');

@@ -124,9 +124,45 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="inline-flex justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
-                                <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
-                            </button>
+                            <div x-data="{ open: false }" @click.away="open = false" @scroll.window="open = false"
+                                 class="relative">
+                                <button @click.stop="open = !open"
+                                        class="inline-flex justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                                        aria-expanded="false" aria-haspopup="true">
+                                    <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
+                                </button>
+
+                                <div x-show="open"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                     role="menu" aria-orientation="vertical" tabindex="-1">
+                                    <div role="none">
+                                        <a href="#"
+                                           class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                           role="menuitem">
+                                            <i class="fas fa-eye mr-3 text-neutral-400"></i>
+                                            View Details
+                                        </a>
+                                        <a href="#"
+                                           class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                           role="menuitem">
+                                            <i class="fas fa-edit mr-3 text-blue-400"></i>
+                                            Edit Product
+                                        </a>
+                                        <a href="{{ route('board.restock.product', $order->id) }}"
+                                           class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                           role="menuitem">
+                                            <i class="fas fa-boxes mr-3 text-green-400"></i>
+                                            Restock
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 @empty
