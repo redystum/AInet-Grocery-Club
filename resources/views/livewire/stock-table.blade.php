@@ -1,5 +1,8 @@
 <!-- Filters and Search -->
-<div>
+<div x-data="{ activeDropdown: null }" 
+     x-init="document.addEventListener('click', () => { activeDropdown = null })" 
+     @scroll.window="activeDropdown = null" 
+     @keydown.escape.window="activeDropdown = null">
     <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div class="md:col-span-2">
@@ -150,15 +153,16 @@
 
                         <!-- Actions Column -->
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div x-data="{ open: false }" @click.away="open = false" @scroll.window="open = false"
-                                 class="relative">
-                                <button @click.stop="open = !open"
+                            <div class="relative">
+                                <button @click="$event.stopPropagation(); activeDropdown === 'product-{{ $product->id }}' ? activeDropdown = null : activeDropdown = 'product-{{ $product->id }}'"
                                         class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
-                                        aria-expanded="false" aria-haspopup="true">
+                                        :aria-expanded="activeDropdown === 'product-{{ $product->id }}'" aria-haspopup="true">
                                     <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
                                 </button>
 
-                                <div x-show="open"
+                                <div x-show="activeDropdown === 'product-{{ $product->id }}'"
+                                     @click.outside="activeDropdown = null" 
+                                     @click.stop="$event.stopPropagation()"
                                      x-transition:enter="transition ease-out duration-100"
                                      x-transition:enter-start="transform opacity-0 scale-95"
                                      x-transition:enter-end="transform opacity-100 scale-100"

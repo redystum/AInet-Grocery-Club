@@ -1,4 +1,7 @@
-<div>
+<div x-data="{ activeDropdown: null }" 
+     x-init="document.addEventListener('click', () => { activeDropdown = null })" 
+     @scroll.window="activeDropdown = null" 
+     @keydown.escape.window="activeDropdown = null">
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
@@ -124,15 +127,16 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div x-data="{ open: false }" @click.away="open = false" @scroll.window="open = false"
-                                 class="relative">
-                                <button @click.stop="open = !open"
+                            <div class="relative">
+                                <button @click="$event.stopPropagation(); activeDropdown === 'order-{{ $order->id }}' ? activeDropdown = null : activeDropdown = 'order-{{ $order->id }}'"
                                         class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
-                                        aria-expanded="false" aria-haspopup="true">
+                                        :aria-expanded="activeDropdown === 'order-{{ $order->id }}'" aria-haspopup="true">
                                     <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
                                 </button>
 
-                                <div x-show="open"
+                                <div x-show="activeDropdown === 'order-{{ $order->id }}'"
+                                     @click.outside="activeDropdown = null" 
+                                     @click.stop="$event.stopPropagation()"
                                      x-transition:enter="transition ease-out duration-100"
                                      x-transition:enter-start="transform opacity-0 scale-95"
                                      x-transition:enter-end="transform opacity-100 scale-100"
@@ -149,15 +153,19 @@
                                             Download Invoice
                                         </a>
                                         <a href="#"
-                                           class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                           class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700
+                                           @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"
                                            role="menuitem">
-                                            <i class="fas fa-edit mr-3 text-blue-400"></i>
+                                            <i class="fas fa-edit mr-3 group-disabled:text-neutral-500 text-blue-400
+                                            @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"></i>
                                             Edit Order
                                         </a>
-                                        <a href="{{ route('board.restock.product', $order->id) }}"
-                                           class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                        <a href="{{ route('board.restock.product', $order->id) }}" @disabled(now()->diffInHours($order->created_at) < 24)
+                                           class="w-full group disabled:text-neutral-500 disabled:cursor-not-allowed rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700
+                                           @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"
                                            role="menuitem">
-                                            <i class="fas fa-cancel mr-3 text-red-400"></i>
+                                            <i class="fas fa-cancel mr-3 group-disabled:text-neutral-500 text-red-400
+                                            @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"></i>
                                             Cancel Order
                                         </a>
                                     </div>
