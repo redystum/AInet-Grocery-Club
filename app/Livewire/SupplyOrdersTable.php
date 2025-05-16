@@ -13,7 +13,7 @@ class SupplyOrdersTable extends Component
     use WithPagination;
 
     public $search = '';
-    public $orderBy = 'date_asc';
+    public $orderBy = 'date_desc';
     public $dateRange = '';
     public $tab = 'pending';
 
@@ -101,9 +101,6 @@ class SupplyOrdersTable extends Component
         }
 
         switch ($this->orderBy) {
-            case 'date_desc':
-                $query->orderBy('supply_orders.created_at', 'desc');
-                break;
             case 'date_asc':
                 $query->orderBy('supply_orders.created_at');
                 break;
@@ -120,6 +117,9 @@ class SupplyOrdersTable extends Component
             case 'name_desc':
                 $query->join('products', 'products.id', '=', 'supply_orders.product_id')
                     ->orderBy('products.name', 'desc');
+                break;
+            default: // date_desc
+                $query->orderBy('supply_orders.created_at', 'desc');
                 break;
         }
 

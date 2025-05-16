@@ -13,7 +13,7 @@
         </div>
 
         <!-- Restock Form -->
-        <form id="restockForm" method="POST" action="{{ route('board.restock.confirm') }}">
+        <form id="restockForm" method="POST" action="{{ route('board.restock.store') }}">
             @csrf
             <input type="hidden" id="restockData" name="restock_data" value="">
 

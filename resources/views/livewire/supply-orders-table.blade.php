@@ -1,6 +1,7 @@
-<div x-data="{ activeDropdown: null }" 
-     x-init="document.addEventListener('click', () => { activeDropdown = null })" 
-     @scroll.window="activeDropdown = null" 
+@use('App\Models\SupplyOrder')
+<div x-data="{ activeDropdown: null }"
+     x-init="document.addEventListener('click', () => { activeDropdown = null })"
+     @scroll.window="activeDropdown = null"
      @keydown.escape.window="activeDropdown = null">
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -52,8 +53,8 @@
                     By</label>
                 <select id="orderBy" wire:model.live="orderBy"
                         class="w-full cursor-pointer px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
-                    <option value="date_asc">Date Recent-Old</option>
-                    <option value="date_desc">Date Old-Recent</option>
+                    <option value="date_desc">Date Recent-Old</option>
+                    <option value="date_asc">Date Old-Recent</option>
                     <option value="quantity_low_high">Quantity Low-High</option>
                     <option value="quantity_high_low">Quantity High-Low</option>
                     <option value="name_asc">Name A-Z</option>
@@ -118,7 +119,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->delivered_at }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">{{ $order->quantity }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($order->status == \App\Models\SupplyOrder::STATUS_COMPLETED)
+                            @if($order->status == SupplyOrder::STATUS_COMPLETED)
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200"><i
                                             class="fas fa-check mr-1"></i> Delivered</span>
                             @else
@@ -127,50 +128,74 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="relative">
-                                <button @click="$event.stopPropagation(); activeDropdown === 'order-{{ $order->id }}' ? activeDropdown = null : activeDropdown = 'order-{{ $order->id }}'"
-                                        class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
-                                        :aria-expanded="activeDropdown === 'order-{{ $order->id }}'" aria-haspopup="true">
-                                    <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
-                                </button>
+                            @if($tab == "received")
+                                <a href="#"
+                                   class="text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                    <i class="fas fa-receipt mr-3"></i>
+                                    Invoice
+                                </a>
+                            @else
+                                <div class="relative">
+                                    <button @click="$event.stopPropagation(); activeDropdown === 'order-{{ $order->id }}' ? activeDropdown = null : activeDropdown = 'order-{{ $order->id }}'"
+                                            class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                                            :aria-expanded="activeDropdown === 'order-{{ $order->id }}'"
+                                            aria-haspopup="true">
+                                        <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
+                                    </button>
 
-                                <div x-show="activeDropdown === 'order-{{ $order->id }}'"
-                                     @click.outside="activeDropdown = null" 
-                                     @click.stop="$event.stopPropagation()"
-                                     x-transition:enter="transition ease-out duration-100"
-                                     x-transition:enter-start="transform opacity-0 scale-95"
-                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                     x-transition:leave="transition ease-in duration-75"
-                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                     x-transition:leave-end="transform opacity-0 scale-95"
-                                     class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
-                                     role="menu" aria-orientation="vertical" tabindex="-1">
-                                    <div role="none">
-                                        <a href="#"
-                                           class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                           role="menuitem">
-                                            <i class="fas fa-receipt mr-3 text-neutral-400"></i>
-                                            Download Invoice
-                                        </a>
-                                        <a href="#"
-                                           class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700
-                                           @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"
-                                           role="menuitem">
-                                            <i class="fas fa-edit mr-3 group-disabled:text-neutral-500 text-blue-400
-                                            @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"></i>
-                                            Edit Order
-                                        </a>
-                                        <a href="{{ route('board.restock.product', $order->id) }}" @disabled(now()->diffInHours($order->created_at) < 24)
-                                           class="w-full group disabled:text-neutral-500 disabled:cursor-not-allowed rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700
-                                           @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"
-                                           role="menuitem">
-                                            <i class="fas fa-cancel mr-3 group-disabled:text-neutral-500 text-red-400
-                                            @if(now()->diffInHours($order->created_at) < 24) !text-neutral-500 cursor-not-allowed @endif"></i>
-                                            Cancel Order
-                                        </a>
+                                    <div x-show="activeDropdown === 'order-{{ $order->id }}'"
+                                         @click.outside="activeDropdown = null"
+                                         @click.stop="$event.stopPropagation()"
+                                         x-transition:enter="transition ease-out duration-100"
+                                         x-transition:enter-start="transform opacity-0 scale-95"
+                                         x-transition:enter-end="transform opacity-100 scale-100"
+                                         x-transition:leave="transition ease-in duration-75"
+                                         x-transition:leave-start="transform opacity-100 scale-100"
+                                         x-transition:leave-end="transform opacity-0 scale-95"
+                                         class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                         role="menu" aria-orientation="vertical" tabindex="-1">
+                                        <div role="none">
+                                            <a href="#"
+                                               class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                               role="menuitem">
+                                                <i class="fas fa-receipt mr-3 text-neutral-400"></i>
+                                                Download Invoice
+                                            </a>
+                                            @if($order->status != SupplyOrder::STATUS_COMPLETED && $order->created_at->diffInHours(now(), false) < 24)
+                                                <a href="{{ route('board.supply.edit', $order->id) }}"
+                                                   class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   role="menuitem">
+                                                    <i class="fas fa-edit mr-3 text-blue-400"></i>
+                                                    Edit Order
+                                                </a>
+                                            @else
+                                                <a href="#"
+                                                   class="flex items-center px-4 py-2 text-sm text-neutral-500 cursor-not-allowed"
+                                                   role="menuitem">
+                                                    <i class="fas fa-edit mr-3 text-neutral-500"></i>
+                                                    Edit Order
+                                                </a>
+                                            @endif
+                                            @if($order->status != SupplyOrder::STATUS_COMPLETED)
+                                                <a href="{{ route('board.supply.cancel', $order->id) }}"
+                                                   class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   role="menuitem">
+                                                    <i class="fas fa-cancel mr-3 text-red-400"></i>
+                                                    Cancel Order
+                                                </a>
+                                            @else
+                                                <a href="#"
+                                                   class="w-full cursor-not-allowed rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-500"
+                                                   role="menuitem">
+                                                    <i class="fas fa-cancel mr-3 text-neutral-500"></i>
+                                                    Cancel Order
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
+
                         </td>
                     </tr>
                 @empty

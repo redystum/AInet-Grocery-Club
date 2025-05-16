@@ -67,10 +67,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
-            Route::post('auto', [StockController::class, 'restockConfirm'])->name('confirm');
+            Route::post('store', [SupplyController::class, 'store'])->name('store');
             Route::get('{product}', [StockController::class, 'restock'])->name('product');
         });
-        Route::get('/supplies', [SupplyController::class, 'index'])->name('supplies');
+
+        Route::resource('supplies', SupplyController::class)->only([
+            'index', 'edit', 'update', 'destroy', 'cancel'
+        ])->names('supply');
+
+        Route::get('supplies/{order}/cancel', [SupplyController::class, 'cancel'])->name('supply.cancel');
     });
 });
 
