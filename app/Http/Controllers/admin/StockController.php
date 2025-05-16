@@ -19,13 +19,24 @@ class StockController extends Controller
     public function restockAuto()
     {
         $products = Product::whereColumn('stock', '<=', 'stock_lower_limit')->get();
+        $orderSupplies = SupplyOrder::where('status', 'requested')->whereIn('product_id', $products->pluck('id'))->get();
+        $orderSuppliesIds = $orderSupplies->pluck('product_id')->toArray();
+
+        $alreadyExists = false;
 
         foreach ($products as $product) {
             $restock = $product->stock_upper_limit - $product->stock;
             $product->setAttribute('restock', $restock);
+
+            if ($orderSupplies->isNotEmpty()) {
+                if (in_array($product->id, $orderSuppliesIds)) {
+                    $product->setAttribute('alreadySupplyOrder', true);
+                    $alreadyExists = true;
+                }
+            }
         }
 
-        return view('pages.admin.stock.restock', compact('products'));
+        return view('pages.admin.stock.restock', compact('products', 'alreadyExists'));
     }
 
     public function restockConfirm(Request $request)
@@ -69,14 +80,28 @@ class StockController extends Controller
     public function restock(Product $product)
     {
         if ($product->stock >= $product->stock_upper_limit) {
-            return redirect()->route('board.stock')->withErrors(['product' => 'Product is already fully stocked.']);
+            return redirect()->route('board.stock')->with('toast', [
+                'title' => 'Error',
+                'message' => 'Product is full of stock.',
+                'type' => 'error',
+            ]);
         }
 
         $restock = $product->stock_upper_limit - $product->stock;
         $product->setAttribute('restock', $restock);
 
+        $orderSupplies = SupplyOrder::where('status', 'requested')->where('product_id', $product->id)->first();
+        $alreadyExists = false;
+
+        if ($orderSupplies) {
+            $alreadyExists = true;
+            $product->setAttribute('alreadySupplyOrder', true);
+        }
+
+        $product->setAttribute('alreadyExists', $alreadyExists);
+
         $products = collect([$product]); // just to use the same page
 
-        return view('pages.admin.stock.restock', compact('products'));
+        return view('pages.admin.stock.restock', compact('products', 'alreadyExists'));
     }
 }

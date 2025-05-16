@@ -35,6 +35,11 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                                 New Total
                             </th>
+                            @if($alreadyExists)
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                    Warning
+                                </th>
+                            @endif
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                                 Actions
                             </th>
@@ -90,9 +95,19 @@
                                     </div>
                                 </td>
 
+                                @if($product->alreadySupplyOrder != null && $product->alreadySupplyOrder == true)
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-red-600 dark:text-red-400">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i> Already exists a supply order
+                                        </div>
+                                    </td>
+                                @else
+                                    <td></td>
+                                @endif
+
                                 <!-- Actions Column -->
                                 <td class="whitespace-nowrap text-right text-sm font-medium">
-                                    <button type="button" class="px-6 py-4 cursor-pointer text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors remove-item">
+                                    <button type="button" class="px-6 py-4 cursor-pointer text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-400 transition-colors remove-item">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
