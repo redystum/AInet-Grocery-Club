@@ -71,12 +71,13 @@ Route::middleware('auth')->group(function () {
             Route::get('{product}', [StockController::class, 'restock'])->name('product');
         });
 
-        Route::resource('supplies', SupplyController::class)->only([
-            'index', 'edit', 'update'
-        ])->names('supply');
-
-        Route::get('supplies/{order}/cancel', [SupplyController::class, 'cancel'])->name('supply.cancel');
-        Route::delete('supplies/destroy', [SupplyController::class, 'destroy'])->name('supply.destroy');
+        Route::name('supply.')->prefix('supply/')->group(function () {
+            Route::get('/', [SupplyController::class, 'index'])->name('index');
+            Route::put('{order}', [SupplyController::class, 'update'])->name('update');
+            Route::get('{order}/cancel', [SupplyController::class, 'cancel'])->name('cancel');
+            Route::get('{order}/complete', [SupplyController::class, 'complete'])->name('complete');
+            Route::delete('destroy', [SupplyController::class, 'destroy'])->name('destroy');
+        });
     });
 });
 

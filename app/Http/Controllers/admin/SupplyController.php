@@ -52,11 +52,6 @@ class SupplyController extends Controller
         ]);
     }
 
-    public function edit()
-    {
-        return view('pages.admin.supply.edit');
-    }
-
     public function cancel(SupplyOrder $order)
     {
         $otherOrders = SupplyOrder::whereDate('created_at', '=', $order->created_at->toDateString())
@@ -92,10 +87,45 @@ class SupplyController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, SupplyOrder $order)
     {
-        // TODO
-    }
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
 
+        if($order->status == SupplyOrder::STATUS_COMPLETED) {
+            return redirect()->route('board.supply.index')->with('toast', [
+                'title' => 'Error',
+                'message' => 'Cannot update completed orders.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($order->created_at->diffInHours(now(), false) >= 24){
+            return redirect()->route('board.supply.index')->with('toast', [
+                'title' => 'Error',
+                'message' => 'Cannot update orders older than 24 hours.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ((int) $request->input('quantity') + $order->product->stock > $order->product->stock_upper_limit) {
+            return redirect()->route('board.supply.index')->with('toast', [
+                'title' => 'Error',
+                'message' => 'Cannot update order to exceed stock upper limit.',
+                'type' => 'error',
+            ]);
+        }
+
+        $order->update([
+            'quantity' => $request->input('quantity'),
+        ]);
+
+        return redirect()->route('board.supply.index')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Supply order updated successfully.',
+            'type' => 'success',
+        ]);
+    }
 
 }

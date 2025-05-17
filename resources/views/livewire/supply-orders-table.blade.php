@@ -1,5 +1,10 @@
 @use('App\Models\SupplyOrder')
-<div x-data="{ activeDropdown: null }"
+<div x-data="{
+    activeDropdown: null,
+    showEditModal: false,
+    editOrderId: null,
+    editQuantity: 0
+}"
      x-init="document.addEventListener('click', () => { activeDropdown = null })"
      @scroll.window="activeDropdown = null"
      @keydown.escape.window="activeDropdown = null">
@@ -13,6 +18,79 @@
             <button class="px-4 cursor-pointer py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
                 <i class="fas fa-file-export mr-2"></i> Export
             </button>
+        </div>
+    </div>
+
+    <!-- Edit Quantity Modal -->
+    <div x-show="showEditModal"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto unhideOnLoad"
+         aria-labelledby="modal-title"
+         role="dialog"
+         aria-modal="true">
+        <div class="flex items-center justify-center min-h-dvh pt-4 px-4 pb-20 text-center sm:p-0">
+            <!-- Background overlay -->
+            <div x-show="showEditModal"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/65 transition-opacity"
+                 aria-hidden="true"
+                 @click="showEditModal = false"></div>
+
+            <!-- Modal panel -->
+            <div x-show="showEditModal"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <form method="POST" x-bind:action="'{{ route('board.supply.update', ['order' => '__ID__']) }}'.replace('__ID__', editOrderId)">
+                    @method('PUT')
+                    @csrf
+                    <div class="bg-white dark:bg-neutral-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                                <i class="fas fa-edit text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-neutral-800 dark:text-neutral-100"
+                                    id="modal-title">
+                                    Edit Order Quantity
+                                </h3>
+                                <div class="mt-4">
+                                    <label for="quantity"
+                                           class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
+                                    <input type="number" id="quantity" x-model="editQuantity" name="quantity" min="1" required
+                                           class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="submit"
+                                @click="showEditModal = false;"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Save Changes
+                        </button>
+                        <button type="button"
+                                @click="showEditModal = false"
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-neutral-300 dark:border-neutral-600 shadow-sm px-4 py-2 bg-white dark:bg-neutral-700 text-base font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -152,7 +230,7 @@
                                          x-transition:leave="transition ease-in duration-75"
                                          x-transition:leave-start="transform opacity-100 scale-100"
                                          x-transition:leave-end="transform opacity-0 scale-95"
-                                         class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                         class="unhideOnLoad origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
                                             <a href="#"
@@ -162,18 +240,23 @@
                                                 Download Invoice
                                             </a>
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED && $order->created_at->diffInHours(now(), false) < 24)
-                                                <a href="{{ route('board.supply.edit', $order->id) }}"
-                                                   class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
+                                                <button @click="
+                                                    editOrderId = '{{ $order->id }}';
+                                                    editQuantity = {{ $order->quantity }};
+                                                    showEditModal = true;
+                                                    activeDropdown = null;
+                                                "
+                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                        role="menuitem">
                                                     <i class="fas fa-edit mr-3 text-blue-400"></i>
-                                                    Edit Order
-                                                </a>
+                                                    Edit Quantity
+                                                </button>
                                             @else
                                                 <a href="#"
                                                    class="flex items-center px-4 py-2 text-sm text-neutral-500 cursor-not-allowed"
                                                    role="menuitem">
                                                     <i class="fas fa-edit mr-3 text-neutral-500"></i>
-                                                    Edit Order
+                                                    Edit Quantity
                                                 </a>
                                             @endif
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED)
@@ -195,7 +278,6 @@
                                     </div>
                                 </div>
                             @endif
-
                         </td>
                     </tr>
                 @empty
@@ -256,9 +338,7 @@
                         class="px-3 py-1 @unless($supplyOrders->currentPage() === $supplyOrders->lastPage()) disabled @endunless rounded-lg border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors {{ $supplyOrders->currentPage() === $supplyOrders->lastPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-angle-double-right"></i>
                 </button>
-
             </div>
         </div>
-
     </div>
 </div>

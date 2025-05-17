@@ -26,6 +26,15 @@
 
 {{--    <x-footer/>--}}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const elementsToUnhide = document.getElementsByClassName('unhideOnLoad');
+        while (elementsToUnhide.length > 0) {
+            elementsToUnhide[0].classList.remove('unhideOnLoad');
+        }
+    });
+</script>
+
 @vite(['resources/js/adminNavBar.js'])
 </body>
 

@@ -24,6 +24,10 @@
     grid-template-columns: 1fr repeat(3, minmax(0, 1fr));
 }
 
+.unhideOnLoad {
+    display: none;
+}
+
 .toast {
     @apply w-80 p-4 rounded-xl shadow-lg mb-4;
 }
