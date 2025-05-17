@@ -72,10 +72,11 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::resource('supplies', SupplyController::class)->only([
-            'index', 'edit', 'update', 'destroy', 'cancel'
+            'index', 'edit', 'update'
         ])->names('supply');
 
         Route::get('supplies/{order}/cancel', [SupplyController::class, 'cancel'])->name('supply.cancel');
+        Route::delete('supplies/destroy', [SupplyController::class, 'destroy'])->name('supply.destroy');
     });
 });
 

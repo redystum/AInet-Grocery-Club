@@ -14,7 +14,8 @@ class SupplyController extends Controller
         return view('pages.admin.supply.index');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'restock_data' => 'required|json',
         ]);
@@ -56,19 +57,44 @@ class SupplyController extends Controller
         return view('pages.admin.supply.edit');
     }
 
-    public function cancel($id)
+    public function cancel(SupplyOrder $order)
     {
-        return view('pages.admin.supply.cancel');
+        $otherOrders = SupplyOrder::whereDate('created_at', '=', $order->created_at->toDateString())
+            ->where('id', '!=', $order->id)
+            ->get();
+
+        $otherOrders->prepend($order);
+        return view('pages.admin.supply.cancel', compact('order', 'otherOrders'));
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        // TODO
+        $request->validate([
+            'cancel_data' => 'required|array',
+            'cancel_data.*' => 'exists:supply_orders,id',
+            'reason' => 'required|string|max:255',
+        ]);
+        // reason is not used is just to simulate a real cancel...
+
+        $orders = SupplyOrder::whereIn('id', $request->input('cancel_data'))->get();
+        foreach ($orders as $order) {
+            if ($order->status == SupplyOrder::STATUS_COMPLETED) {
+                return redirect()->route('board.supply.index')
+                    ->withErrors(['cancel_data' => 'Cannot cancel completed orders.']);
+            }
+            $order->delete();
+        }
+
+        return redirect()->route('board.supply.index')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Supply orders deleted successfully.',
+            'type' => 'success',
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-       // TODO
+        // TODO
     }
 
 
