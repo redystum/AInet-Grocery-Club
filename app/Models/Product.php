@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'category_id',
         'name',
@@ -20,6 +24,11 @@ class Product extends Model
         'stock_upper_limit',
         'custom',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(ItemsOrder::class);
+    }
 
     public function getImage()
     {

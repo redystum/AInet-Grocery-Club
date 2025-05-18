@@ -7,7 +7,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProductController;
-
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -21,6 +20,11 @@ Route::get('/', function () {
 })->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::name('product.')->prefix('product/{product}')->group(function () {
+    Route::get('/', [ProductController::class, 'show'])->name('show');
+    Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
+
+});
 
 /*--------------------------------------------------------------------------
 | Guest routes
@@ -88,7 +92,7 @@ Route::middleware('auth')->group(function () {
 |
 */
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
+Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
 
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE
@@ -102,4 +106,27 @@ if (!app()->isProduction()) {
         auth()->loginUsingId($user);
         return redirect()->back();
     })->name('force_login');
+
+    // Error Pages
+    Route::get('401', function () {
+        abort(401);
+    });
+    Route::get('403', function () {
+        abort(403);
+    });
+    Route::get('404', function () {
+        abort(404);
+    });
+    Route::get('419', function () {
+        abort(419);
+    });
+    Route::get('429', function () {
+        abort(429);
+    });
+    Route::get('500', function () {
+        abort(500);
+    });
+    Route::get('503', function () {
+        abort(503);
+    });
 }

@@ -9,6 +9,9 @@ class Card extends Model
 {
     use SoftDeletes;
 
+    public $incrementing = false;
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -20,6 +23,7 @@ class Card extends Model
         'balance',
         'custom',
     ];
+
 
     public function user()
     {

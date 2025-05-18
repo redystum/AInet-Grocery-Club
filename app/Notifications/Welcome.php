@@ -11,6 +11,7 @@ class Welcome extends Notification
     use Queueable;
 
     private string $appName;
+
     private string $logoUrl;
 
     /**
@@ -38,10 +39,10 @@ class Welcome extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Welcome to ' . $this->appName)
+            ->subject('Welcome to '.$this->appName)
             ->view('emails.pages.welcome', [
                 'userName' => $notifiable->name,
-                'userPhoto' => $notifiable->photo ?: "anonymous.png",
+                'userPhoto' => $notifiable->photo ?: 'anonymous.png',
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
             ]);

@@ -74,7 +74,7 @@
                     <!-- Remember Me Checkbox -->
                     <div class="flex items-center">
                         <input type="checkbox" name="remember" id="remember" @checked(old('remember'))
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800">
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-neutral-700 rounded dark:bg-neutral-800 cursor-pointer">
                         <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-neutral-300">
                             Remember me
                         </label>

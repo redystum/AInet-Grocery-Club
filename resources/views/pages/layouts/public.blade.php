@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="" type="image/x-icon">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 
 </head>
 
@@ -24,6 +25,7 @@
 
 {{--    <x-footer/>--}}
 
+@livewireScripts
 </body>
 
 </html>

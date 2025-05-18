@@ -32,19 +32,12 @@
                 </div>
             </div>
 
-            <!-- Search bar and user dropdown -->
+            <!-- Search button and user dropdown -->
             <div class="flex items-center space-x-4">
-                <div class="hidden lg:block relative">
-                    <input type="text"
-                           class="w-40 lg:w-56 pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400"
-                           placeholder="Search...">
-                    <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 dark:text-neutral-500 text-sm"></i>
-                </div>
-
-                <div class="lg:hidden">
+                <div>
                     <button
                             class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
-                            id="mobileSearchButton">
+                            id="searchButton">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -80,13 +73,6 @@
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
-                                @if(auth()->user()->isBoard())
-                                    <a href="{{ route('board.index') }}"
-                                       class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
-                                        <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
-                                        Management
-                                    </a>
-                                @endif
                                 <a href="#"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
@@ -132,14 +118,9 @@
             </div>
         </div>
 
-        <!-- Mobile search bar -->
-        <div class="hidden lg:hidden px-2 py-2" id="mobileSearchBar">
-            <div class="relative">
-                <input type="text"
-                       class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder-gray-500 dark:placeholder-neutral-400"
-                       placeholder="Search...">
-                <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 dark:text-neutral-500 text-sm"></i>
-            </div>
+        <!-- Search bar -->
+        <div class="hidden px-2 py-2" id="searchBar">
+            <livewire:search-dropdown />
         </div>
     </div>
 
@@ -182,19 +163,17 @@
             </div>
             <div class="mt-3 px-2 space-y-1">
                 @auth
-                    <a href="#"
+                    <a href="{{ route('profile') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400"></i>
-                        Your Profile
+                        Profile
                     </a>
-                    @if(auth()->user()->isBoard())
-                        <a href="{{ route('board.index') }}"
-                           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
-                            <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400"></i>
-                            Management
-                        </a>
-                    @endif
                     <a href="#"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                        <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                        Cart
+                    </a>
+                    <a href="{{ route('logout') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-sign-out-alt mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Sign out
@@ -254,11 +233,58 @@
         }
     });
 
-    // Mobile search toggle
-    const mobileSearchBtn = document.getElementById('mobileSearchButton');
-    const mobileSearchBar = document.getElementById('mobileSearchBar');
+    const searchBtn = document.getElementById('searchButton');
+    const searchBar = document.getElementById('searchBar');
 
-    mobileSearchBtn.addEventListener('click', function () {
-        mobileSearchBar.classList.toggle('hidden');
+    searchBtn.addEventListener('click', function () {
+        searchBar.classList.toggle('hidden');
+        document.getElementById('searchInput').focus();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.ctrlKey && event.key === 'k') {
+            event.preventDefault();
+            searchBar.classList.toggle('hidden');
+            document.getElementById('searchInput').focus();
+        }
+    });
+
+    // Search dropdown functionality
+    const searchInput = document.getElementById('searchInput');
+    let searchDropdown = document.getElementById('searchDropdown');
+
+    // Show dropdown when focus
+    searchInput.addEventListener('focus', function () {
+        if (searchInput.value.length > 0) {
+            searchDropdown.classList.remove('opacity-0');
+            searchDropdown.classList.remove('scale-95');
+            searchDropdown.classList.remove('pointer-events-none');
+            searchDropdown.classList.add('opacity-100');
+            searchDropdown.classList.add('scale-100');
+            searchDropdown.classList.add('pointer-events-auto');
+            searchInput.classList.remove('rounded-b-xl');
+            searchInput.classList.add('rounded-b-none');
+            searchInput.classList.add('dark:!border-b-neutral-700');
+            searchInput.classList.add('!border-b-gray-300');
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+        searchDropdown = document.getElementById('searchDropdown')
+        if (searchInput && searchDropdown) {
+            if (!searchDropdown.contains(event.target) && !searchInput.contains(event.target)) {
+                searchDropdown.classList.add('opacity-0');
+                searchDropdown.classList.add('scale-95');
+                searchDropdown.classList.add('pointer-events-none');
+                searchDropdown.classList.remove('opacity-100');
+                searchDropdown.classList.remove('scale-100');
+                searchDropdown.classList.remove('pointer-events-auto');
+                searchInput.classList.remove('rounded-b-none');
+                searchInput.classList.add('rounded-b-xl');
+                searchInput.classList.remove('dark:!border-b-neutral-700');
+                searchInput.classList.remove('!border-b-gray-300');
+            }
+        }
     });
 </script>
