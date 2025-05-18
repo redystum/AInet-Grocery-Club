@@ -161,6 +161,7 @@
                                 </button>
 
                                 <div x-show="activeDropdown === 'product-{{ $product->id }}'"
+                                     x-cloak
                                      @click.outside="activeDropdown = null" 
                                      @click.stop="$event.stopPropagation()"
                                      x-transition:enter="transition ease-out duration-100"
@@ -169,7 +170,7 @@
                                      x-transition:leave="transition ease-in duration-75"
                                      x-transition:leave-start="transform opacity-100 scale-100"
                                      x-transition:leave-end="transform opacity-0 scale-95"
-                                     class="unhideOnLoad origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                     class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                      role="menu" aria-orientation="vertical" tabindex="-1">
                                     <div role="none">
                                         <a href="#"

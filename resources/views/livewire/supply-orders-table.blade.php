@@ -23,13 +23,14 @@
 
     <!-- Edit Quantity Modal -->
     <div x-show="showEditModal"
+         x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 overflow-y-auto unhideOnLoad"
+         class="fixed inset-0 z-50 overflow-y-auto"
          aria-labelledby="modal-title"
          role="dialog"
          aria-modal="true">
@@ -55,7 +56,8 @@
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form method="POST" x-bind:action="'{{ route('board.supply.update', ['order' => '__ID__']) }}'.replace('__ID__', editOrderId)">
+                <form method="POST"
+                      x-bind:action="'{{ route('board.supply.update', ['order' => '__ID__']) }}'.replace('__ID__', editOrderId)">
                     @method('PUT')
                     @csrf
                     <div class="bg-white dark:bg-neutral-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -71,7 +73,8 @@
                                 <div class="mt-4">
                                     <label for="quantity"
                                            class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
-                                    <input type="number" id="quantity" x-model="editQuantity" name="quantity" min="1" required
+                                    <input type="number" id="quantity" x-model="editQuantity" name="quantity" min="1"
+                                           required
                                            class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                                 </div>
                             </div>
@@ -222,6 +225,7 @@
                                     </button>
 
                                     <div x-show="activeDropdown === 'order-{{ $order->id }}'"
+                                         x-cloak
                                          @click.outside="activeDropdown = null"
                                          @click.stop="$event.stopPropagation()"
                                          x-transition:enter="transition ease-out duration-100"
@@ -230,7 +234,7 @@
                                          x-transition:leave="transition ease-in duration-75"
                                          x-transition:leave-start="transform opacity-100 scale-100"
                                          x-transition:leave-end="transform opacity-0 scale-95"
-                                         class="unhideOnLoad origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                         class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
                                             <a href="#"
@@ -260,6 +264,12 @@
                                                 </a>
                                             @endif
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED)
+                                                <a href="{{ route('board.supply.complete', $order->id) }}"
+                                                   class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   role="menuitem">
+                                                    <i class="fas fa-check mr-3 text-green-400"></i>
+                                                    Mark as Received
+                                                </a>
                                                 <a href="{{ route('board.supply.cancel', $order->id) }}"
                                                    class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                    role="menuitem">

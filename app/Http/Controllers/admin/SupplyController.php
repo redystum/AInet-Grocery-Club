@@ -93,7 +93,7 @@ class SupplyController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        if($order->status == SupplyOrder::STATUS_COMPLETED) {
+        if ($order->status == SupplyOrder::STATUS_COMPLETED) {
             return redirect()->route('board.supply.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'Cannot update completed orders.',
@@ -101,7 +101,7 @@ class SupplyController extends Controller
             ]);
         }
 
-        if ($order->created_at->diffInHours(now(), false) >= 24){
+        if ($order->created_at->diffInHours(now(), false) >= 24) {
             return redirect()->route('board.supply.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'Cannot update orders older than 24 hours.',
@@ -109,7 +109,7 @@ class SupplyController extends Controller
             ]);
         }
 
-        if ((int) $request->input('quantity') + $order->product->stock > $order->product->stock_upper_limit) {
+        if ((int)$request->input('quantity') + $order->product->stock > $order->product->stock_upper_limit) {
             return redirect()->route('board.supply.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'Cannot update order to exceed stock upper limit.',
@@ -126,6 +126,24 @@ class SupplyController extends Controller
             'message' => 'Supply order updated successfully.',
             'type' => 'success',
         ]);
+    }
+
+    public function complete(SupplyOrder $order)
+    {
+        $order->update([
+            'status' => SupplyOrder::STATUS_COMPLETED,
+            'custom' => json_encode([
+                'expected_delivery_date' => null,
+                'delivered_at' => now(),
+            ]),
+        ]);
+
+        return redirect()->route('board.supply.index')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Supply order completed successfully.',
+            'type' => 'success',
+        ]);
+
     }
 
 }
