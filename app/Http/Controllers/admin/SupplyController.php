@@ -55,6 +55,7 @@ class SupplyController extends Controller
     public function cancel(SupplyOrder $order)
     {
         $otherOrders = SupplyOrder::whereDate('created_at', '=', $order->created_at->toDateString())
+            ->where('status', '!=' , SupplyOrder::STATUS_COMPLETED)
             ->where('id', '!=', $order->id)
             ->get();
 
