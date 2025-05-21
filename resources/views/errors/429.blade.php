@@ -4,11 +4,23 @@
 
 @section('content')
 
-    <div class="min-h-screen flex flex-col items-center justify-center bg-neutral-50 dark:bg-neutral-900 p-4">
+    <div class="h-full relative overflow-hidden flex flex-col items-center justify-center bg-neutral-50 dark:bg-neutral-900 p-4"
+         id="cookieContainer">
+
+        <div class="mt-8 text-center text-neutral-600 dark:text-neutral-400 text-sm hidden">
+            <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">
+                Score: <span id="score">0</span>
+            </h1>
+        </div>
+
         <div class="max-w-md w-full bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-8 text-center">
 
-            <div class="mx-auto w-24 h-24 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-6">
-                <i class="fas fa-cookie text-red-600 dark:text-red-400 text-5xl"></i>
+            <div class="absolute top-1/8 left-0 w-full flex justify-center hidden">
+            </div>
+
+            <div class="mx-auto w-24 h-24 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-6 relative cursor-pointer"
+                 id="cookie">
+                <i class="fas fa-cookie text-red-600 dark:text-red-400 text-5xl" id="cookie-icon"></i>
             </div>
 
             <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-4">429</h1>
@@ -40,8 +52,137 @@
         </div>
 
         <div class="mt-8 text-center text-neutral-600 dark:text-neutral-400 text-sm">
-            <p>Need help? <a href="" class="text-blue-600 dark:text-blue-400 hover:underline">Contact our support team</a></p>
+            <p>Need help? <a href="" class="text-blue-600 dark:text-blue-400 hover:underline">Contact our support
+                    team</a></p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cookie = document.getElementById('cookie');
+            const scoreElement = document.getElementById('score');
+            const scoreDiv = scoreElement.parentElement.parentElement;
+            const cookieContainer = document.getElementById('cookieContainer');
+            let score = 0;
+            let cookiesFalling = false;
+
+            cookie.addEventListener('click', function (e) {
+                // Increase score
+                score++;
+                scoreElement.textContent = score;
+                scoreDiv.classList.remove('hidden');
+
+                // Create +1 element
+                const plusOne = document.createElement('div');
+                plusOne.textContent = '+1';
+                plusOne.className = 'absolute text-white font-bold text-md select-none animate-float opacity-0';
+
+                // Position it near the click
+                const rect = cookie.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                plusOne.style.left = `${x}px`;
+                plusOne.style.top = `${y}px`;
+
+                cookie.appendChild(plusOne);
+
+                // Trigger animation
+                setTimeout(() => {
+                    plusOne.classList.remove('opacity-0');
+                    plusOne.classList.add('opacity-100');
+                }, 10);
+
+                // Remove after animation
+                setTimeout(() => {
+                    plusOne.remove();
+                }, 1000);
+
+                // Add click effect to cookie
+                const icon = document.getElementById('cookie-icon');
+                icon.classList.add('scale-90');
+                setTimeout(() => {
+                    icon.classList.remove('scale-90');
+                }, 100);
+
+                // Start falling cookies when score reaches 100
+                if (score >= 100 && !cookiesFalling) {
+                    startFallingCookies();
+                }
+            });
+
+            function startFallingCookies() {
+                cookiesFalling = true;
+
+                function createFallingCookie() {
+                    const fallingCookie = document.createElement('div');
+                    fallingCookie.className = 'falling-cookie';
+                    fallingCookie.style.position = 'absolute';
+
+                    // Ensure cookies are created within the visible screen width
+                    const cookieWidth = 50; // Width of the cookie
+                    const maxLeft = window.innerWidth - cookieWidth;
+                    fallingCookie.style.left = Math.random() * maxLeft + 'px';
+
+                    fallingCookie.style.top = '-50px';
+                    fallingCookie.style.width = `${cookieWidth}px`;
+                    fallingCookie.style.height = `${cookieWidth}px`;
+                    fallingCookie.style.backgroundImage = `url('{{ asset('assets/cookie.png') }}')`;
+                    fallingCookie.style.backgroundSize = 'cover';
+                    fallingCookie.style.zIndex = '1000';
+                    fallingCookie.style.pointerEvents = 'none';
+                    cookieContainer.appendChild(fallingCookie);
+
+                    let fallInterval = setInterval(() => {
+                        const currentTop = parseInt(fallingCookie.style.top.replace('px', ''));
+                        if (currentTop > window.innerHeight) {
+                            clearInterval(fallInterval);
+                            fallingCookie.remove();
+                        } else {
+                            fallingCookie.style.top = currentTop + 5 + 'px';
+                        }
+                    }, 30);
+                }
+
+                // Create cookies at intervals
+                setInterval(() => {
+                    createFallingCookie();
+                }, 300);
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        .animate-float {
+            animation: float 1s ease-out forwards;
+        }
+
+        @keyframes fall_ {
+            0% {
+                top: -50px;
+                rotate: 0;
+            }
+            100% {
+                top: 100vh;
+                rotate: 360deg;
+            }
+        }
+
+        .falling-cookie {
+            animation: fall_ 5s linear forwards;
+        }
+
+    </style>
 
 @endsection

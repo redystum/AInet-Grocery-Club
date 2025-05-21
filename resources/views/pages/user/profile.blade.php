@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Profile')
 
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        @unless(auth()->user()->isEmployee())
+        @if(!auth()->user()->isEmployee())
 
             @if(session('success'))
                 <div
@@ -263,6 +263,17 @@
                     </div>
                 </div>
             @endif
-        @endunless  
+        @else
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <div class="text-center">
+                    <p class="text-neutral-800 dark:text-neutral-100">Hi {{ $user->name }}, </p>
+                    <p class="text-neutral-800 dark:text-neutral-100">You are logged in as an employee.</p>
+                    <p class="text-neutral-800 dark:text-neutral-100">Which means you don't have a profile page. If you
+                        need to update any of your information please talk with your superior.</p>
+                    <p class="text-neutral-800 dark:text-neutral-100">Thanks!</p>
+                </div>
+
+            </div>
+        @endif
     </div>
 @endsection
