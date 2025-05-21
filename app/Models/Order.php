@@ -2,13 +2,25 @@
 
 namespace App\Models;
 
+use App\Utils\CustomFieldManager;
 use Illuminate\Database\Eloquent\Model;
 
+
+/**
+ * @property CustomFieldManager $customManager
+ *
+ * @property string $cancellationStatus
+ * @property string $cancellationTime
+ */
 class Order extends Model
 {
     const STATUS_COMPLETED = "completed";
     const STATUS_PENDING = "pending";
     const STATUS_CANCELED = "canceled";
+
+    const CANCEL_STATUS_PENDING = "pending";
+    const CANCEL_STATUS_REFUSED = "refused";
+    const CANCEL_STATUS_ACCEPTED = "accepted";
 
     /**
      * The attributes that are mass assignable.

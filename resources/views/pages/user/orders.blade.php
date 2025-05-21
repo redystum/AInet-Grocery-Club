@@ -175,10 +175,17 @@
                                         <i class="fas fa-check mr-1"></i> Delivered
                                     </span>
                                 @elseif($order->status == Order::STATUS_PENDING)
-                                    <span
-                                            class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
-                                        <i class="fas fa-clock mr-1"></i> Pending
-                                    </span>
+                                    @if($order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
+                                        <span
+                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
+                                            <i class="fas fa-clock mr-1"></i> Cancellation Pending
+                                        </span>
+                                    @else
+                                        <span
+                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
+                                            <i class="fas fa-clock mr-1"></i> Pending
+                                        </span>
+                                    @endif
                                 @elseif($order->status == Order::STATUS_CANCELED)
                                     <span
                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200">
@@ -225,7 +232,8 @@
                                                         <div
                                                                 class="text-green-600 dark:text-green-400 text-xs mt-1">
                                                             Discount:
-                                                            {{ number_format(($item->discount / $item->product->price) * 100) }}%
+                                                            {{ number_format(($item->discount / $item->product->price) * 100) }}
+                                                            %
                                                         </div>
                                                     @endif
                                                 </div>

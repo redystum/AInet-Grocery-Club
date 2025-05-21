@@ -6,6 +6,7 @@ use App\Http\Requests\OrderFilterRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use ZipArchive;
+use App\Utils\CustomFieldManager;
 
 class OrderController extends Controller
 {
@@ -26,6 +27,8 @@ class OrderController extends Controller
 
             $order->setAttribute("items_count", $total_items);
             $order->setAttribute("total_discount", $total_discount);
+
+            CustomFieldManager::self_custom_to_attribute($order);
         }
 
         return view('pages.user.orders', compact('orders'));
@@ -138,16 +141,18 @@ class OrderController extends Controller
 
         $reason_text .= $request->input('details');
 
-        // TODO: employee have to accept the cancellation, use the custom field for pending concalation, and cannot cancel again after cancel refused
-
         $order->update([
-            'status' => Order::STATUS_CANCELED,
+            'status' => Order::STATUS_PENDING,
             'cancel_reason' => $reason_text,
+            'custom' => CustomFieldManager::update_array($order->custom, [
+                'cancellationStatus' => Order::CANCEL_STATUS_PENDING,
+                'cancellationTime' => now(),
+            ])
         ]);
 
         return redirect()->route('orders')->with('toast', [
             'title' => 'Success',
-            'message' => 'Order canceled successfully',
+            'message' => 'Cancellation request sent successfully',
             'type' => 'success',
         ]);
     }
