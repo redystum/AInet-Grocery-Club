@@ -3,6 +3,7 @@
 @section('title', ' - Profile')
 
 @section('content')
+    @use('App\Models\Order')
 
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Profile Header Section -->
@@ -10,7 +11,7 @@
             <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <!-- Profile Image -->
                 <div
-                    class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                        class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
 
                     <img @if($user->photo)
                              src="{{ asset('storage/users/' . $user->photo) }}"
@@ -29,25 +30,27 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <span
-                                class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-sm rounded-full">
+                                    class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-sm rounded-full">
                                 <i class="fas fa-crown mr-1"></i>
                                 Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
                             </span>
-                            <a href="{{ route('profile.edit') }}"
-                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                <i class="fas fa-edit mr-2"></i> Edit Profile
-                            </a>
+                            @unless(auth()->user()->isEmployee())
+                                <a href="{{ route('profile.edit') }}"
+                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                    <i class="fas fa-edit mr-2"></i> Edit Profile
+                                </a>
+                            @endunless
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        @if(!auth()->user()->isEmployee())
+        @unless(auth()->user()->isEmployee())
 
             @if(session('success'))
                 <div
-                    class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
+                        class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-0.5">
                             <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
@@ -81,7 +84,7 @@
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Account Type</span>
                             <span
-                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ ucfirst($user->type) }}</span>
+                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ ucfirst($user->type) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Status</span>
@@ -96,27 +99,27 @@
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Gender</span>
                             <span
-                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->gender == "M" ? "Male" : "Female" }}</span>
+                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->gender == "M" ? "Male" : "Female" }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">NIF</span>
                             <span
-                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->nif ?? "Not Defined" }}</span>
+                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->nif ?? "Not Defined" }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Default Delivery</span>
                             <span
-                                class="font-medium text-right max-w-xs text-neutral-800 dark:text-neutral-200">{{ $user->default_delivery_address ?? "Not Defined" }}</span>
+                                    class="font-medium text-right max-w-xs text-neutral-800 dark:text-neutral-200">{{ $user->default_delivery_address ?? "Not Defined" }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Payment Method</span>
                             <span
-                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
+                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Payment Reference</span>
                             <span
-                                class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
+                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
                         </div>
                     </div>
                 </div>
@@ -129,16 +132,16 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-sm opacity-80">Current Balance</p>
-                                <p class="text-2xl font-bold">€{{ $user->card->balance }}</p>
+                                <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
                             </div>
                             @if($user->card->deleted_at == null)
                                 <div
-                                    class="bg-white dark:bg-neutral-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
+                                        class="bg-white dark:bg-neutral-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
                                     ACTIVE
                                 </div>
                             @else
                                 <div
-                                    class="bg-white dark:bg-neutral-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
+                                        class="bg-white dark:bg-neutral-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
                                     DELETED
                                 </div>
                             @endif
@@ -149,7 +152,7 @@
                                 <div class="flex justify-between items-center mt-1">
                                     <p class="font-medium">{{ $lastOrder->items_count }}
                                         Item{{ $lastOrder->items_count > 1 ? "s":"" }}</p>
-                                    <p class="font-bold">-€{{ $lastOrder->total }}</p>
+                                    <p class="font-bold">-€{{ number_format($lastOrder->total, 2) }}</p>
                                 </div>
                                 <p class="text-xs opacity-70 mt-1"
                                    title="{{ $lastOrder->created_at }}">{{ $lastOrder->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}</p>
@@ -166,7 +169,7 @@
                             <i class="fas fa-plus mr-2"></i> Add Funds
                         </button>
                         <button
-                            class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
+                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
                             <i class="fas fa-history mr-2"></i> View All
                         </button>
                     </div>
@@ -178,7 +181,7 @@
                 <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Recent Purchases</h2>
-                        <a href="#"
+                        <a href="{{ route('orders') }}"
                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                             View All <i class="fas fa-arrow-right ml-1"></i>
                         </a>
@@ -215,7 +218,7 @@
                             </tr>
                             </thead>
                             <tbody
-                                class="bg-neutral-50 dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                                    class="bg-neutral-50 dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                             @foreach($user->lastOrders as $order)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
@@ -228,28 +231,30 @@
                                         {{ $order->items_count }} item{{ $order->items_count > 1 ? "s":"" }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                        €{{ $order->total }}
+                                        €{{ number_format($order->total, 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($order->status == 'completed')
+                                        @if($order->status == Order::STATUS_COMPLETED)
                                             <span
-                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
-                                                Delivered
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
+                                                <i class="fas fa-check mr-1"></i> Delivered
                                             </span>
-                                        @elseif($order->status == 'pending')
+                                        @elseif($order->status == Order::STATUS_PENDING)
                                             <span
-                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
-                                                Pending
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
+                                                <i class="fas fa-clock mr-1"></i> Pending
                                             </span>
-                                        @elseif($order->status == 'canceled')
+                                        @elseif($order->status == Order::STATUS_CANCELED)
                                             <span
-                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200">
-                                                Canceled
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200">
+                                                <i class="fas fa-times mr-1"></i> Canceled
                                             </span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                        <a href="#"><i class="fas fa-receipt mr-1"></i> Details</a>
+                                        <a href="{{ route('orders.receipt', $order->id) }}"><i
+                                                    class="fas fa-receipt mr-1"></i>
+                                            Receipt</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -258,16 +263,6 @@
                     </div>
                 </div>
             @endif
-        @else
-            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                <div class="text-center">
-                    <p class="text-neutral-800 dark:text-neutral-100">Hi {{ $user->name }}, </p>
-                    <p class="text-neutral-800 dark:text-neutral-100">You are logged in as an employee.</p>
-                    <p class="text-neutral-800 dark:text-neutral-100">Which means you don't have a profile page. If you need to update any of your information please talk with your superior.</p>
-                    <p class="text-neutral-800 dark:text-neutral-100">Thanks!</p>
-                </div>
-
-            </div>
-        @endif
+        @endunless  
     </div>
 @endsection

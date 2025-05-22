@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    const STATUS_COMPLETED = "completed";
+    const STATUS_PENDING = "pending";
+    const STATUS_CANCELED = "canceled";
+
     /**
      * The attributes that are mass assignable.
      *
@@ -34,6 +38,11 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(ItemsOrder::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(ItemsOrder::class)->with('product');
     }
 
 }
