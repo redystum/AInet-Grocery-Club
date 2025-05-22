@@ -36,7 +36,7 @@
             <div class="flex items-center space-x-4">
                 <div>
                     <button
-                            class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none"
+                            class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none cursor-pointer"
                             id="searchButton">
                         <i class="fas fa-search"></i>
                     </button>
