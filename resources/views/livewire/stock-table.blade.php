@@ -1,7 +1,7 @@
 <!-- Filters and Search -->
-<div x-data="{ activeDropdown: null }" 
-     x-init="document.addEventListener('click', () => { activeDropdown = null })" 
-     @scroll.window="activeDropdown = null" 
+<div x-data="{ activeDropdown: null }"
+     x-init="document.addEventListener('click', () => { activeDropdown = null })"
+     @scroll.window="activeDropdown = null"
      @keydown.escape.window="activeDropdown = null">
     <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -22,7 +22,7 @@
                 <label for="category"
                        class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Category</label>
                 <select id="category" wire:model.live="category"
-                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 cursor-pointer">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -36,7 +36,7 @@
                     Stock Status
                 </label>
                 <select id="stock-status" wire:model.live="stock_status"
-                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 cursor-pointer">
                     <option value="">All</option>
                     <option value="in_stock">In Stock</option>
                     <option value="low_stock">Low Stock</option>
@@ -49,7 +49,7 @@
                     Order By
                 </label>
                 <select id="order-by" wire:model.live="order_by"
-                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 cursor-pointer">
                     <option value="stock_low_high">Stock Low-High</option>
                     <option value="stock_high_low">Stock High-Low</option>
                     <option value="name_asc">Name A-Z</option>
@@ -162,7 +162,7 @@
 
                                 <div x-show="activeDropdown === 'product-{{ $product->id }}'"
                                      x-cloak
-                                     @click.outside="activeDropdown = null" 
+                                     @click.outside="activeDropdown = null"
                                      @click.stop="$event.stopPropagation()"
                                      x-transition:enter="transition ease-out duration-100"
                                      x-transition:enter-start="transform opacity-0 scale-95"

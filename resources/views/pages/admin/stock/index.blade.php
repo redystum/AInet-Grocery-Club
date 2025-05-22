@@ -12,7 +12,7 @@
             </div>
 
             <div class="flex gap-3">
-                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
+                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center cursor-pointer">
                     <i class="fas fa-plus mr-2"></i> Add New Product
                 </button>
                 <a href="{{ route("board.restock.auto") }}"
