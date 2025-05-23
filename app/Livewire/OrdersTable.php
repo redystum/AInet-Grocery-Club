@@ -1,0 +1,179 @@
+<?php
+
+namespace App\Livewire;
+
+use App\Models\Order;
+use DB;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
+use App\Utils\CustomFieldManager;
+
+class OrdersTable extends Component
+{
+    use WithPagination;
+
+    public $search = '';
+    public $orderBy = 'date_desc';
+    public $dateRange = '';
+    public $tab = 'pending';
+
+    protected $validOrderByOptions = [
+        'date_desc', 'date_asc', 'user_asc', 'user_desc', 'price_desc', 'price_asc', 'requests'
+    ];
+
+    protected $validDateRangeOptions = [
+        '', 'today', 'week', 'month', 'year'
+    ];
+
+    protected $validTabOptions = [
+        'pending', 'received', 'all', 'cancellation', ''
+    ];
+
+    protected function rules()
+    {
+        return [
+            'search' => 'nullable|string|max:100',
+            'orderBy' => ['required', Rule::in($this->validOrderByOptions)],
+            'dateRange' => ['nullable', Rule::in($this->validDateRangeOptions)],
+            'tab' => ['required', Rule::in($this->validTabOptions)],
+        ];
+    }
+
+    public function validateInputs()
+    {
+        $this->validateOnly('search');
+        $this->validateOnly('orderBy');
+        $this->validateOnly('dateRange');
+        $this->validateOnly('tab');
+    }
+
+    public function mount()
+    {
+        $this->validateInputs();
+    }
+
+    public function updatedSearch()
+    {
+        $this->validateOnly('search');
+        $this->resetPage();
+    }
+
+    public function updatedOrderBy()
+    {
+        $this->validateOnly('orderBy');
+        $this->resetPage();
+    }
+
+    public function updatedDateRange()
+    {
+        $this->validateOnly('dateRange');
+        $this->resetPage();
+    }
+
+    public function updatedTab()
+    {
+        $this->validateOnly('tab');
+        if ($this->tab == 'cancellation') {
+            $this->orderBy = 'requests';
+        } elseif ($this->orderBy == 'requests') {
+            $this->orderBy = 'date_asc';
+        }
+        $this->resetPage();
+    }
+
+    public function gotoPage($page)
+    {
+        $this->setPage((int)$page);
+    }
+
+    public function render()
+    {
+        $this->validateInputs();
+
+        $query = Order::query()->with(['user', 'items.product']);
+
+        if ($this->search) {
+            $sanitizedSearch = e($this->search);
+
+            $query->where(function ($q) use ($sanitizedSearch) {
+                $q->whereHas('items.product', function ($q) use ($sanitizedSearch) {
+                    $q->where('name', 'like', '%' . $sanitizedSearch . '%');
+                })
+                    ->orWhereHas('user', function ($q) use ($sanitizedSearch) {
+                        $q->where('name', 'like', '%' . $sanitizedSearch . '%');
+                    });
+            });
+        }
+
+        if ($this->tab == 'pending') {
+            $query->where('status', Order::STATUS_PENDING);
+        } elseif ($this->tab == 'received') {
+            $query->where('status', Order::STATUS_COMPLETED);
+        } elseif ($this->tab == 'cancellation') {
+            $query->where(function ($q) {
+                $q->where('status', Order::STATUS_CANCELED)
+                    ->orWhere(function ($subq) {
+                        $subq->whereNotNull('cancel_reason')
+                            ->where('status', Order::STATUS_PENDING);
+                    });
+            });
+        }
+
+        switch ($this->orderBy) {
+            case 'date_dsc':
+            case 'date_desc':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'user_asc':
+                $query->join('users', 'users.id', '=', 'orders.member_id')
+                    ->orderBy('users.name');
+                break;
+            case 'user_desc':
+                $query->join('users', 'users.id', '=', 'orders.member_id')
+                    ->orderBy('users.name', 'desc');
+                break;
+            case 'price_asc':
+                $query->orderBy('total');
+                break;
+            case 'price_desc':
+                $query->orderBy('total', 'desc');
+                break;
+            case 'requests':
+                $query->orderBy('status');
+                break;
+            default: // date_asc
+                $query->orderBy('created_at');
+                break;
+        }
+
+        if ($this->dateRange == 'today') {
+            $query->whereDate('created_at', today());
+        } elseif ($this->dateRange == 'week') {
+            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+        } elseif ($this->dateRange == 'month') {
+            $query->whereMonth('created_at', now()->month);
+        } elseif ($this->dateRange == 'year') {
+            $query->whereYear('created_at', now()->year);
+        }
+
+        $orders = $query->paginate(50);
+
+        foreach ($orders as $order) {
+            // Calculate totals
+            $items_count = 0;
+
+            foreach ($order->items as $item) {
+                $items_count += $item->quantity;
+            }
+
+            $order->setAttribute("items_count", $items_count);
+
+            CustomFieldManager::self_custom_to_attribute($order);
+        }
+
+        return view('livewire.orders-table', [
+            'orders' => $orders,
+        ]);
+    }
+}

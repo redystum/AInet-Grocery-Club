@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\admin\StockController;
-use App\Http\Controllers\admin\SupplyController;
+use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
@@ -98,6 +99,16 @@ Route::middleware('auth')->group(function () {
             Route::get('{order}/cancel', [SupplyController::class, 'cancel'])->name('cancel');
             Route::get('{order}/complete', [SupplyController::class, 'complete'])->name('complete');
             Route::delete('destroy', [SupplyController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::name('orders.')->prefix('orders/')->group(function () {
+            Route::get('/', [AdminOrderController::class, 'index'])->name('index');
+            Route::get('export', [AdminOrderController::class, 'export'])->name('export');
+            Route::get('{order}', [AdminOrderController::class, 'show'])->name('show');
+            Route::get('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
+            Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel');
+            Route::post('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
+            Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
         });
     });
 });

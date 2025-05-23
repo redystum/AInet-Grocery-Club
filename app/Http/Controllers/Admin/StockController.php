@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\StockFilterRequest;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\SupplyOrder;
-use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
