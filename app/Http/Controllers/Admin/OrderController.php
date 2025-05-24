@@ -205,12 +205,12 @@ class OrderController extends Controller
             ]);
         }
 
-//        $order->update([
-//            'custom' => CustomFieldManager::update_array($order->custom, [
-//                'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
-//                'cancellationTime' => now(),
-//            ])
-//        ]);
+        $order->update([
+            'custom' => CustomFieldManager::update_array($order->custom, [
+                'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
+                'cancellationTime' => now(),
+            ])
+        ]);
 
         $order->user->notify(new RefusedCancellationOrder(
             $order->id,
