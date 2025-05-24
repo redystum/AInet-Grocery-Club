@@ -1,4 +1,4 @@
-@extends('pages.layouts.public')
+@extends('pages.layouts.admin')
 
 @section('title', ' - Cancel Order')
 
@@ -10,11 +10,11 @@
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Cancel Order</h1>
-                <p class="text-neutral-600 dark:text-neutral-400 mt-2">Request to cancel your order
+                <p class="text-neutral-600 dark:text-neutral-400 mt-2">Request to cancel this order
                     #{{ $order->id }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('orders') }}"
+                <a href="{{ route('board.orders.index') }}"
                    class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                     <i class="fas fa-arrow-left mr-2"></i> Back to Orders
                 </a>
@@ -61,16 +61,19 @@
                                  class="w-full h-full object-cover">
                         </div>
                         <div class="ml-4 flex-1">
-                            <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $item->product->name }}</h3>
-                            <p class="text-xs text-neutral-600 dark:text-neutral-400">
-                                Quantity: {{ $item->quantity }}</p>
-                            @if($item->discount > 0)
-                                <div
-                                        class="text-green-600 dark:text-green-400 text-xs mt-1">
-                                    Discount:
-                                    {{ number_format(($item->discount / $item->product->price) * 100) }}%
-                                </div>
-                            @endif
+                            <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-100 mb-3">
+                                {{ $item->product->name }}
+                            </h3>
+                            <div class="flex items-center">
+                                <span class="text-sm text-neutral-600 dark:text-neutral-400 mr-4">
+                                    Qty: {{ $item->quantity }}
+                                </span>
+                                @if($item->discount > 0)
+                                    <span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                                        {{ number_format(($item->discount / $item->product->price) * 100) }}% OFF
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                         <div class="text-right">
                             <div
@@ -129,8 +132,10 @@
 
         <!-- Cancellation Form -->
         <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Cancel Order Request</h2>
-            <form action="{{ route('orders.cancel.confirm', $order->id) }}" method="POST">
+            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Cancel Order</h2>
+
+
+            <form action="{{ route('board.orders.cancel.store', $order->id) }}" method="POST">
                 @csrf
 
                 <div class="mb-6">
@@ -145,12 +150,13 @@
                                 text-neutral-800 dark:text-neutral-200
                                 @error('reason') border-red-500 dark:border-red-700 @enderror">
                         <option value="0" selected disabled>Select a reason...</option>
-                        <option value="1" {{ old('reason') == 1 ? 'selected' : '' }}>Found cheaper elsewhere
+                        <option value="1" {{ old('reason') == 1 ? 'selected' : '' }}>Excessive processing time
                         </option>
-                        <option value="2" {{ old('reason') == 2 ? 'selected' : '' }}>Changed my mind</option>
-                        <option value="3" {{ old('reason') == 3 ? 'selected' : '' }}>Shipping takes too long
+                        <option value="2" {{ old('reason') == 2 ? 'selected' : '' }}>Contacted by the User</option>
+                        <option value="3" {{ old('reason') == 3 ? 'selected' : '' }}>
+                            Product arrived damaged or defective
                         </option>
-                        <option value="4" {{ old('reason') == 4 ? 'selected' : '' }}>Ordered by mistake</option>
+                        <option value="4" {{ old('reason') == 4 ? 'selected' : '' }}>Company bankruptcy</option>
                         <option value="5" {{ old('reason') == 5 ? 'selected' : '' }}>Other reason</option>
                     </select>
                 </div>
@@ -158,7 +164,7 @@
                 <div class="mb-6">
                     <label for="details"
                            class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2">
-                        Additional details (optional but recommended)
+                        Additional details
                     </label>
                     @error('details') <span class="text-red-500">{{ $message }}</span> @enderror
                     <textarea id="details" name="details" rows="4" maxlength="255"
@@ -169,20 +175,14 @@
                               placeholder="Please provide any additional information about your cancellation...">{{ old('details') }}</textarea>
                 </div>
 
-                <div class="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded-lg mb-6">
-                    <p><i class="fas fa-exclamation-circle mr-2"></i> Please note that cancellation requests may
-                        take up to 24 hours to process. If your order has already been shipped, you may need to
-                        return it instead.</p>
-                </div>
-
                 <div class="flex items-center justify-between">
-                    <a href="{{ route('orders') }}"
+                    <a href="{{ route('board.orders.show', $order->id) }}"
                        class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                         <i class="fas fa-arrow-left mr-2"></i> Go Back
                     </a>
                     <button type="submit"
                             class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-                        <i class="fas fa-times-circle mr-2"></i> Send Cancellation Request
+                        <i class="fas fa-times-circle mr-2"></i> Cancel Order
                     </button>
                 </div>
             </form>

@@ -169,10 +169,11 @@
                             <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">
                                 €{{ number_format($item->subtotal, 2) }}
                             </p>
+                            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                {{ $item->quantity }} ×
+                                €{{ number_format($item->product->price - $item->discount, 2) }}
+                            </p>
                             @if($item->discount > 0)
-                                <p class="text-sm text-neutral-600 dark:text-neutral-400 line-through">
-                                    €{{ number_format($item->product->price * $item->quantity, 2) }}
-                                </p>
                                 <p class="text-xs text-green-600 dark:text-green-400">
                                     Saved €{{ number_format($item->discount * $item->quantity, 2) }}
                                 </p>
@@ -190,7 +191,8 @@
 
                 <!-- Cancellation Request (if exists) -->
                 @if($order->cancellationStatus)
-                    <div class="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 dark:border-orange-400 p-4 mb-6 rounded-r-lg">
+                    <div id="cancellation"
+                         class="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 dark:border-orange-400 p-4 mb-6 rounded-r-lg">
                         <div class="flex items-start">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-exclamation-circle text-orange-500 dark:text-orange-400"></i>
@@ -264,14 +266,10 @@
 
                 <!-- Order Action Buttons -->
                 <div class="w-full flex items-center justify-end space-x-4">
-                    <form action="{{ route('board.orders.cancel', $order->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <button type="submit"
-                                class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center">
-                            <i class="fas fa-times-circle mr-2"></i> Cancel Order
-                        </button>
-                    </form>
+                    <a href="{{ route('board.orders.cancel.show', $order->id) }}"
+                       class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-times-circle mr-2"></i> Cancel Order
+                    </a>
 
                     @if($can_be_delivered)
                         <form action="{{ route('board.orders.confirm', $order->id) }}" method="POST">
@@ -288,5 +286,44 @@
             </div>
         @endif
 
+        @if($order->status == Order::STATUS_CANCELED)
+            <!-- Cancellation Details Section -->
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-6">Cancellation</h2>
+                <div id="cancellation"
+                     class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
+                    <div class="flex items start">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-times-circle text-red-500 dark:text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-red-800 dark:text-red-200 mb-2">Order Cancellation</h3>
+                            <p class="text-sm text-red-700 dark:text-red-300 mb-2">
+                                This order has been canceled.
+                            </p>
+                            <p class="text-sm text-red-700 dark:text-red-300 mb-2">
+                                <strong>Reason:</strong> {{ $order->cancel_reason }}
+                            </p>
+                            <p class="text-sm text-red-700 dark:text-red-300">
+                                <strong>Details:</strong> {{ $order->cancellationDetails }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        @endif
+
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // if #cancellation exists, scroll to it
+            const cancellationSection = document.getElementById('cancellation');
+            if (cancellationSection) {
+                cancellationSection.scrollIntoView({behavior: 'smooth'});
+            }
+        });
+    </script>
 @endsection

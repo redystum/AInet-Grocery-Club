@@ -19,6 +19,9 @@
 
 <x-navbar/>
 
+<x-toast/>
+
+
 <main class="h-main">
     @yield('content')
 </main>

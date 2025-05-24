@@ -280,14 +280,14 @@
                                             </a>
                                             @if($order->status == Order::STATUS_PENDING)
                                                 @if($order->cancellationStatus)
-                                                    <a href="{{ route('board.orders.cancel', $order->id) }}"
+                                                    <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                        role="menuitem">
                                                         <i class="fas fa-scroll mr-3 text-red-400"></i>
                                                         View cancellation request
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('board.orders.cancel', $order->id) }}"
+                                                <a href="{{ route('board.orders.cancel.show', $order->id) }}"
                                                    class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                    role="menuitem">
                                                     <i class="fas fa-times mr-3 text-red-400"></i>
@@ -306,7 +306,8 @@
                                                         Mark as Delivered
                                                     </button>
                                                 @else
-                                                    <a href="#" class="cursor-not-allowed w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-400 dark:text-neutral-500">
+                                                    <a href="#"
+                                                       class="cursor-not-allowed w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-400 dark:text-neutral-500">
                                                         <i class="fas fa-check mr-3 text-green-400"></i>
                                                         Mark as Delivered
                                                     </a>

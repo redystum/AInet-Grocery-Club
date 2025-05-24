@@ -82,6 +82,14 @@ class OrderController extends Controller
             abort(404);
         }
 
+        if ($order->status != Order::STATUS_PENDING) {
+            return redirect()->route('orders')->with('toast', [
+                'title' => 'Error',
+                'message' => 'You cannot cancel this order',
+                'type' => 'error',
+            ]);
+        }
+
         CustomFieldManager::self_custom_to_attribute($order);
 
         if ($order->cancellationStatus != null) {
@@ -146,7 +154,6 @@ class OrderController extends Controller
         }
 
         $order->update([
-            'status' => Order::STATUS_PENDING,
             'cancel_reason' => $reason_text,
             'custom' => CustomFieldManager::update_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_PENDING,
