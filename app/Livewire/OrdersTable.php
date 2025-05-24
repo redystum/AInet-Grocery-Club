@@ -16,6 +16,13 @@ class OrdersTable extends Component
     public $orderBy = 'date_desc';
     public $dateRange = '';
     public $tab = 'pending';
+    
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'orderBy' => ['except' => 'date_desc'],
+        'dateRange' => ['except' => ''],
+        'tab' => ['except' => 'pending'],
+    ];
 
     protected $validOrderByOptions = [
         'date_desc', 'date_asc', 'user_asc', 'user_desc', 'price_desc', 'price_asc', 'requests'
@@ -95,7 +102,7 @@ class OrdersTable extends Component
     {
         $this->validateInputs();
 
-        $query = Order::query()->with(['user', 'items.product']);
+        $query = Order::query()->select('orders.*')->with(['user', 'items.product']);
 
         if ($this->search) {
             $sanitizedSearch = trim(e($this->search));
@@ -128,7 +135,7 @@ class OrdersTable extends Component
         switch ($this->orderBy) {
             case 'date_dsc':
             case 'date_desc':
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('orders.created_at', 'desc');
                 break;
             case 'user_asc':
                 $query->join('users', 'users.id', '=', 'orders.member_id')
@@ -139,32 +146,39 @@ class OrdersTable extends Component
                     ->orderBy('users.name', 'desc');
                 break;
             case 'price_asc':
-                $query->orderBy('total');
+                $query->orderBy('orders.total');
                 break;
             case 'price_desc':
-                $query->orderBy('total', 'desc');
+                $query->orderBy('orders.total', 'desc');
                 break;
             case 'requests':
-                $query->orderBy('status');
+                $query->orderBy('orders.status');
                 break;
             default: // date_asc
-                $query->orderBy('created_at');
+                $query->orderBy('orders.created_at');
                 break;
         }
 
         if ($this->dateRange == 'today') {
-            $query->whereDate('created_at', today());
+            $query->whereDate('orders.created_at', today());
         } elseif ($this->dateRange == 'week') {
-            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            $query->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
         } elseif ($this->dateRange == 'month') {
-            $query->whereMonth('created_at', now()->month);
+            $query->whereMonth('orders.created_at', now()->month);
         } elseif ($this->dateRange == 'year') {
-            $query->whereYear('created_at', now()->year);
+            $query->whereYear('orders.created_at', now()->year);
         }
 
         $orders = $query->paginate(50);
 
         foreach ($orders as $order) {
+            CustomFieldManager::self_custom_to_attribute($order);
+
+            if ($this->tab == "cancellation" && $order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_REFUSED) {
+                $orders->forget($orders->search($order));
+                continue;
+            }
+
             // Calculate totals
             $items_count = 0;
 
@@ -180,7 +194,6 @@ class OrdersTable extends Component
             $order->setAttribute("items_count", $items_count);
             $order->setAttribute("can_be_delivered", $can_be_delivered);
 
-            CustomFieldManager::self_custom_to_attribute($order);
         }
 
         return view('livewire.orders-table', [

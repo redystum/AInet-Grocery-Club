@@ -107,8 +107,8 @@ Route::middleware('auth')->group(function () {
             Route::put('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
             Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel.show');
             Route::post('{order}/cancel', [AdminOrderController::class, 'cancelByAdmin'])->name('cancel.store');
-            Route::post('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
-            Route::post('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
+            Route::put('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
+            Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
             Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
         });
     });

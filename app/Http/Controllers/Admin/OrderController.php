@@ -149,4 +149,53 @@ class OrderController extends Controller
             'type' => 'success',
         ]);
     }
+
+    public function cancelConfirm(Order $order)
+    {
+        if ($order->status != Order::STATUS_PENDING) {
+            return redirect()->route('orders')->with('toast', [
+                'title' => 'Error',
+                'message' => 'You cannot cancel this order',
+                'type' => 'error',
+            ]);
+        }
+
+        $order->update([
+            'status' => Order::STATUS_CANCELED,
+            'custom' => CustomFieldManager::update_array($order->custom, [
+                'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
+                'cancellationTime' => now(),
+            ])
+        ]);
+
+        return redirect()->route('board.orders.index')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Order canceled successfully.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function cancelReject(Order $order)
+    {
+        if ($order->status != Order::STATUS_PENDING) {
+            return redirect()->route('orders')->with('toast', [
+                'title' => 'Error',
+                'message' => 'You cannot reject this order',
+                'type' => 'error',
+            ]);
+        }
+
+        $order->update([
+            'custom' => CustomFieldManager::update_array($order->custom, [
+                'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
+                'cancellationTime' => now(),
+            ])
+        ]);
+
+        return redirect()->route('board.orders.index')->with('toast', [
+            'title' => 'Success',
+            'message' => 'Cancellation request rejected successfully.',
+            'type' => 'success',
+        ]);
+    }
 }

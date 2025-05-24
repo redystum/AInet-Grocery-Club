@@ -232,7 +232,7 @@
                                     <i class="fas fa-times mr-1"></i> Canceled
                                 </span>
                             @else
-                                @if($order->cancellationStatus)
+                                @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200">
                                         <i class="fas fa-exclamation-triangle mr-1"></i> Cancellation Requested
                                     </span>
@@ -279,7 +279,7 @@
                                                 Download Invoice
                                             </a>
                                             @if($order->status == Order::STATUS_PENDING)
-                                                @if($order->cancellationStatus)
+                                                @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
                                                     <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                        role="menuitem">

@@ -24,7 +24,7 @@
                             <i class="fas fa-times mr-1"></i> Canceled
                         </span>
                     @else
-                        @if($order->cancellationStatus)
+                        @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200">
                                 <i class="fas fa-exclamation-triangle mr-1"></i> Cancellation Requested
                             </span>
@@ -190,7 +190,7 @@
                 <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-6">Order Management</h2>
 
                 <!-- Cancellation Request (if exists) -->
-                @if($order->cancellationStatus)
+                @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
                     <div id="cancellation"
                          class="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 dark:border-orange-400 p-4 mb-6 rounded-r-lg">
                         <div class="flex items-start">
@@ -202,7 +202,7 @@
                                     Request</h3>
                                 <div class="text-sm text-orange-700 dark:text-orange-300">
                                     <p class="mb-2"><strong>Reason:</strong> {{ $order->cancel_reason }}</p>
-                                    <p class="mb-2"><strong>Details:</strong> {{ $order->cancellationDetails }}</p>
+                                    <p class="mb-2"><strong>Details:</strong> {{ $order->cancellationDetails ?? "N/A" }}</p>
                                     <p><strong>Requested
                                             at:</strong> {{ $order->cancellationTime ? Carbon::parse($order->cancellationTime)->format('F j, Y \a\t H:i') : 'N/A' }}
                                     </p>
@@ -290,7 +290,7 @@
             <!-- Cancellation Details Section -->
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-8">
                 <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-6">Cancellation</h2>
-                <div id="cancellation"
+                <div
                      class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
                     <div class="flex items start">
                         <div class="flex-shrink-0">

@@ -328,7 +328,54 @@
                                             <i class="fas fa-receipt mr-2"></i> Download Receipt
                                         </a>
                                     </div>
-                                </div>
+
+                                    @if($order->status == Order::STATUS_CANCELED)
+                                        <div
+                                             class="mt-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
+                                            <div class="flex items start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-times-circle text-red-500 dark:text-red-400"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <h3 class="text-lg font-medium text-red-800 dark:text-red-200 mb-2">
+                                                        Order Cancellation</h3>
+                                                    <p class="text-sm text-red-700 dark:text-red-300 mb-2">
+                                                        This order has been canceled.
+                                                    </p>
+                                                    <p class="text-sm text-red-700 dark:text-red-300 mb-2">
+                                                        <strong>Reason:</strong> {{ $order->cancel_reason }}
+                                                    </p>
+                                                    <p class="text-sm text-red-700 dark:text-red-300">
+                                                        <strong>Details:</strong> {{ $order->cancellationDetails }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($order->cancellationStatus == Order::CANCEL_STATUS_REFUSED)
+                                        <div
+                                             class="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 dark:border-yellow-400 p-4 mb-8 rounded-r-lg">
+                                            <div class="flex items start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-exclamation-triangle text-yellow-500 dark:text-yellow-400"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <h3 class="text-lg font-medium text-yellow-800 dark:text-yellow-200 mb-2">
+                                                        Cancellation Refused</h3>
+                                                    <p class="text-sm text-yellow-700 dark:text-yellow-300 mb-2">
+                                                        Your cancellation request for this order has been refused.
+                                                    </p>
+                                                    <p class="text-sm text-yellow-700 dark:text-yellow-300 mb-2">
+                                                        <strong>Your reason:</strong> {{ $order->cancel_reason }}
+                                                    </p>
+                                                    <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                                                        <strong>Your details:</strong> {{ $order->cancellationDetails ?? "N/A" }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
