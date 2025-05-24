@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Notifications\CancelledOrder;
+use App\Notifications\NewLogin;
+use App\Notifications\RefusedCancellationOrder;
 use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -143,6 +147,14 @@ class OrderController extends Controller
             ])
         ]);
 
+        $order->user()->notify(new CancelledOrder(
+            $order->id,
+            $order->created_at->format('d-m-Y H:i:s'),
+            $reason_text,
+            $request->input('details'),
+            $order->total
+        ));
+
         return redirect()->route('board.orders.index')->with('toast', [
             'title' => 'Success',
             'message' => 'Order canceled successfully.',
@@ -153,7 +165,7 @@ class OrderController extends Controller
     public function cancelConfirm(Order $order)
     {
         if ($order->status != Order::STATUS_PENDING) {
-            return redirect()->route('orders')->with('toast', [
+            return redirect()->route('board.orders.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'You cannot cancel this order',
                 'type' => 'error',
@@ -167,6 +179,14 @@ class OrderController extends Controller
                 'cancellationTime' => now(),
             ])
         ]);
+
+        $order->user->notify(new CancelledOrder(
+            $order->id,
+            $order->created_at->format('d-m-Y H:i:s'),
+            $order->cancel_reason ?? 'No reason provided',
+            CustomFieldManager::get_field($order, 'cancellationDetails') ?? 'No details provided',
+            $order->total
+        ));
 
         return redirect()->route('board.orders.index')->with('toast', [
             'title' => 'Success',
@@ -185,12 +205,19 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->update([
-            'custom' => CustomFieldManager::update_array($order->custom, [
-                'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
-                'cancellationTime' => now(),
-            ])
-        ]);
+//        $order->update([
+//            'custom' => CustomFieldManager::update_array($order->custom, [
+//                'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
+//                'cancellationTime' => now(),
+//            ])
+//        ]);
+
+        $order->user->notify(new RefusedCancellationOrder(
+            $order->id,
+            $order->cancel_reason ?? 'No reason provided',
+            CustomFieldManager::get_field($order, 'cancellationDetails') ?? 'No details provided',
+            CustomFieldManager::get_field($order, 'expectedShipDate') ?? "No expected ship date provided",
+        ));
 
         return redirect()->route('board.orders.index')->with('toast', [
             'title' => 'Success',

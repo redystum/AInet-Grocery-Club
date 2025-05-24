@@ -202,7 +202,8 @@
                                     Request</h3>
                                 <div class="text-sm text-orange-700 dark:text-orange-300">
                                     <p class="mb-2"><strong>Reason:</strong> {{ $order->cancel_reason }}</p>
-                                    <p class="mb-2"><strong>Details:</strong> {{ $order->cancellationDetails ?? "N/A" }}</p>
+                                    <p class="mb-2"><strong>Details:</strong> {{ $order->cancellationDetails ?? "N/A" }}
+                                    </p>
                                     <p><strong>Requested
                                             at:</strong> {{ $order->cancellationTime ? Carbon::parse($order->cancellationTime)->format('F j, Y \a\t H:i') : 'N/A' }}
                                     </p>
@@ -291,7 +292,7 @@
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-8">
                 <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-6">Cancellation</h2>
                 <div
-                     class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
+                        class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
                     <div class="flex items start">
                         <div class="flex-shrink-0">
                             <i class="fas fa-times-circle text-red-500 dark:text-red-400"></i>
@@ -320,9 +321,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // if #cancellation exists, scroll to it
-            const cancellationSection = document.getElementById('cancellation');
-            if (cancellationSection) {
-                cancellationSection.scrollIntoView({behavior: 'smooth'});
+            if (window.location.hash.includes('cancellation')) {
+                const cancellationSection = document.getElementById('cancellation');
+                if (cancellationSection) {
+                    cancellationSection.scrollIntoView({behavior: 'smooth'});
+                }
             }
         });
     </script>

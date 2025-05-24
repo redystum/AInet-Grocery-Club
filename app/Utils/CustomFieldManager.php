@@ -145,6 +145,11 @@ class CustomFieldManager
         if (!isset($instance->custom)) {
             return null;
         }
+
+        if (!is_array($instance->custom)) {
+            $instance->custom = json_decode($instance->custom, true);
+        }
+
         return $instance->custom[$key] ?? null;
     }
 
