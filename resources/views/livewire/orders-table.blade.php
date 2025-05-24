@@ -127,7 +127,7 @@
             <div>
                 <label for="orderBy" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Order
                     By</label>
-                <select id="orderBy" wire:model.live="orderBy"
+                <select id="orderBy" wire:model.live="orderBy" wire:key="orderBy-{{ $tab }}"
                         class="w-full cursor-pointer px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                     @if($tab == 'cancellation')
                         <option value="requests">Requests On Top</option>

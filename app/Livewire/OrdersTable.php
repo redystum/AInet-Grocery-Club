@@ -77,7 +77,7 @@ class OrdersTable extends Component
         if ($this->tab == 'cancellation') {
             $this->orderBy = 'requests';
         } elseif ($this->orderBy == 'requests') {
-            $this->orderBy = 'date_asc';
+            $this->orderBy = 'date_desc';
         }
         $this->resetPage();
     }
