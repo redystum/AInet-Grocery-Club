@@ -317,7 +317,7 @@
                                            class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                             <i class="fas fa-redo mr-2"></i> Reorder
                                         </a>
-                                        @if($order->status == Order::STATUS_PENDING)
+                                        @if($order->status == Order::STATUS_PENDING && $order->cancellationStatus == null)
                                             <a href="{{ route('orders.cancel', $order->id) }}"
                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                                 <i class="fas fa-cancel mr-2"></i> Cancel

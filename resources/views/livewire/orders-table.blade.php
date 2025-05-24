@@ -189,19 +189,23 @@
                 @forelse($orders as $order)
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
+                            <a href="{{ route('board.orders.show', $order->id) }}?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}" class="flex items-center">
                                 <div
                                         class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
                                     <i class="fas fa-shopping-bag text-blue-600 dark:text-blue-400"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-neutral-800 dark:text-neutral-100">
+                                    <div
+                                            class="text-sm font-medium text-neutral-800 dark:text-neutral-100">
                                         #{{ $order->id }}</div>
                                 </div>
-                            </div>
+                            </a>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">
-                            {{ $order->user->name ?? 'Unknown' }}
+                            <a href="{{-- route('board.users.show', $order->user_id) --}}"
+                               class="cursor-pointer">
+                                {{ $order->user->name ?? 'Unknown' }}
+                            </a>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-100">
                             {{ $order->created_at->format('d/m/Y H:i') }}
@@ -303,8 +307,18 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-4 text-neutral-500 dark:text-neutral-400">No orders
-                            found.
+                        <td colspan="7" class="text-center py-4 text-neutral-500 dark:text-neutral-400">
+                            No orders found.
+                            <div class="mt-2 text-sm">
+                                Try adjusting your filters
+                                @if($tab != 'all')
+                                    , search or
+                                    <span wire:click="$set('tab', 'all')"
+                                          class="cursor-pointer underline">go to all orders tab</span>.
+                                @else
+                                    or search.
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforelse

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string $cancellationStatus
  * @property string $cancellationTime
+ * @property string $cancellationDetails
  */
 class Order extends Model
 {
@@ -44,7 +45,7 @@ class Order extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(User::class, 'member_id')->withTrashed();
     }
 
     public function items()

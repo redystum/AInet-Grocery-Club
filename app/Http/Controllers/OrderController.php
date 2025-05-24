@@ -82,6 +82,12 @@ class OrderController extends Controller
             abort(404);
         }
 
+        CustomFieldManager::self_custom_to_attribute($order);
+
+        if ($order->cancellationStatus != null) {
+            abort(403);
+        }
+
         $total_items = 0;
         $total_discount = 0; // in cents
 
@@ -126,20 +132,18 @@ class OrderController extends Controller
 
         switch ($reason) {
             case 1:
-                $reason_text = 'Found cheaper elsewhere - ';
+                $reason_text = 'Found cheaper elsewhere';
                 break;
             case 2:
-                $reason_text = 'Changed my mind - ';
+                $reason_text = 'Changed my mind';
                 break;
             case 3:
-                $reason_text = 'Shipping takes too long - ';
+                $reason_text = 'Shipping takes too long';
                 break;
             case 4:
-                $reason_text = 'Ordered by mistake - ';
+                $reason_text = 'Ordered by mistake';
                 break;
         }
-
-        $reason_text .= $request->input('details');
 
         $order->update([
             'status' => Order::STATUS_PENDING,
@@ -147,6 +151,7 @@ class OrderController extends Controller
             'custom' => CustomFieldManager::update_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_PENDING,
                 'cancellationTime' => now(),
+                'cancellationDetails' => $request->input('details'),
             ])
         ]);
 

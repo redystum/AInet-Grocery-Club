@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Order;
-use DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
@@ -50,6 +49,11 @@ class OrdersTable extends Component
 
     public function mount()
     {
+        $this->search = request()->query('search', $this->search);
+        $this->orderBy = request()->query('orderBy', $this->orderBy);
+        $this->dateRange = request()->query('dateRange', $this->dateRange);
+        $this->tab = request()->query('tab', $this->tab);
+
         $this->validateInputs();
     }
 
@@ -94,7 +98,7 @@ class OrdersTable extends Component
         $query = Order::query()->with(['user', 'items.product']);
 
         if ($this->search) {
-            $sanitizedSearch = e($this->search);
+            $sanitizedSearch = trim(e($this->search));
 
             $query->where(function ($q) use ($sanitizedSearch) {
                 $q->whereHas('items.product', function ($q) use ($sanitizedSearch) {
@@ -102,7 +106,8 @@ class OrdersTable extends Component
                 })
                     ->orWhereHas('user', function ($q) use ($sanitizedSearch) {
                         $q->where('name', 'like', '%' . $sanitizedSearch . '%');
-                    });
+                    })
+                    ->orWhere('id', 'like', '%' . $sanitizedSearch . '%');
             });
         }
 
