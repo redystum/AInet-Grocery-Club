@@ -229,6 +229,39 @@
                     </div>
                 @endif
 
+                @unless($can_be_delivered)
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 dark:border-yellow-400 p-4 mb-6 rounded-r-lg">
+                        <div class="flex items start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-yellow-500 dark:text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-yellow-800 dark:text-yellow-200 mb-2">Order Not
+                                    Ready
+                                    for Delivery</h3>
+                                <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                                    This order cannot be marked as delivered yet. Please add more stock of this products
+                                    to mark as delivered.
+                                </p>
+                                <ul class="mt-4 space-y-2">
+                                    @foreach($missing_products as $product)
+                                        <li>
+                                            <a href="{{-- route('board.products.show', $product->id) --}}"
+                                               class="flex items-center">
+                                                <img src="{{ $product->image }}" alt="{{ $product->name }}"
+                                                     class="inline-block w-8 h-8 rounded-full mr-2">
+                                                {{ $product->name }} ({{ $product->missing_quantity }} missing)
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                @endunless
+
                 <!-- Order Action Buttons -->
                 <div class="w-full flex items-center justify-end space-x-4">
                     <form action="{{ route('board.orders.cancel', $order->id) }}" method="POST">
@@ -240,14 +273,16 @@
                         </button>
                     </form>
 
-                    <form action="{{ route('board.orders.confirm', $order->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <button type="submit"
-                                class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center">
-                            <i class="fas fa-check-circle mr-2"></i> Mark as Delivered
-                        </button>
-                    </form>
+                    @if($can_be_delivered)
+                        <form action="{{ route('board.orders.confirm', $order->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit"
+                                    class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center">
+                                <i class="fas fa-check-circle mr-2"></i> Mark as Delivered
+                            </button>
+                        </form>
+                    @endif
 
                 </div>
             </div>

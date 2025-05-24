@@ -74,10 +74,15 @@
                     </div>
                 </div>
                 <div class="bg-neutral-50 dark:bg-neutral-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <a x-bind:href="'{{ route('board.orders.confirm', ['order' => '__ID__']) }}'.replace('__ID__', confirmOrderId)"
-                       class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Confirm Delivery
-                    </a>
+                    <form method="POST"
+                          x-bind:action="'{{ route('board.orders.confirm', ['order' => '__ID__']) }}'.replace('__ID__', confirmOrderId)">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Confirm Delivery
+                        </button>
+                    </form>
                     <button type="button"
                             @click="showConfirmModal = false"
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-neutral-300 dark:border-neutral-600 shadow-sm px-4 py-2 bg-white dark:bg-neutral-700 text-base font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
@@ -189,7 +194,8 @@
                 @forelse($orders as $order)
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('board.orders.show', $order->id) }}?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}" class="flex items-center">
+                            <a href="{{ route('board.orders.show', $order->id) }}?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
+                               class="flex items-center">
                                 <div
                                         class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
                                     <i class="fas fa-shopping-bag text-blue-600 dark:text-blue-400"></i>
@@ -287,17 +293,24 @@
                                                     <i class="fas fa-times mr-3 text-red-400"></i>
                                                     Cancel Order
                                                 </a>
-                                                <button
-                                                        @click="
+                                                @if($order->can_be_delivered)
+                                                    <button
+                                                            @click="
                                                         confirmOrderId = '{{ $order->id }}';
                                                         showConfirmModal = true;
                                                         activeDropdown = null;
                                                    "
-                                                        class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                        role="menuitem">
-                                                    <i class="fas fa-check mr-3 text-green-400"></i>
-                                                    Mark as Delivered
-                                                </button>
+                                                            class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                            role="menuitem">
+                                                        <i class="fas fa-check mr-3 text-green-400"></i>
+                                                        Mark as Delivered
+                                                    </button>
+                                                @else
+                                                    <a href="#" class="cursor-not-allowed w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-400 dark:text-neutral-500">
+                                                        <i class="fas fa-check mr-3 text-green-400"></i>
+                                                        Mark as Delivered
+                                                    </a>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>

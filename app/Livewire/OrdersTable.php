@@ -168,11 +168,17 @@ class OrdersTable extends Component
             // Calculate totals
             $items_count = 0;
 
+            $can_be_delivered = true;
+
             foreach ($order->items as $item) {
                 $items_count += $item->quantity;
+                if ($item->product->stock < $item->quantity) {
+                    $can_be_delivered = false;
+                }
             }
 
             $order->setAttribute("items_count", $items_count);
+            $order->setAttribute("can_be_delivered", $can_be_delivered);
 
             CustomFieldManager::self_custom_to_attribute($order);
         }

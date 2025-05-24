@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::name('orders.')->prefix('orders/')->group(function () {
             Route::get('/', [AdminOrderController::class, 'index'])->name('index');
             Route::get('{order}', [AdminOrderController::class, 'show'])->name('show');
-            Route::post('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
+            Route::put('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
             Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel');
             Route::post('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
             Route::post('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
