@@ -25,4 +25,8 @@ class ItemsOrder extends Model
         'custom',
     ];
 
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
+
 }

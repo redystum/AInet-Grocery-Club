@@ -21,18 +21,16 @@ class UserController extends Controller
             foreach ($order->items as $item) {
                 $total_items += $item->quantity;
             }
-            $order->items_count = $total_items;
+            $order->setAttribute('items_count', $total_items);
             unset($order->items);
         }
         $lastOrder = $user->lastOrders->last();
-
-        return view('pages.profile', compact('user', 'lastOrder'));
+        return view('pages.user.profile', compact('user', 'lastOrder'));
     }
 
     public function edit()
     {
         $user = User::with('card')->find(auth()->user()->id);
-
         return view('pages.editProfile', compact('user'));
     }
 

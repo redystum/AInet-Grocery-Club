@@ -30,6 +30,7 @@ class Product extends Model
         return $this->hasMany(ItemsOrder::class);
     }
 
+
     public function getImage()
     {
         return $this->photo ? asset('storage/products/' . $this->photo) : asset('storage/producst/product_no_image.png');

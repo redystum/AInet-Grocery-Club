@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\SupplyController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProductController;
@@ -20,6 +21,8 @@ Route::get('/', function () {
 })->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
     Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
@@ -32,11 +35,13 @@ Route::name('product.')->prefix('product/{product}')->group(function () {
 | Routes that are accessible only to guests (not authenticated users).
 |
 */
-Route::get('login', [AuthController::class, 'show_login'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::get('register', [AuthController::class, 'show_register'])->name('register');
-Route::post('register', [AuthController::class, 'register'])->name('register');
-Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthController::class, 'show_login'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::get('register', [AuthController::class, 'show_register'])->name('register');
+    Route::post('register', [AuthController::class, 'register'])->name('register');
+    Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+});
 
 /*--------------------------------------------------------------------------
 | Pssword reset routes
@@ -57,6 +62,18 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 */
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
+
+
+    Route::name('orders')->prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::get('export', [OrderController::class, 'export'])->name('.export');
+
+        Route::prefix('{order}')->group(function () {
+            Route::get('receipt', [OrderController::class, 'receipt'])->name('.receipt');
+            Route::get('cancel', [OrderController::class, 'cancel'])->name('.cancel');
+            Route::post('cancel/confirm', [OrderController::class, 'cancelConfirm'])->name('.cancel.confirm');
+        });
+    });
 
     Route::middleware('notEmployee')->group(function () {
         Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
