@@ -85,7 +85,7 @@
                                        class="flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors categoryLink {{ request('category') == $category->id ? 'font-bold' : '' }}">
                                         <div
                                                 class="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700">
-                                            <img src="{{ asset('storage/categories/' . $category->image) }}"
+                                            <img src="{{ $category->getImage() }}"
                                                  alt="{{ $category->name }}" class="w-full h-full object-cover">
                                         </div>
                                         <span class="flex-1">{{ $category->name }}</span>
@@ -122,7 +122,7 @@
                 @if($products->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         @foreach($products as $product)
-                            <div
+                            <a href="{{ route('product.show', $product->id) }}"
                                     class="product-card bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md relative group">
                                 <!-- Wishlist Button (shown on hover) -->
                                 <button
@@ -133,16 +133,15 @@
 
                                 <!-- Product Image -->
                                 <div class="relative overflow-hidden h-48 cursor-pointer">
-                                    <img src="{{ asset('storage/products/' . $product->photo) }}"
+                                    <img src="{{ $product->getImage() }}"
                                          alt="{{ $product->name }}"
                                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
 
                                     <!-- Discount Badge -->
                                     @if($product->discount > 0)
-                                        <div
-                                                class="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-md">
-                                            -{{ $product->discount }}%
-                                        </div>
+                                        <span class="absolute top-3 left-3 shadow-md text-xs bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                                            {{ number_format(($product->discount / $product->price) * 100) }}% OFF
+                                        </span>
                                     @endif
                                 </div>
 
@@ -155,13 +154,13 @@
                                         @if($product->discount > 0)
                                             <div>
                                                 <span
-                                                        class="text-red-600 dark:text-red-400 font-bold text-lg">€{{ number_format($product->price * (1 - $product->discount/100), 2) }}</span>
+                                                        class="text-green-600 dark:text-green-400 font-bold text-xl">€{{ number_format($product->price * (1 - $product->discount/100), 2) }}</span>
                                                 <span
                                                         class="ml-2 text-neutral-500 dark:text-neutral-400 text-sm line-through">€{{ number_format($product->price, 2) }}</span>
                                             </div>
                                         @else
                                             <span
-                                                    class="text-blue-600 dark:text-blue-400 font-bold text-lg">€{{ number_format($product->price, 2) }}</span>
+                                                    class="text-blue-600 dark:text-blue-400 font-bold text-xl">€{{ number_format($product->price, 2) }}</span>
                                         @endif
 
                                         <span
@@ -172,10 +171,10 @@
 
                                     <!-- Action Buttons -->
                                     <div class="flex justify-between items-center">
-                                        <a href="#"
+                                        <span
                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm">
                                             View Details
-                                        </a>
+                                        </span>
                                         <button
                                                 class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition-colors add-to-cart-btn cursor-pointer"
                                                 {{ $product->stock <= 0 ? 'disabled' : '' }}>
@@ -183,7 +182,7 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
 

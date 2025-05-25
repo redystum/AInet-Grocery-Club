@@ -51,11 +51,7 @@
                         @endguest
                         @auth
                             <img class="h-8 w-8 rounded-full flex items-center justify-center"
-                                 @if(auth()->user()->photo)
-                                     src="{{ asset('storage/users/' . auth()->user()->photo) }}"
-                                 @else
-                                     src="{{ asset('storage/users/anonymous.png') }}"
-                                 @endif
+                                 src="{{ auth()->user()->getImage() }}"
                                  alt="Account"/>
                             <span
                                     class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
@@ -120,7 +116,7 @@
 
         <!-- Search bar -->
         <div class="hidden px-2 py-2" id="searchBar">
-            <livewire:search-dropdown />
+            <livewire:search-dropdown/>
         </div>
     </div>
 
@@ -143,7 +139,7 @@
                 <div class="flex-shrink-0">
                     @auth
                         <img class="h-10 w-10 rounded-full"
-                             src="{{ asset('storage/users/' . auth()->user()->photo) }}" alt="Account"/>
+                             src="{{ auth()->user()->getImage() }}" alt="Account"/>
                     @else
                         <img class="h-10 w-10 rounded-full"
                              src="{{ asset('storage/users/anonymous.png') }}" alt="Account"/>
