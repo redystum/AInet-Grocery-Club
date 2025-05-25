@@ -4,17 +4,21 @@
             <div class="flex items-start">
                 <div class="toast-icon">
                     @if(session('toast')['type'] === 'success')
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                        <div class="icon-circle bg-green-500 text-white">
+                            <i class="fas fa-check"></i>
+                        </div>
                     @elseif(session('toast')['type'] === 'error')
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                        <div class="icon-circle bg-red-500 text-white">
+                            <i class="fas fa-times"></i>
+                        </div>
                     @elseif(session('toast')['type'] === 'warning')
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
+                        <div class="icon-circle bg-yellow-500 text-white">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    @elseif(session('toast')['type'] === 'info')
+                        <div class="icon-circle bg-blue-500 text-white">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
                     @endif
                 </div>
                 <div class="ml-3">
@@ -22,29 +26,27 @@
                     <p class="toast-message">{{ session('toast')['message'] }}</p>
                 </div>
                 <button onclick="hideToast()" class="ml-auto toast-close">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                    <i class="fas fa-times text-gray-500 hover:text-gray-600"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            hideToast();
-        }, {{ session('toast')['time'] ?? 5000 }});
-
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => hideToast(), {{ session('toast')['time'] ?? 5000 }});
+        });
+        
         function hideToast() {
             const toast = document.querySelector('#toast-notification .toast');
-            toast.classList.remove('translate-x-0', 'opacity-100');
-            toast.classList.add('translate-x-full', 'opacity-0');
-
-            // Remove from DOM after animation
-            setTimeout(() => {
-                document.getElementById('toast-notification').remove();
-            }, 1000);
+            if (toast) {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    const notification = document.getElementById('toast-notification');
+                    if (notification) notification.remove();
+                }, 1000);
+            }
         }
     </script>
 @endif

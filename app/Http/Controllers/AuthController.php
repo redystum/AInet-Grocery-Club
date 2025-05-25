@@ -64,18 +64,27 @@ class AuthController extends Controller
         ])->onlyInput('email', 'remember');
     }
 
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home')->with('success', 'Logged out successfully.');
+    }
+
     public function register(RegisterRequest $request): RedirectResponse
     {
         $request->validated();
 
-        if (! $request->only('terms')) {
+        if (!$request->only('terms')) {
             return back()->withErrors([
                 'terms' => 'You must accept the terms and conditions.',
             ])->onlyInput('terms');
         }
 
         if ($request->hasFile('photo')) {
-            $filename = Carbon::now()->format('dmYHis').'_'.Str::random(10).'.'.$request->file('photo')->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
             $request->file('photo')->storeAs('users', $filename, 'public');
             $request->merge(['photo' => $filename]);
         }
@@ -87,20 +96,11 @@ class AuthController extends Controller
         return back()->with('success', 'Registration successful. Please check your email to activate your account.');
     }
 
-    public function logout(Request $request): RedirectResponse
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('home')->with('success', 'Logged out successfully.');
-    }
-
     public function activate(Request $request, $id, $hash): RedirectResponse
     {
         $user = User::findOrFail($id);
 
-        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        if (!hash_equals((string)$hash, sha1($user->getEmailForVerification()))) {
             return redirect()->route('home')->withErrors(['email' => 'Invalid activation link.']);
         }
 

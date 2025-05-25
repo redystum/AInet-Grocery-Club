@@ -2,10 +2,9 @@
 
 namespace App\Livewire;
 
-use Illuminate\Support\Facades\Log;
-use Livewire\Component;
-use App\Models\Product;
 use App\Models\Category;
+use App\Models\Product;
+use Livewire\Component;
 
 class SearchDropdown extends Component
 {

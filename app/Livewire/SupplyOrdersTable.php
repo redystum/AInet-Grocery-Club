@@ -4,9 +4,9 @@ namespace App\Livewire;
 
 use App\Models\SupplyOrder;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Validation\Rule;
 
 class SupplyOrdersTable extends Component
 {

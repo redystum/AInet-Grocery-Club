@@ -5,6 +5,8 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\SupplyOrder;
+use App\Utils\CustomFieldManager;
+use App\Utils\ToastCreator;
 use Illuminate\Http\Request;
 
 class SupplyController extends Controller
@@ -31,25 +33,20 @@ class SupplyController extends Controller
         foreach ($restockData as $productId => $quantity) {
             $random_date = now()->addDays(rand(2, 5));
 
-            $custom = json_encode([
-                'expected_delivery_date' => $random_date,
-                'delivered_at' => null,
-            ]);
-
             SupplyOrder::create([
                 'product_id' => $productId,
                 'registered_by_user_id' => auth()->id(),
                 'status' => 'requested',
                 'quantity' => $quantity,
-                'custom' => $custom,
+                'custom' => CustomFieldManager::update_or_create_array(null, [
+                    'expected_delivery_date' => $random_date,
+                    'delivered_at' => null,
+                ], true),
             ]);
         }
 
-        return redirect()->route('board.stock')->with('toast', [
-            'title' => 'Success',
-            'message' => 'Supply order created successfully.',
-            'type' => 'success',
-        ]);
+        ToastCreator::success('Supply order created successfully.');
+        return redirect()->route('board.stock');
     }
 
     public function cancel(SupplyOrder $order)
@@ -81,52 +78,8 @@ class SupplyController extends Controller
             $order->delete();
         }
 
-        return redirect()->route('board.supply.index')->with('toast', [
-            'title' => 'Success',
-            'message' => 'Supply orders deleted successfully.',
-            'type' => 'success',
-        ]);
-    }
-
-    public function update(Request $request, SupplyOrder $order)
-    {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
-        ]);
-
-        if ($order->status == SupplyOrder::STATUS_COMPLETED) {
-            return redirect()->route('board.supply.index')->with('toast', [
-                'title' => 'Error',
-                'message' => 'Cannot update completed orders.',
-                'type' => 'error',
-            ]);
-        }
-
-        if ($order->created_at->diffInHours(now(), false) >= 24) {
-            return redirect()->route('board.supply.index')->with('toast', [
-                'title' => 'Error',
-                'message' => 'Cannot update orders older than 24 hours.',
-                'type' => 'error',
-            ]);
-        }
-
-        if ((int)$request->input('quantity') + $order->product->stock > $order->product->stock_upper_limit) {
-            return redirect()->route('board.supply.index')->with('toast', [
-                'title' => 'Error',
-                'message' => 'Cannot update order to exceed stock upper limit.',
-                'type' => 'error',
-            ]);
-        }
-
-        $order->update([
-            'quantity' => $request->input('quantity'),
-        ]);
-
-        return redirect()->route('board.supply.index')->with('toast', [
-            'title' => 'Success',
-            'message' => 'Supply order updated successfully.',
-            'type' => 'success',
-        ]);
+        ToastCreator::success('Supply orders deleted successfully.');
+        return redirect()->route('board.supply.index');
     }
 
     public function complete(SupplyOrder $order)
@@ -143,12 +96,37 @@ class SupplyController extends Controller
 
         $order->product->increment('stock', $order->quantity);
 
-        return redirect()->route('board.supply.index')->with('toast', [
-            'title' => 'Success',
-            'message' => 'Supply order completed successfully.',
-            'type' => 'success',
+        ToastCreator::success('Supply order completed successfully.');
+        return redirect()->route('board.supply.index');
+    }
+
+    public function update(Request $request, SupplyOrder $order)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
         ]);
 
+        if ($order->status == SupplyOrder::STATUS_COMPLETED) {
+            ToastCreator::error('Cannot update completed orders.');
+            return redirect()->route('board.supply.index');
+        }
+
+        if ($order->created_at->diffInHours(now(), false) >= 24) {
+            ToastCreator::error('Cannot update orders older than 24 hours.');
+            return redirect()->route('board.supply.index');
+        }
+
+        if ((int)$request->input('quantity') + $order->product->stock > $order->product->stock_upper_limit) {
+            ToastCreator::error('Cannot update order to exceed stock upper limit.');
+            return redirect()->route('board.supply.index');
+        }
+
+        $order->update([
+            'quantity' => $request->input('quantity'),
+        ]);
+
+        ToastCreator::success('Supply order updated successfully.');
+        return redirect()->route('board.supply.index');
     }
 
 }

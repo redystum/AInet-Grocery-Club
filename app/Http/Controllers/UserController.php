@@ -53,19 +53,19 @@ class UserController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = Carbon::now()->format('dmYHis').'_'.Str::random(10).'.'.$request['photo']->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
             $file->storeAs('users', $filename, 'public');
             $oldPhoto = $user->photo;
-            if ($oldPhoto && Storage::disk('public')->exists('users/'.$oldPhoto)) {
-                Storage::disk('public')->delete('users/'.$oldPhoto);
+            if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
+                Storage::disk('public')->delete('users/' . $oldPhoto);
             }
             $toUpdate['photo'] = $filename;
         }
 
         if ($request->has('remove_photo') && $request->input('remove_photo') == '1') {
             $oldPhoto = $user->photo;
-            if ($oldPhoto && Storage::disk('public')->exists('users/'.$oldPhoto)) {
-                Storage::disk('public')->delete('users/'.$oldPhoto);
+            if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
+                Storage::disk('public')->delete('users/' . $oldPhoto);
             }
             $toUpdate['photo'] = null;
         }
