@@ -281,7 +281,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if($tab == "received")
                                 <a href="#"
-                                   class="text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                   class="cursor-pointer text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                     <i class="fas fa-receipt mr-3"></i>
                                     Invoice
                                 </a>
@@ -308,7 +308,7 @@
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
                                             <a href="#"
-                                               class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                               class="cursor-pointer flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                role="menuitem">
                                                 <i class="fas fa-receipt mr-3 text-neutral-400"></i>
                                                 Download Invoice
@@ -320,7 +320,7 @@
                                                     showEditModal = true;
                                                     activeDropdown = null;
                                                 "
-                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                        class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                         role="menuitem">
                                                     <i class="fas fa-edit mr-3 text-blue-400"></i>
                                                     Edit Quantity
@@ -340,13 +340,13 @@
                                                         showConfirmModal = true;
                                                         activeDropdown = null;
                                                    "
-                                                   class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                    role="menuitem">
                                                     <i class="fas fa-check mr-3 text-green-400"></i>
                                                     Mark as Received
                                                 </button>
                                                 <a href="{{ route('board.supply.cancel', $order->id) }}"
-                                                   class="w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   class="cursor-pointer w-full rounded-b-md text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                    role="menuitem">
                                                     <i class="fas fa-cancel mr-3 text-red-400"></i>
                                                     Cancel Order
@@ -367,8 +367,18 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-4 text-neutral-500 dark:text-neutral-400">No orders
-                            found.
+                        <td colspan="6" class="text-center py-4 text-neutral-500 dark:text-neutral-400">
+                            No supply orders found.
+                            <div class="mt-2 text-sm">
+                                Try adjusting your filters
+                                @if($tab != 'all')
+                                    , search or
+                                    <span wire:click="$set('tab', 'all')"
+                                          class="cursor-pointer underline">go to all supply orders tab</span>.
+                                @else
+                                    or search.
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforelse

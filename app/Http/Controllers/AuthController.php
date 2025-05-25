@@ -23,6 +23,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
         }
+
         return view('pages.auth.login');
     }
 
@@ -31,6 +32,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
         }
+
         return view('pages.auth.register');
     }
 
@@ -52,13 +54,23 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            Auth::user()->notify(new NewLogin());
+            Auth::user()->notify(new NewLogin);
+
             return redirect()->route('home')->with('success', 'Logged in successfully.');
         }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email', 'remember');
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home')->with('success', 'Logged out successfully.');
     }
 
     public function register(RegisterRequest $request): RedirectResponse
@@ -72,7 +84,7 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
             $request->file('photo')->storeAs('users', $filename, 'public');
             $request->merge(['photo' => $filename]);
         }
@@ -82,15 +94,6 @@ class AuthController extends Controller
         $user->sendEmailVerificationNotification();
 
         return back()->with('success', 'Registration successful. Please check your email to activate your account.');
-    }
-
-    public function logout(Request $request): RedirectResponse
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('home')->with('success', 'Logged out successfully.');
     }
 
     public function activate(Request $request, $id, $hash): RedirectResponse
@@ -107,7 +110,7 @@ class AuthController extends Controller
 
         $user->markEmailAsVerified();
 
-        $user->notify(new Welcome());
+        $user->notify(new Welcome);
 
         return redirect()->route('login')->with('status', 'Your account has been activated successfully.');
     }

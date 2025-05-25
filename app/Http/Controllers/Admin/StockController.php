@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\SupplyOrder;
+use App\Utils\ToastCreator;
 
 class StockController extends Controller
 {
@@ -39,11 +40,8 @@ class StockController extends Controller
     public function restock(Product $product)
     {
         if ($product->stock >= $product->stock_upper_limit) {
-            return redirect()->route('board.stock')->with('toast', [
-                'title' => 'Error',
-                'message' => 'Product is full of stock.',
-                'type' => 'error',
-            ]);
+            ToastCreator::error('Product is full of stock.');
+            return redirect()->route('board.stock');
         }
 
         $restock = $product->stock_upper_limit - $product->stock;

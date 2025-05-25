@@ -105,7 +105,7 @@ class CustomFieldManager
      * @param mixed $instance An eloquent model instance
      * @return void
      */
-    public static function self_custom_to_attribute(mixed &$instance): void
+    public static function self_custom_to_attribute(mixed $instance): void
     {
         if (isset($instance->custom)) {
             if (!is_array($instance->custom)) {
@@ -132,7 +132,6 @@ class CustomFieldManager
         $instance->custom = $custom;
     }
 
-
     /**
      * Gets a custom field value from the model
      *
@@ -153,24 +152,33 @@ class CustomFieldManager
         return $instance->custom[$key] ?? null;
     }
 
+
+
+    // Region Static methods
+
     /**
      * Updates the custom array with values from the provided data array.
      *
      * @param mixed $custom The array to be updated. If not an array, the data array is returned.
      * @param array $data The data array containing key-value pairs to update the custom array.
-     *
-     * @return array The resulting array after merging values from the data array into the custom array.
+     * @param bool $stringify If true, the resulting array will be JSON-encoded.
+     * @return array|string The resulting array after merging values from the data array into the custom array.
      */
-    public static function update_array(mixed $custom, array $data): array
+    public static function update_or_create_array(mixed $custom, array $data, bool $stringify = false): array|string
     {
-        if (!is_array($custom)) {
+        if (!$custom || !is_array($custom)) {
+            if ($stringify) {
+                $data = json_encode($data);
+            }
             return $data;
         }
 
         foreach ($data as $key => $value) {
-            if (isset($custom[$key])) {
-                $custom[$key] = $value;
-            }
+            $custom[$key] = $value;
+        }
+
+        if ($stringify) {
+            $custom = json_encode($custom);
         }
         return $custom;
     }

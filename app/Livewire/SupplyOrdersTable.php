@@ -4,9 +4,9 @@ namespace App\Livewire;
 
 use App\Models\SupplyOrder;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Validation\Rule;
 
 class SupplyOrdersTable extends Component
 {
@@ -16,6 +16,13 @@ class SupplyOrdersTable extends Component
     public $orderBy = 'date_desc';
     public $dateRange = '';
     public $tab = 'pending';
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'orderBy' => ['except' => 'date_desc'],
+        'dateRange' => ['except' => ''],
+        'tab' => ['except' => 'pending'],
+    ];
 
     protected $validOrderByOptions = [
         'date_desc', 'date_asc', 'quantity_low_high', 'quantity_high_low', 'name_asc', 'name_desc'

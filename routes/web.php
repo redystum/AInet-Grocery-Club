@@ -1,15 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\StockController;
-use App\Http\Controllers\Admin\SupplyController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\admin\StockController;
+use App\Http\Controllers\admin\SupplyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\OrderController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
