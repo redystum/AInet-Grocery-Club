@@ -53,7 +53,12 @@
                 </div>
 
                 <div class="mt-2 mb-6">
-                    @if($product->stock > 0)
+                    @if($product->stock > 0 && $product->stock < $product->stock_lower_limit)
+                        <span class="w-2 h-2 inline-block bg-yellow-500 rounded-full mr-2"></span>
+                        <span class="text-yellow-600 dark:text-yellow-400 text-sm font-medium">
+                            Low Stock ({{ $product->stock }})
+                        </span>
+                    @elseif($product->stock > 0)
                         <span class="w-2 h-2 inline-block bg-green-500 rounded-full mr-2"></span>
                         <span class="text-green-600 dark:text-green-400 text-sm font-medium">
                             In Stock ({{ $product->stock }})
@@ -67,7 +72,7 @@
                 <!-- Pricing -->
                 <div class="mb-6">
                     <span id="originalPrice"
-                          class="@if($product->discount_min_qty <= 1) hidden @endif text-4xl font-bold text-blue-600 dark:text-blue-400">€{{ number_format($product->price, 2) }}</span>
+                          class="@if($product->discount_min_qty && $product->discount_min_qty <= 1) hidden @endif text-4xl font-bold text-blue-600 dark:text-blue-400">€{{ number_format($product->price, 2) }}</span>
 
                     @if($product->discount)
                         <div class="flex items-center @if($product->discount_min_qty > 1) hidden @endif"
@@ -172,39 +177,8 @@
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">You May Also Like</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Related Product 1 -->
                 @foreach($random_products as $randomProduct)
-                    <a href="{{ route('product.show', $randomProduct->id) }}"
-                       class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-                        <div class="relative h-48 overflow-hidden">
-                            <img src="{{ $randomProduct->getImage() }}"
-                                 alt="{{ $randomProduct->name }}"
-                                 class="w-full h-full object-cover">
-                            @if($randomProduct->discount)
-                                <span class="absolute top-3 left-3 shadow-md text-xs bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
-                                    {{ number_format(($randomProduct->discount / $randomProduct->price) * 100) }}% OFF
-                                </span>
-                            @endif
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-neutral-800 dark:text-neutral-100 mb-1">{{ $randomProduct->name }}</h3>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    @if($randomProduct->discount)
-                                        <span
-                                                class="text-blue-600 dark:text-blue-400 font-bold">€{{ number_format($randomProduct->price - $randomProduct->discount, 2) }}</span>
-                                        <span
-                                                class="ml-2 text-neutral-500 dark:text-neutral-400 text-sm line-through">€{{ number_format($randomProduct->price, 2) }}</span>
-                                    @else
-                                        <span
-                                                class="text-blue-600 dark:text-blue-400 font-bold">€{{ number_format($randomProduct->price, 2) }}</span>
-                                    @endif
-                                </div>
-                                <span
-                                        class="text-green-600 dark:text-green-400 text-xs font-medium">{{ $randomProduct->stock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
-                            </div>
-                        </div>
-                    </a>
+                    <x-product-card :product="$randomProduct"/>
                 @endforeach
             </div>
         </div>
@@ -231,12 +205,14 @@
                     quantityInput.value = maxVal;
                 }
 
-                if (currentValue >= discountMinQty) {
-                    finalDiscountPrice.classList.remove('hidden');
-                    originalPrice.classList.add('hidden');
-                } else {
-                    finalDiscountPrice.classList.add('hidden');
-                    originalPrice.classList.remove('hidden');
+                if (finalDiscountPrice) {
+                    if (currentValue >= discountMinQty) {
+                        finalDiscountPrice.classList.remove('hidden');
+                        originalPrice.classList.add('hidden');
+                    } else {
+                        finalDiscountPrice.classList.add('hidden');
+                        originalPrice.classList.remove('hidden');
+                    }
                 }
             });
 
@@ -246,13 +222,14 @@
                     currentValue--;
                     quantityInput.value = currentValue;
                 }
-
-                if (currentValue >= discountMinQty) {
-                    finalDiscountPrice.classList.remove('hidden');
-                    originalPrice.classList.add('hidden');
-                } else {
-                    finalDiscountPrice.classList.add('hidden');
-                    originalPrice.classList.remove('hidden');
+                if (finalDiscountPrice) {
+                    if (currentValue >= discountMinQty) {
+                        finalDiscountPrice.classList.remove('hidden');
+                        originalPrice.classList.add('hidden');
+                    } else {
+                        finalDiscountPrice.classList.add('hidden');
+                        originalPrice.classList.remove('hidden');
+                    }
                 }
             });
 
@@ -263,12 +240,15 @@
                     quantityInput.value = currentValue;
                 }
 
-                if (currentValue >= discountMinQty) {
-                    finalDiscountPrice.classList.remove('hidden');
-                    originalPrice.classList.add('hidden');
-                } else {
-                    finalDiscountPrice.classList.add('hidden');
-                    originalPrice.classList.remove('hidden');
+                if (finalDiscountPrice) {
+
+                    if (currentValue >= discountMinQty) {
+                        finalDiscountPrice.classList.remove('hidden');
+                        originalPrice.classList.add('hidden');
+                    } else {
+                        finalDiscountPrice.classList.add('hidden');
+                        originalPrice.classList.remove('hidden');
+                    }
                 }
             });
 

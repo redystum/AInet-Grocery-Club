@@ -64,7 +64,7 @@ class SearchDropdown extends Component
         $mappedProducts = $products->map(fn($p) => [
             'type' => 'product - ' . $p->category->name,
             'name' => $p->name,
-            'url' => "#",
+            'url' => route('product.show', $p->id),
             'image' => $p->getImage(),
         ]);
 
@@ -108,8 +108,13 @@ class SearchDropdown extends Component
     }
 
     // Select the currently highlighted item
-    public function selectItem()
+    public function selectItem(int $index = null)
     {
+        if ($index !== null) {
+            $this->selectedIndex = $index;
+            return redirect()->to($this->results[$this->selectedIndex]['url']);
+        }
+
         if ($this->selectedIndex >= 0 && $this->selectedIndex < count($this->results)) {
             return redirect()->to($this->results[$this->selectedIndex]['url']);
         }
