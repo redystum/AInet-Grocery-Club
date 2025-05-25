@@ -155,7 +155,7 @@ class OrderController extends Controller
 
         $order->update([
             'cancel_reason' => $reason_text,
-            'custom' => CustomFieldManager::update_array($order->custom, [
+            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_PENDING,
                 'cancellationTime' => now(),
                 'cancellationDetails' => $request->input('details'),

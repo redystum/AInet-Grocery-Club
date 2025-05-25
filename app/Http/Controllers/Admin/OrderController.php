@@ -101,7 +101,7 @@ class OrderController extends Controller
     public function cancelByAdmin(Order $order, Request $request)
     {
         if ($order->status != Order::STATUS_PENDING) {
-            return redirect()->route('orders')->with('toast', [
+            return redirect()->route('board.orders.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'You cannot cancel an order that is not pending',
                 'type' => 'error',
@@ -140,14 +140,14 @@ class OrderController extends Controller
         $order->update([
             'status' => Order::STATUS_CANCELED,
             'cancel_reason' => $reason_text,
-            'custom' => CustomFieldManager::update_array($order->custom, [
+            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
                 'cancellationTime' => now(),
                 'cancellationDetails' => $request->input('details'),
             ])
         ]);
 
-        $order->user()->notify(new CancelledOrder(
+        $order->user->notify(new CancelledOrder(
             $order->id,
             $order->created_at->format('d-m-Y H:i:s'),
             $reason_text,
@@ -174,7 +174,7 @@ class OrderController extends Controller
 
         $order->update([
             'status' => Order::STATUS_CANCELED,
-            'custom' => CustomFieldManager::update_array($order->custom, [
+            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
                 'cancellationTime' => now(),
             ])
@@ -206,7 +206,7 @@ class OrderController extends Controller
         }
 
         $order->update([
-            'custom' => CustomFieldManager::update_array($order->custom, [
+            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
                 'cancellationStatus' => Order::CANCEL_STATUS_REFUSED,
                 'cancellationTime' => now(),
             ])
