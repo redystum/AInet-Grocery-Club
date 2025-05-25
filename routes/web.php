@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
         })->name('index');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
+        Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
             Route::post('store', [SupplyController::class, 'store'])->name('store');
@@ -119,8 +120,9 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 !
 !*/
 if (!app()->isProduction()) {
-    Route::get('force_login/{user}', function ($user) {
+    Route::get('force_login/{user}', function (\App\Models\User $user) {
         auth()->loginUsingId($user);
+        \App\Utils\ToastCreator::success('Logged in as ' . $user->name);
         return redirect()->back();
     })->name('force_login');
 

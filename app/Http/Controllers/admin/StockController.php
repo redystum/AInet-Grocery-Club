@@ -4,8 +4,10 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\StockAdjustments;
 use App\Models\SupplyOrder;
 use App\Utils\ToastCreator;
+use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
@@ -60,5 +62,38 @@ class StockController extends Controller
         $products = collect([$product]); // just to use the same page
 
         return view('pages.admin.stock.restock', compact('products', 'alreadyExists'));
+    }
+
+    public function update(Product $product, Request $request)
+    {
+        $request->validate([
+            'quantity' => ['required', 'integer'],
+        ]);
+
+        if ($request->quantity > $product->stock_upper_limit) {
+            ToastCreator::error('Cannot update stock to more than the upper limit.');
+            return redirect()->route('board.stock');
+        }
+
+        if ($request->quantity < $product->stock_lower_limit) {
+            ToastCreator::error('Cannot update stock to less than the lower limit.');
+            return redirect()->route('board.stock');
+        }
+
+
+        $changedQuantity = $request->input('quantity') - $product->stock;
+
+        $product->update(['stock' => $request->input('quantity')]);
+
+        StockAdjustments::create([
+            'product_id' => $product->id,
+            'quantity_changed' => $changedQuantity,
+            'registered_by_user_id' => auth()->id(),
+        ]);
+
+        ToastCreator::success('Stock updated successfully.');
+
+        return redirect()->route('board.stock');
+
     }
 }
