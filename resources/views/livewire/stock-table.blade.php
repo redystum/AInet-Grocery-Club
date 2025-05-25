@@ -96,7 +96,7 @@
                 </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                @foreach($products as $product)
+                @forelse($products as $product)
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                         <!-- Product Column -->
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -156,7 +156,8 @@
                             <div class="relative">
                                 <button @click="$event.stopPropagation(); activeDropdown === 'product-{{ $product->id }}' ? activeDropdown = null : activeDropdown = 'product-{{ $product->id }}'"
                                         class="inline-flex cursor-pointer justify-center w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
-                                        :aria-expanded="activeDropdown === 'product-{{ $product->id }}'" aria-haspopup="true">
+                                        :aria-expanded="activeDropdown === 'product-{{ $product->id }}'"
+                                        aria-haspopup="true">
                                     <i class="fas fa-ellipsis-v text-neutral-600 dark:text-neutral-300 m-auto"></i>
                                 </button>
 
@@ -196,7 +197,13 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-neutral-500 dark:text-neutral-400">
+                            No products found.
+                        </td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>

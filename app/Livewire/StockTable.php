@@ -16,6 +16,13 @@ class StockTable extends Component
     public $category = '';
     public $stock_status = '';
     public $order_by = 'stock_low_high';
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'category' => ['except' => ''],
+        'stock_status' => ['except' => ''],
+        'order_by' => ['except' => 'stock_low_high'],
+    ];
     
     protected $validOrderByOptions = [
         'stock_low_high', 'stock_high_low', 'name_asc', 'name_desc', 'category_asc', 'category_desc', 'price_high_low',

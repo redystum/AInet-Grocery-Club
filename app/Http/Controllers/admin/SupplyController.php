@@ -55,7 +55,7 @@ class SupplyController extends Controller
     public function cancel(SupplyOrder $order)
     {
         $otherOrders = SupplyOrder::whereDate('created_at', '=', $order->created_at->toDateString())
-            ->where('status', '!=' , SupplyOrder::STATUS_COMPLETED)
+            ->where('status', '!=', SupplyOrder::STATUS_COMPLETED)
             ->where('id', '!=', $order->id)
             ->get();
 
@@ -138,6 +138,10 @@ class SupplyController extends Controller
                 'delivered_at' => now(),
             ]),
         ]);
+
+        $order->load('product');
+
+        $order->product->increment('stock', $order->quantity);
 
         return redirect()->route('board.supply.index')->with('toast', [
             'title' => 'Success',

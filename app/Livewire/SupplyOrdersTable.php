@@ -17,6 +17,13 @@ class SupplyOrdersTable extends Component
     public $dateRange = '';
     public $tab = 'pending';
 
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'orderBy' => ['except' => 'date_desc'],
+        'dateRange' => ['except' => ''],
+        'tab' => ['except' => 'pending'],
+    ];
+
     protected $validOrderByOptions = [
         'date_desc', 'date_asc', 'quantity_low_high', 'quantity_high_low', 'name_asc', 'name_desc'
     ];
