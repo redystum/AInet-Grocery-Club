@@ -96,11 +96,13 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         @foreach($products as $product)
                             <div
-                                    class="product-card bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md relative group cursor-pointer">
+                                    class="product-card bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md relative group cursor-pointer"
+                                    onclick="window.location.href='{{ route('product.show', $product->id) }}'">
                                 <!-- Wishlist Button (shown on hover) -->
                                 <button
                                         class="absolute top-3 right-3 z-10 w-8 h-8 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center shadow-md hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors wishlist-btn opacity-0 group-hover:opacity-100 cursor-pointer"
-                                        data-product-id="{{ $product->id }}">
+                                        data-product-id="{{ $product->id }}"
+                                        onclick="event.stopPropagation()">
                                     <i class="far fa-heart text-neutral-600 dark:text-neutral-300"></i>
                                 </button>
 
@@ -146,12 +148,14 @@
                                     <!-- Action Buttons -->
                                     <div class="flex justify-between items-center">
                                         <a href="#"
-                                           class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm">
+                                           class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm"
+                                           onclick="event.stopPropagation()">
                                             View Details
                                         </a>
                                         <button
                                                 class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition-colors add-to-cart-btn cursor-pointer"
-                                                {{ $product->stock <= 0 ? 'disabled' : '' }}>
+                                                {{ $product->stock <= 0 ? 'disabled' : '' }}
+                                                onclick="event.stopPropagation()">
                                             <i class="fas fa-shopping-cart mr-1"></i> Add
                                         </button>
                                     </div>
