@@ -121,7 +121,7 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 !*/
 if (!app()->isProduction()) {
     Route::get('force_login/{user}', function (\App\Models\User $user) {
-        auth()->loginUsingId($user);
+        auth()->loginUsingId($user->id, true);
         \App\Utils\ToastCreator::success('Logged in as ' . $user->name);
         return redirect()->back();
     })->name('force_login');
