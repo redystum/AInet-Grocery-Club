@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProductController;
@@ -88,6 +89,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
 
+Route::get('/cart', [CartController::class, 'show'])->name('cart.page');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE
 !---------------------------------------------------------------------------
