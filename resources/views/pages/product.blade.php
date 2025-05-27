@@ -107,7 +107,7 @@
                         <!-- Quantity Selector -->
                         <div
                             class="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-lg overflow-hidden bg-white dark:bg-neutral-700">
-                            <button type="button" id="minus"
+                            <button type="button" id="minus" aria-label="Decrease quantity"
                                     class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
                                 <i class="fas fa-minus"></i>
                             </button>
