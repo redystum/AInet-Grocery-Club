@@ -16,7 +16,7 @@
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300
                                        dark:border-neutral-700 focus:ring-2 focus:ring-blue-500
                                        focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100
-                                       placeholder-gray-400 dark:placeholder-neutral-500">
+                                       placeholder-gray-400 dark:placeholder-neutral-500 cursor-pointer">
                             <option value="discount_desc" {{ request('sort') === 'discount_desc' ? 'selected' : '' }}>
                                 Best Discounts
                             </option>
