@@ -5,8 +5,8 @@
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-2xl">
     <h1 class="text-2xl font-bold mb-6">Your Shopping Cart</h1>
-    @if(session('cart') && count(session('cart')) > 0)
-        @foreach(session('cart') as $id => $item)
+    @if($cart && count($cart) > 0)
+        @foreach($cart as $id => $item)
             <div class="flex items-center mb-4">
                 <img src="{{ asset('storage/products/' . $item['photo']) }}" class="w-16 h-16 rounded mr-4">
                 <div class="flex-1">
