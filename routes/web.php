@@ -91,7 +91,7 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 
 Route::get('/cart', [CartController::class, 'show'])->name('cart.page');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE
 !---------------------------------------------------------------------------
