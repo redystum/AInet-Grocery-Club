@@ -177,8 +177,8 @@
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">You May Also Like</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @foreach($random_products as $randomProduct)
-                    <x-product-card :product="$randomProduct"/>
+                @foreach($relatedProducts as $related)
+                    <x-product-card :product="$related"/>
                 @endforeach
             </div>
         </div>
