@@ -4,33 +4,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Hero Carousel -->
-        <div class="relative rounded-xl overflow-hidden shadow-md mb-8 h-80" id="carousel">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-20"></div>
-            <div class="flex h-full transition-transform duration-500 ease-in-out">
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight1.jpg') }}" alt="Highlight 1"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight2.jpg') }}" alt="Highlight 2"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight3.jpg') }}" alt="Highlight 3"
-                         class="w-full h-full object-cover">
-                </div>
-            </div>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2" id="carouselIndicators">
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-            </div>
-        </div>
-
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Sidebar Filters -->
