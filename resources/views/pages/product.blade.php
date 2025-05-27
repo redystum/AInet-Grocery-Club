@@ -110,28 +110,28 @@
                         <div
                                 class="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-lg overflow-hidden bg-white dark:bg-neutral-700">
                             <button id="minus"
-                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
+                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 cursor-pointer">
                                 <i class="fas fa-minus"></i>
                             </button>
                             <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity"
                                    id="quantity" autocomplete="off"
                                    class="appearance-textfield w-12 text-center border-0 bg-transparent text-neutral-800 dark:text-neutral-200 focus:ring-0">
                             <button id="plus"
-                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600">
+                                    class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 cursor-pointer">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
 
                         <!-- Add to Cart Button -->
                         <button
-                                class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center cursor-pointer">
                             <i class="fas fa-shopping-cart mr-2"></i> <span class="block md:hidden lg:block">Add to
                                 Cart</span>
                         </button>
 
                         <!-- Wishlist Button -->
                         <button
-                                class="p-3 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+                                class="p-3 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                             <i class="far fa-heart text-neutral-600 dark:text-neutral-300"></i>
                         </button>
                     </div>
