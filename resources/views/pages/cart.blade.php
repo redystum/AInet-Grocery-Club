@@ -44,13 +44,15 @@
                                         <!-- Price and Quantity -->
                                         <div class="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             <!-- Price -->
-                                            <div class="text-lg font-medium text-neutral-800 dark:text-neutral-100">
-                                                @if($item->product->discount_price)
-                                                    <span class="text-red-600 dark:text-red-400">${{ number_format($item->product->discount_price, 2) }}</span>
-                                                    <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">${{ number_format($item->product->price, 2) }}</span>
-                                                @else
+                                            <div
+                                                class="text-lg font-medium text-neutral-800 dark:text-neutral-100 unit-price"
+                                                data-original-price="{{ $item->product->price }}"
+                                                data-discount="{{ $item->product->discount ?? 0 }}"
+                                                data-discount-min-qty="{{ $item->product->discount_min_qty ?? 0 }}"
+                                                data-id="{{ $item->id }}">
+                                                <span class="unit-price-value">
                                                     ${{ number_format($item->product->price, 2) }}
-                                                @endif
+                                                </span>
                                             </div>
 
                                             <!-- Quantity Controls -->
@@ -166,37 +168,6 @@
             });
         });
 
-        // Calculate and update totals
-        function updateTotals() {
-            let subtotal = 0, totalDiscount = 0;
-
-            document.querySelectorAll('.item-total').forEach(item => {
-                const input = item.closest('.flex').querySelector('.quantity-input');
-                const quantity = parseInt(input.value) || 1;
-                const { originalPrice, discount, discountMinQty } = item.dataset;
-
-                const price = parseFloat(originalPrice);
-                const disc = parseFloat(discount);
-                const minQty = parseInt(discountMinQty);
-
-                // Aplica desconto se aplicável
-                const isDiscounted = (disc > 0 && quantity >= minQty);
-                const unitPrice = isDiscounted ? (price - disc) : price;
-                const discountLine = isDiscounted ? disc * quantity : 0;
-
-                subtotal += price * quantity;
-                totalDiscount += discountLine;
-
-                // Atualiza visual
-                item.textContent = '$' + (unitPrice * quantity).toFixed(2);
-            });
-
-            const total = subtotal - totalDiscount;
-            document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('cart-tax').textContent = '- $' + totalDiscount.toFixed(2);
-            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
-        }
-
         // Input change handler
         document.querySelectorAll('.quantity-input').forEach(input => {
             input.addEventListener('change', function() {
@@ -259,6 +230,43 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            updateUnitPrices();
+        });
+
+        // Calculate and update totals
+        function updateTotals() {
+            let subtotal = 0, totalDiscount = 0;
+
+            document.querySelectorAll('.item-total').forEach(item => {
+                const input = item.closest('.flex').querySelector('.quantity-input');
+                const quantity = parseInt(input.value) || 1;
+                const { originalPrice, discount, discountMinQty } = item.dataset;
+
+                const price = parseFloat(originalPrice);
+                const disc = parseFloat(discount);
+                const minQty = parseInt(discountMinQty);
+
+                // Aplica desconto se aplicável
+                const isDiscounted = (disc > 0 && quantity >= minQty);
+                const unitPrice = isDiscounted ? (price - disc) : price;
+                const discountLine = isDiscounted ? disc * quantity : 0;
+
+                subtotal += price * quantity;
+                totalDiscount += discountLine;
+
+                // Atualiza visual
+                item.textContent = '$' + (unitPrice * quantity).toFixed(2);
+            });
+
+            const total = subtotal - totalDiscount;
+            document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('cart-tax').textContent = '- $' + totalDiscount.toFixed(2);
+            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+
+            // ATUALIZA OS PREÇOS UNITÁRIOS
+            updateUnitPrices();
+        }
 
         // AJAX functions
         function updateCartItem(itemId, quantity, reload = true) {
@@ -305,6 +313,29 @@
                     }
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function updateUnitPrices() {
+            document.querySelectorAll('.unit-price').forEach(unit => {
+                const price = parseFloat(unit.dataset.originalPrice);
+                const discount = parseFloat(unit.dataset.discount);
+                const minQty = parseInt(unit.dataset.discountMinQty);
+                const productId = unit.dataset.id;
+                const input = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+                const quantity = parseInt(input.value) || 1;
+
+                let html = '';
+                if (discount > 0 && quantity >= minQty) {
+                    const discounted = price - discount;
+                    const percent = Math.round((discount / price) * 100);
+                    html = `<span class="text-red-600 dark:text-red-400">$${discounted.toFixed(2)}</span>
+                    <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">$${price.toFixed(2)}</span>
+                    <span class="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">${percent}% OFF</span>`;
+                } else {
+                    html = `$${price.toFixed(2)}`;
+                }
+                unit.querySelector('.unit-price-value').innerHTML = html;
+            });
         }
     </script>
 @endsection
