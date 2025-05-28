@@ -196,7 +196,7 @@ class OrderController extends Controller
     public function cancelReject(Order $order)
     {
         if ($order->status != Order::STATUS_PENDING) {
-            return redirect()->route('orders')->with('toast', [
+            return redirect()->route('board.orders.index')->with('toast', [
                 'title' => 'Error',
                 'message' => 'You cannot reject this order',
                 'type' => 'error',
