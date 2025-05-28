@@ -111,4 +111,9 @@ class User extends Authenticatable
     {
         return $this->photo ? asset('storage/users/' . $this->photo) : asset('storage/users/anonymous.png');
     }
+
+    public function cartItems()
+    {
+        return $this->hasMany(\App\Models\CartItem::class, 'user_id', 'id');
+    }
 }

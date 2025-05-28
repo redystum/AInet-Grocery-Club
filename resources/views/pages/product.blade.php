@@ -123,7 +123,8 @@
                         </div>
 
                         <!-- Add to Cart Button -->
-                        <button
+                        <button type="button"
+                                onclick="addToCart({{ $product->id }})"
                                 class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center cursor-pointer">
                             <i class="fas fa-shopping-cart mr-2"></i> <span class="block md:hidden lg:block">Add to
                                 Cart</span>
@@ -265,5 +266,12 @@
             element.parentElement.classList.remove('border', 'border-neutral-200', 'dark:border-neutral-700', 'hover:border-blue-500');
             element.parentElement.classList.add('border-2', 'border-blue-500');
         }
+
+        function addToCart(productId) {
+            let quantity = document.getElementById('quantity').value;
+            fetch(`/cart/add/${productId}?quantity=${quantity}`)
+                .then(response => window.location.reload());
+        }
+
     </script>
 @endsection

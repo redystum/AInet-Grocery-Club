@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -78,6 +79,17 @@ Route::middleware('auth')->group(function () {
         Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
     });
 });
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/update', [CartController::class, 'update']); // Para atualizar todas as quantidades
+Route::put('/cart/{id}', [CartController::class, 'changeQuantity']); // AJAX update individual
+Route::delete('/cart/{id}', [CartController::class, 'remove']); // AJAX remove
+Route::get('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+
+//--> NÃO MEXER NISTO ENQUANTO O CHECKOUT NÃO ESTIVER PRONTO!!! <--
+Route::get('/checkout', function () {
+    return 'Página de checkout em construção!';
+})->name('checkout');
 
 /*--------------------------------------------------------------------------
 | Admin routes
