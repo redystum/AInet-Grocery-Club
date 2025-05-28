@@ -44,25 +44,20 @@
                                         <!-- Price and Quantity -->
                                         <table class="w-full mt-4">
                                             <tr>
-                                                <!-- Price Column (largura fixa) -->
+                                                <!-- Price Column -->
                                                 <td class="w-1/4 text-lg font-medium text-neutral-800 dark:text-neutral-100 unit-price align-middle"
                                                     data-original-price="{{ $item->product->price }}"
                                                     data-discount="{{ $item->product->discount ?? 0 }}"
                                                     data-discount-min-qty="{{ $item->product->discount_min_qty ?? 0 }}"
                                                     data-id="{{ $item->id }}">
                                                     <div class="min-w-[120px]">
-                                                        <span class="unit-price-value">
-                                                            ${{ number_format($item->product->price, 2) }}
-                                                        </span>
-                                                        @if($item->product->discount && $item->quantity >= $item->product->discount_min_qty)
-                                                            <span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full ml-2">
-                                                                {{ number_format(($item->product->discount / $item->product->price) * 100) }}% OFF
-                                                            </span>
-                                                        @endif
+                                    <span class="unit-price-value">
+                                        ${{ number_format($item->product->price, 2) }}
+                                    </span>
                                                     </div>
                                                 </td>
 
-                                                <!-- Quantity Controls Column (largura fixa e centralizada) -->
+                                                <!-- Quantity Controls Column -->
                                                 <td class="w-1/2 px-4 align-middle">
                                                     <div class="flex items-center justify-center">
                                                         <button class="quantity-btn px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-l-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
@@ -84,18 +79,13 @@
                                                     </div>
                                                 </td>
 
-                                                <!-- Item Total Column (largura fixa) -->
+                                                <!-- Item Total Column -->
                                                 <td class="w-1/4 text-lg font-medium text-neutral-800 dark:text-neutral-100 item-total align-middle text-right"
                                                     data-original-price="{{ $item->product->price }}"
                                                     data-discount="{{ $item->product->discount ?? 0 }}"
                                                     data-discount-min-qty="{{ $item->product->discount_min_qty ?? 0 }}">
                                                     <div class="min-w-[100px]">
                                                         ${{ number_format($item->total, 2) }}
-                                                        @if($item->product->discount && $item->quantity >= $item->product->discount_min_qty)
-                                                            <div class="text-xs text-green-600 dark:text-green-400">
-                                                                <span class="font-medium">Saved ${{ number_format($item->product->discount * $item->quantity, 2) }}</span>
-                                                            </div>
-                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
