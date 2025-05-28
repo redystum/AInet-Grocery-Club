@@ -56,7 +56,17 @@ class CartController extends Controller
 
         $total = $subtotal - $discounts;
 
-        return view('pages.cart', compact('cartItems', 'subtotal', 'discounts', 'total'));
+        if ($subtotal <= 50) {
+            $shipping = 10;
+        } elseif ($subtotal > 50 && $subtotal <= 100) {
+            $shipping = 5;
+        } else {
+            $shipping = 0;
+        }
+
+        $total_with_shipping = $total + $shipping;
+
+        return view('pages.cart', compact('cartItems', 'subtotal', 'discounts', 'total', 'shipping', 'total_with_shipping'));
     }
 
     public function add($productId, Request $request)

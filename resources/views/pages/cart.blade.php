@@ -52,7 +52,7 @@
                                                     data-id="{{ $item->id }}">
                                                     <div class="min-w-[120px]">
                                     <span class="unit-price-value">
-                                        ${{ number_format($item->product->price, 2) }}
+                                        €{{ number_format($item->product->price, 2) }}
                                     </span>
                                                     </div>
                                                 </td>
@@ -85,7 +85,7 @@
                                                     data-discount="{{ $item->product->discount ?? 0 }}"
                                                     data-discount-min-qty="{{ $item->product->discount_min_qty ?? 0 }}">
                                                     <div class="min-w-[100px]">
-                                                        ${{ number_format($item->total, 2) }}
+                                                        €{{ number_format($item->total, 2) }}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -128,23 +128,31 @@
                         <div class="space-y-4">
                             <div class="flex justify-between">
                                 <span class="text-neutral-600 dark:text-neutral-400">Subtotal</span>
-                                <span class="font-medium text-neutral-800 dark:text-neutral-100" id="cart-subtotal">${{ number_format($subtotal, 2) }}</span>
+                                <span class="font-medium text-neutral-800 dark:text-neutral-100" id="cart-subtotal">€{{ number_format($subtotal, 2) }}</span>
                             </div>
 
                             <div class="flex justify-between">
                                 <span class="text-neutral-600 dark:text-neutral-400">Shipping</span>
-                                <span class="font-medium text-neutral-800 dark:text-neutral-100">Free</span>
+                                <span class="font-medium text-neutral-800 dark:text-neutral-100" id="cart-shipping">
+                                    @if($shipping > 0)
+                                        €{{ number_format($shipping, 2) }}
+                                    @else
+                                        Free
+                                    @endif
+                                </span>
                             </div>
 
                             <div class="flex justify-between">
                                 <span class="text-neutral-600 dark:text-neutral-400">Discounts</span>
-                                <span class="font-medium text-neutral-800 dark:text-neutral-100" id="cart-tax">- ${{ number_format($discounts, 2) }}</span>
+                                <span class="font-medium text-neutral-800 dark:text-neutral-100" id="cart-tax">- €{{ number_format($discounts, 2) }}</span>
                             </div>
 
                             <div class="pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-700">
                                 <div class="flex justify-between">
                                     <span class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Total</span>
-                                    <span class="text-lg font-semibold text-blue-600 dark:text-blue-400" id="cart-total">${{ number_format($total, 2) }}</span>
+                                    <span class="text-lg font-semibold text-blue-600 dark:text-blue-400" id="cart-total">
+                                        €{{ number_format($total_with_shipping, 2) }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -275,13 +283,24 @@
                 totalDiscount += discountLine;
 
                 // Atualiza visual
-                item.textContent = '$' + (unitPrice * quantity).toFixed(2);
+                item.textContent = '€' + (unitPrice * quantity).toFixed(2);
             });
 
-            const total = subtotal - totalDiscount;
-            document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('cart-tax').textContent = '- $' + totalDiscount.toFixed(2);
-            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+            // >>>> LÓGICA DO SHIPPING <<<<
+            let shipping = 0;
+            if (subtotal <= 50) {
+                shipping = 10;
+            } else if (subtotal > 50 && subtotal <= 100) {
+                shipping = 5;
+            } else {
+                shipping = 0;
+            }
+            document.getElementById('cart-shipping').textContent = shipping > 0 ? '€' + shipping.toFixed(2) : 'Free';
+
+            const total = subtotal - totalDiscount + shipping;
+            document.getElementById('cart-subtotal').textContent = '€' + subtotal.toFixed(2);
+            document.getElementById('cart-tax').textContent = '- €' + totalDiscount.toFixed(2);
+            document.getElementById('cart-total').textContent = '€' + total.toFixed(2);
 
             // ATUALIZA OS PREÇOS UNITÁRIOS
             updateUnitPrices();
@@ -347,11 +366,11 @@
                 if (discount > 0 && quantity >= minQty) {
                     const discounted = price - discount;
                     const percent = Math.round((discount / price) * 100);
-                    html = `<span class="text-red-600 dark:text-red-400">$${discounted.toFixed(2)}</span>
-                    <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">$${price.toFixed(2)}</span>
+                    html = `<span class="text-red-600 dark:text-red-400">€${discounted.toFixed(2)}</span>
+                    <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">€${price.toFixed(2)}</span>
                     <span class="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">${percent}% OFF</span>`;
                 } else {
-                    html = `$${price.toFixed(2)}`;
+                    html = `€${price.toFixed(2)}`;
                 }
                 unit.querySelector('.unit-price-value').innerHTML = html;
             });
