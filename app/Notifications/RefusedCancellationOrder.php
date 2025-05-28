@@ -13,8 +13,8 @@ class RefusedCancellationOrder extends Notification
     private string $appName;
     private string $logoUrl;
     private string $orderId;
-    private string $refusalReason;
-    private string $refusalDetails;
+    private string $cancellationReason;
+    private string $cancellationDetails;
     private string $expectedShipDate;
 
     /**
@@ -22,16 +22,16 @@ class RefusedCancellationOrder extends Notification
      */
     public function __construct(
         string $orderId,
-        string $refusalReason,
-        string $refusalDetails,
+        string $cancellationReason,
+        string $cancellationDetails,
         string $expectedShipDate = 'Within 2-3 business days',
     )
     {
         $this->appName = config('app.name');
         $this->logoUrl = asset('assets/logo.jpg');
         $this->orderId = $orderId;
-        $this->refusalReason = $refusalReason;
-        $this->refusalDetails = $refusalDetails;
+        $this->cancellationReason = $cancellationReason;
+        $this->cancellationDetails = $cancellationDetails;
         $this->expectedShipDate = $expectedShipDate;
     }
 
@@ -60,8 +60,8 @@ class RefusedCancellationOrder extends Notification
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
                 'orderId' => $this->orderId,
-                'refusalReason' => $this->refusalReason,
-                'refusalDetails' => $this->refusalDetails,
+                'cancellationReason' => $this->cancellationReason,
+                'cancellationDetails' => $this->cancellationDetails,
                 'expectedShipDate' => $this->expectedShipDate,
                 'orderLink' => $orderLink,
                 'userName' => $notifiable->name,

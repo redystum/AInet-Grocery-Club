@@ -35,10 +35,10 @@
                         Your cancellation request was not approved
                     </h3>
                     <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        {{ $refusalReason }}
+                        Reason: {{ $cancellationReason }}
                     </p>
                     <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        {{ $refusalDetails }}
+                        Details: {{ $cancellationDetails }}
                     </p>
                 </div>
             </div>

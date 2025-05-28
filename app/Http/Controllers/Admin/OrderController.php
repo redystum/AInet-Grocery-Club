@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Notifications\CancelledOrder;
-use App\Notifications\NewLogin;
 use App\Notifications\RefusedCancellationOrder;
 use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {

@@ -179,9 +179,12 @@ class OrderController extends Controller
             $query->where('created_at', '>=', now()->subDays($days));
         }
 
-        switch ($request->input('sort', 'newest')) {
+        switch ($request->input('sort', 'status')) {
             case 'oldest':
                 $query->orderBy('created_at');
+                break;
+            case 'newest':
+                $query->orderByDesc('created_at');
                 break;
             case 'price_asc':
                 $query->orderBy('total');
@@ -189,14 +192,11 @@ class OrderController extends Controller
             case 'price_desc':
                 $query->orderByDesc('total');
                 break;
-            case 'status':
+            default: // status
                 $query->orderBy('status');
-                break;
-            default: // newest
-                $query->orderByDesc('created_at');
         }
 
-        $perPage = $request->input('per_page', 5);
+        $perPage = $request->input('per_page', 20);
         return $query->paginate($perPage)
             ->appends($request->only(['date_range', 'sort', 'per_page']));
     }

@@ -152,10 +152,6 @@ class CustomFieldManager
         return $instance->custom[$key] ?? null;
     }
 
-
-
-    // Region Static methods
-
     /**
      * Updates the custom array with values from the provided data array.
      *
@@ -166,11 +162,21 @@ class CustomFieldManager
      */
     public static function update_or_create_array(mixed $custom, array $data, bool $stringify = false): array|string
     {
-        if (!$custom || !is_array($custom)) {
+        if (!$custom) {
             if ($stringify) {
                 $data = json_encode($data);
             }
             return $data;
+        }
+
+        if (!is_array($custom)) {
+            $custom = json_decode($custom, true);
+            if (!$custom || !is_array($custom)) {
+                if ($stringify) {
+                    $data = json_encode($data);
+                }
+                return $data;
+            }
         }
 
         foreach ($data as $key => $value) {

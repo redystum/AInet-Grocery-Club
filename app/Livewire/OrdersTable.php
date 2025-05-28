@@ -120,15 +120,13 @@ class OrdersTable extends Component
 
         if ($this->tab == 'pending') {
             $query->where('status', Order::STATUS_PENDING);
+//                  ->whereRaw("(JSON_EXTRACT(custom, '$.cancellationStatus') IS NULL OR JSON_EXTRACT(custom, '$.cancellationStatus') != ?)", [Order::CANCEL_STATUS_PENDING]);
         } elseif ($this->tab == 'received') {
             $query->where('status', Order::STATUS_COMPLETED);
         } elseif ($this->tab == 'cancellation') {
             $query->where(function ($q) {
                 $q->where('status', Order::STATUS_CANCELED)
-                    ->orWhere(function ($subq) {
-                        $subq->whereNotNull('cancel_reason')
-                            ->where('status', Order::STATUS_PENDING);
-                    });
+                  ->orWhereRaw("JSON_EXTRACT(custom, '$.cancellationStatus') = ?", [Order::CANCEL_STATUS_PENDING]);
             });
         }
 
@@ -152,7 +150,13 @@ class OrdersTable extends Component
                 $query->orderBy('orders.total', 'desc');
                 break;
             case 'requests':
-                $query->orderBy('orders.status');
+                // Order by cancellation status first (pending cancellations first)
+                $query->orderByRaw("CASE 
+                    WHEN JSON_EXTRACT(custom, '$.cancellationStatus') = ? THEN 0
+                    WHEN status = ? THEN 1
+                    ELSE 2 
+                    END", [Order::CANCEL_STATUS_PENDING, Order::STATUS_CANCELED])
+                    ->orderBy('orders.created_at', 'desc');
                 break;
             default: // date_asc
                 $query->orderBy('orders.created_at');
