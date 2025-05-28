@@ -23,6 +23,82 @@ class CustomFieldManager
     }
 
     /**
+     * Retrieve a value associated with the specified key from the custom property of the eloquent instance.
+     *
+     * @param string $key The key used to access the value in the custom property.
+     * @param mixed $default The default value to return if the key does not exist or the instance does not exist.
+     *
+     * @return mixed The value associated with the key or the default value if not found.
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        if (!$this->exists()) {
+            return $default;
+        }
+
+        $this->not_array_convert_it();
+        return $this->eloquent_instance->custom[$key] ?? $default;
+    }
+
+    /**
+     * Checks if a custom field exists in the eloquent model instance
+     *
+     * @return bool True if the custom field exists, otherwise false
+     */
+    public function exists(): bool
+    {
+        return isset($this->eloquent_instance->custom);
+    }
+
+    /**
+     * Assign a value to the specified key within the custom property of the eloquent instance.
+     *
+     * @param string $key The key where the value should be stored in the custom property.
+     * @param mixed $value The value to be assigned to the specified key.
+     *
+     * @return void
+     */
+    public function set(string $key, mixed $value): void
+    {
+        $this->not_array_convert_it();
+        $custom = $this->eloquent_instance->custom ?? [];
+        $custom[$key] = $value;
+        $this->eloquent_instance->custom = $custom;
+    }
+
+    /**
+     * Assigns all key-value pairs from the custom property of the eloquent instance as attributes of the instance.
+     *
+     * Iterates through each item in the custom property and sets it as an attribute
+     * on the eloquent instance, provided the instance exists.
+     *
+     * @return void
+     */
+    public function to_attribute(): void
+    {
+        if ($this->exists()) {
+            $this->not_array_convert_it();
+            foreach ($this->eloquent_instance->custom as $key => $value) {
+                $this->eloquent_instance->setAttribute($key, $value);
+            }
+        }
+    }
+
+    private function not_array_convert_it(): void
+    {
+        if (!$this->exists()) {
+            return;
+        }
+
+        if (!is_array($this->eloquent_instance->custom)) {
+            $this->eloquent_instance->custom = json_decode($this->eloquent_instance->custom, true);
+        }
+    }
+
+    // Region Static methods
+
+
+    /**
      * Sets custom fields as attributes on the model
      *
      * @param mixed $instance An eloquent model instance
@@ -89,10 +165,6 @@ class CustomFieldManager
         return $instance->custom[$key] ?? null;
     }
 
-
-
-    // Region Static methods
-
     /**
      * Updates the custom array with values from the provided data array.
      *
@@ -120,63 +192,6 @@ class CustomFieldManager
         return $custom;
     }
 
-    /**
-     * Retrieve a value associated with the specified key from the custom property of the eloquent instance.
-     *
-     * @param string $key The key used to access the value in the custom property.
-     * @param mixed $default The default value to return if the key does not exist or the instance does not exist.
-     *
-     * @return mixed The value associated with the key or the default value if not found.
-     */
-    public function get(string $key, mixed $default = null): mixed
-    {
-        if (!$this->exists()) {
-            return $default;
-        }
-        return $this->eloquent_instance->custom[$key] ?? $default;
-    }
-
-    /**
-     * Checks if a custom field exists in the eloquent model instance
-     *
-     * @return bool True if the custom field exists, otherwise false
-     */
-    private function exists(): bool
-    {
-        return isset($this->eloquent_instance->custom);
-    }
-
-    /**
-     * Assign a value to the specified key within the custom property of the eloquent instance.
-     *
-     * @param string $key The key where the value should be stored in the custom property.
-     * @param mixed $value The value to be assigned to the specified key.
-     *
-     * @return void
-     */
-    public function set(string $key, mixed $value): void
-    {
-        $custom = $this->eloquent_instance->custom ?? [];
-        $custom[$key] = $value;
-        $this->eloquent_instance->custom = $custom;
-    }
-
-    /**
-     * Assigns all key-value pairs from the custom property of the eloquent instance as attributes of the instance.
-     *
-     * Iterates through each item in the custom property and sets it as an attribute
-     * on the eloquent instance, provided the instance exists.
-     *
-     * @return void
-     */
-    public function to_attribute(): void
-    {
-        if ($this->exists()) {
-            foreach ($this->eloquent_instance->custom as $key => $value) {
-                $this->eloquent_instance->setAttribute($key, $value);
-            }
-        }
-    }
 
     // End Region
 }
