@@ -22,13 +22,47 @@ class CartTable extends Component
 
     private function getCard()
     {
-        $user = auth()->user();
-        $card = Card::firstOrCreate(['id' => $user->id]);
-        // Ensure custom field is an array
-        if (!is_array($card->custom)) {
-            $card->custom = [];
+        if (auth()->check()) {
+            $user = auth()->user();
+            $card = Card::firstOrCreate(['id' => $user->id]);
+            // Ensure custom field is an array
+            if (!is_array($card->custom)) {
+                $card->custom = [];
+            }
+
+            // If there was a guest cart in session, merge it with the user's cart
+            if (session()->has('guest_cart')) {
+                $guestCart = session('guest_cart', []);
+                $userCart = $card->custom;
+
+                // Merge guest cart items into user cart
+                foreach ($guestCart as $productId => $quantity) {
+                    if (isset($userCart[$productId])) {
+                        $userCart[$productId] += $quantity;
+                    } else {
+                        $userCart[$productId] = $quantity;
+                    }
+                }
+
+                $card->custom = $userCart;
+                $card->save();
+
+                // Clear the guest cart from session
+                session()->forget('guest_cart');
+            }
+
+            return $card;
+        } else {
+            // For guest users, use session instead
+            if (!session()->has('guest_cart')) {
+                session(['guest_cart' => []]);
+            }
+
+            // Create a virtual card object to maintain consistency
+            $card = new Card();
+            $card->custom = session('guest_cart', []);
+            return $card;
         }
-        return $card;
     }
 
     private function refreshCart()
@@ -102,8 +136,12 @@ class CartTable extends Component
                 $cart[$productId] = $newQuantity;
             }
 
-            $card->custom = $cart;
-            $card->save();
+            if (auth()->check()) {
+                $card->custom = $cart;
+                $card->save();
+            } else {
+                session(['guest_cart' => $cart]);
+            }
 
             $this->refreshCart();
         }
@@ -119,8 +157,14 @@ class CartTable extends Component
             // Don't exceed stock
             if ($cart[$productId] < $product->stock) {
                 $cart[$productId]++;
-                $card->custom = $cart;
-                $card->save();
+
+                if (auth()->check()) {
+                    $card->custom = $cart;
+                    $card->save();
+                } else {
+                    session(['guest_cart' => $cart]);
+                }
+
                 $this->refreshCart();
             }
         }
@@ -134,13 +178,16 @@ class CartTable extends Component
         if (isset($cart[$productId])) {
             if ($cart[$productId] > 1) {
                 $cart[$productId]--;
-                $card->custom = $cart;
-                $card->save();
             } else {
                 // Remove if quantity reaches zero
                 unset($cart[$productId]);
+            }
+
+            if (auth()->check()) {
                 $card->custom = $cart;
                 $card->save();
+            } else {
+                session(['guest_cart' => $cart]);
             }
 
             $this->refreshCart();
@@ -154,8 +201,14 @@ class CartTable extends Component
 
         if (isset($cart[$productId])) {
             unset($cart[$productId]);
-            $card->custom = $cart;
-            $card->save();
+
+            if (auth()->check()) {
+                $card->custom = $cart;
+                $card->save();
+            } else {
+                session(['guest_cart' => $cart]);
+            }
+
             $this->refreshCart();
         }
     }

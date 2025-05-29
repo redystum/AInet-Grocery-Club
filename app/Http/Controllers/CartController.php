@@ -8,16 +8,50 @@ use App\Models\Card;
 
 class CartController extends Controller
 {
-    // Helper para obter (ou criar) o Card do user autenticado
+    // Helper to get card data for both authenticated and guest users
     private function getCard()
     {
-        $user = auth()->user();
-        $card = Card::firstOrCreate(['id' => $user->id]);
-        // Garante que o campo custom existe e é array
-        if (!is_array($card->custom)) {
-            $card->custom = [];
+        if (auth()->check()) {
+            $user = auth()->user();
+            $card = Card::firstOrCreate(['id' => $user->id]);
+            // Ensure the custom field is an array
+            if (!is_array($card->custom)) {
+                $card->custom = [];
+            }
+
+            // If there was a guest cart in session, merge it with the user's cart
+            if (session()->has('guest_cart')) {
+                $guestCart = session('guest_cart', []);
+                $userCart = $card->custom;
+
+                // Merge guest cart items into user cart
+                foreach ($guestCart as $productId => $quantity) {
+                    if (isset($userCart[$productId])) {
+                        $userCart[$productId] += $quantity;
+                    } else {
+                        $userCart[$productId] = $quantity;
+                    }
+                }
+
+                $card->custom = $userCart;
+                $card->save();
+
+                // Clear the guest cart from session
+                session()->forget('guest_cart');
+            }
+
+            return $card;
+        } else {
+            // For guest users, use session instead
+            if (!session()->has('guest_cart')) {
+                session(['guest_cart' => []]);
+            }
+
+            // Create a virtual card object to maintain consistency
+            $card = new Card();
+            $card->custom = session('guest_cart', []);
+            return $card;
         }
-        return $card;
     }
 
     public function index()
@@ -37,8 +71,14 @@ class CartController extends Controller
         } else {
             $cart[$productId] = $quantity;
         }
-        $card->custom = $cart;
-        $card->save();
+
+        if (auth()->check()) {
+            $card->custom = $cart;
+            $card->save();
+        } else {
+            session(['guest_cart' => $cart]);
+        }
+
         return redirect()->route('cart.index');
     }
 
@@ -50,14 +90,19 @@ class CartController extends Controller
         $cart = $card->custom ?? [];
         $quantity = max(0, intval($request->input('quantity')));
         if (isset($cart[$id])) {
-            // Se quantidade for zero, remove o item do carrinho
+            // If quantity is zero, remove the item from cart
             if ($quantity === 0) {
                 unset($cart[$id]);
             } else {
                 $cart[$id] = $quantity;
             }
-            $card->custom = $cart;
-            $card->save();
+
+            if (auth()->check()) {
+                $card->custom = $cart;
+                $card->save();
+            } else {
+                session(['guest_cart' => $cart]);
+            }
         }
         return response()->json(['success' => true]);
     }
@@ -70,8 +115,14 @@ class CartController extends Controller
         foreach ($items as $item) {
             $cart[$item['id']] = max(1, intval($item['quantity']));
         }
-        $card->custom = $cart;
-        $card->save();
+
+        if (auth()->check()) {
+            $card->custom = $cart;
+            $card->save();
+        } else {
+            session(['guest_cart' => $cart]);
+        }
+
         return response()->json(['success' => true]);
     }
 
@@ -80,8 +131,14 @@ class CartController extends Controller
         $card = $this->getCard();
         $cart = $card->custom ?? [];
         unset($cart[$id]);
-        $card->custom = $cart;
-        $card->save();
+
+        if (auth()->check()) {
+            $card->custom = $cart;
+            $card->save();
+        } else {
+            session(['guest_cart' => $cart]);
+        }
+
         return response()->json(['success' => true]);
     }
 }
