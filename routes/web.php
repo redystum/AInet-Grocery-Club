@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::post('/cart/update', [CartController::class, 'update']); // Para atualizar todas as quantidades
 Route::put('/cart/{id}', [CartController::class, 'changeQuantity']); // AJAX update individual
 Route::delete('/cart/{id}', [CartController::class, 'remove']); // AJAX remove

@@ -69,7 +69,7 @@
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('cart') }}"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Cart

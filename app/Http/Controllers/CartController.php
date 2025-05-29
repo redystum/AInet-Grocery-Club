@@ -22,51 +22,9 @@ class CartController extends Controller
 
     public function index()
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
-        $cartItems = [];
-        $subtotal = 0;
-        $discounts = 0;
-
-        foreach ($cart as $productId => $quantity) {
-            $product = Product::with('category')->find($productId);
-
-            if (!$product) continue;
-
-            $hasDiscount = ($product->discount > 0 && $product->discount_min_qty > 0);
-            $isDiscounted = ($hasDiscount && $quantity >= $product->discount_min_qty);
-
-            $unitPrice = $isDiscounted ? ($product->price - $product->discount) : $product->price;
-            $lineDiscount = $isDiscounted ? $product->discount * $quantity : 0;
-            $lineSubtotal = $product->price * $quantity;
-
-            $cartItems[] = (object)[
-                'id' => $productId,
-                'product' => $product,
-                'quantity' => $quantity,
-                'total' => $unitPrice * $quantity,
-                'line_discount' => $lineDiscount,
-                'unit_price' => $unitPrice,
-                'original_unit_price' => $product->price,
-            ];
-
-            $subtotal  += $lineSubtotal;
-            $discounts += $lineDiscount;
-        }
-
-        $total = $subtotal - $discounts;
-
-        if ($subtotal <= 50) {
-            $shipping = 10;
-        } elseif ($subtotal > 50 && $subtotal <= 100) {
-            $shipping = 5;
-        } else {
-            $shipping = 0;
-        }
-
-        $total_with_shipping = $total + $shipping;
-
-        return view('pages.cart', compact('cartItems', 'subtotal', 'discounts', 'total', 'shipping', 'total_with_shipping'));
+        // With Livewire, we just need to return the view
+        // The Livewire component will handle loading and displaying cart items
+        return view('pages.cart');
     }
 
     public function add($productId, Request $request)
@@ -84,13 +42,20 @@ class CartController extends Controller
         return redirect()->route('cart.index');
     }
 
+    // API routes used by non-Livewire parts of the application
+
     public function changeQuantity($id, Request $request)
     {
         $card = $this->getCard();
         $cart = $card->custom ?? [];
-        $quantity = max(1, intval($request->input('quantity')));
+        $quantity = max(0, intval($request->input('quantity')));
         if (isset($cart[$id])) {
-            $cart[$id] = $quantity;
+            // Se quantidade for zero, remove o item do carrinho
+            if ($quantity === 0) {
+                unset($cart[$id]);
+            } else {
+                $cart[$id] = $quantity;
+            }
             $card->custom = $cart;
             $card->save();
         }
