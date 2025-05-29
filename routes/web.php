@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
+
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
@@ -24,7 +26,6 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
     Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
-
 });
 
 /*--------------------------------------------------------------------------
@@ -88,6 +89,12 @@ Route::middleware('auth')->group(function () {
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
 
+Route::prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'show'])->name('cart.show'); // retorna o carrinho (JSON ou view parcial)
+    Route::post('add', [CartController::class, 'add'])->name('cart.add'); // adiciona produto ao carrinho
+    Route::post('remove', [CartController::class, 'remove'])->name('cart.remove'); // remove produto
+    Route::post('update', [CartController::class, 'update'])->name('cart.update'); // altera quantidade
+});
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE
 !---------------------------------------------------------------------------
