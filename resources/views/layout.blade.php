@@ -19,6 +19,9 @@
 
 <x-navbar/>
 
+<!-- Toast Notification Container -->
+<div id="toast-container" class="fixed right-4 bottom-4 z-50"></div>
+
 <main class="h-main">
     @yield('content')
 </main>

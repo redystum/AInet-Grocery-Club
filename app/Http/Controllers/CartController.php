@@ -79,7 +79,14 @@ class CartController extends Controller
             session(['guest_cart' => $cart]);
         }
 
-        return redirect()->route('cart.index');
+        $product = Product::find($productId);
+        $productName = $product ? $product->name : 'Product';
+
+        return response()->json([
+            'success' => true,
+            'message' => "$productName added to your cart",
+            'quantity' => $quantity
+        ]);
     }
 
     // API routes used by non-Livewire parts of the application
