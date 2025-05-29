@@ -267,56 +267,7 @@
             element.parentElement.classList.add('border-2', 'border-blue-500');
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-
-            // Set classes based on type
-            const baseClasses = 'flex items-center p-4 mb-3 rounded-lg shadow-md transition-all duration-300 transform translate-x-full';
-            const typeClasses = type === 'success'
-                ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-                : 'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
-
-            toast.className = `${baseClasses} ${typeClasses}`;
-            toast.innerHTML = `
-                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg me-3 ${type === 'success' ? 'bg-green-100 dark:bg-green-800 text-green-500 dark:text-green-200' : 'bg-red-100 dark:bg-red-800 text-red-500 dark:text-red-200'}">
-                    <i class="fas ${type === 'success' ? 'fa-check' : 'fa-times'}"></i>
-                </div>
-                <div>${message}</div>
-                <button type="button" class="ms-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            // Add toast to container
-            container.appendChild(toast);
-
-            // Animate entrance
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full');
-                toast.classList.add('translate-x-0');
-            }, 10);
-
-            // Setup close button
-            const closeBtn = toast.querySelector('button');
-            closeBtn.addEventListener('click', () => {
-                removeToast(toast);
-            });
-
-            // Auto close after 5 seconds
-            setTimeout(() => {
-                removeToast(toast);
-            }, 5000);
-        }
-
-        function removeToast(toast) {
-            toast.classList.remove('translate-x-0');
-            toast.classList.add('translate-x-full');
-
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }
+        // Toast functions now available globally from app.js
 
         function addToCart(productId) {
             let quantity = document.getElementById('quantity').value;
@@ -335,9 +286,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast(`${data.message} (${data.quantity}x)`, 'success');
+                    window.showToast(`${data.message} (${data.quantity}x)`, 'success');
                 } else {
-                    showToast('Failed to add product to cart', 'error');
+                    window.showToast('Failed to add product to cart', 'error');
                 }
 
                 // Reset button state
@@ -346,7 +297,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                showToast('An error occurred while adding to cart', 'error');
+                window.showToast('An error occurred while adding to cart', 'error');
 
                 // Reset button state
                 addToCartBtn.innerHTML = originalBtnText;

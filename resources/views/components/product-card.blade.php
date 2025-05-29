@@ -61,6 +61,7 @@
                 View Details
             </span>
             <button
+                    onclick="quickAddToCart({{ $product->id }}, event)"
                     class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition-colors add-to-cart-btn cursor-pointer"
                     {{ $product->stock <= 0 ? 'disabled' : '' }}>
                 <i class="fas fa-shopping-cart mr-1"></i> Add

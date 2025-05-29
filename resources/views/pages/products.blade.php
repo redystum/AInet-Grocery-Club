@@ -170,6 +170,8 @@
     </button>
 
     <script>
+        // Toast notification and quickAddToCart functions are now available globally from app.js
+
         // Carousel functionality
         const carousel = document.getElementById('carousel');
         const slides = document.getElementsByClassName('carouselSlide');

@@ -23,7 +23,7 @@
                                                 <p class="text-sm text-neutral-600 dark:text-neutral-400">{{ $item->product->category->name }}</p>
                                             @endif
                                         </div>
-                                        <button class="text-neutral-400 hover:text-red-500 transition-colors" wire:click="removeItem({{ $item->id }})">
+                                        <button class="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer" wire:click="removeItem({{ $item->id }})">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -47,7 +47,7 @@
                                             <!-- Quantity Controls Column -->
                                             <td class="w-1/2 px-4 align-middle">
                                                 <div class="flex items-center justify-center">
-                                                    <button class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-l-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                                                    <button class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-l-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
                                                             wire:click="decrement({{ $item->id }})">
                                                         <i class="fas fa-minus text-xs"></i>
                                                     </button>
@@ -58,7 +58,7 @@
                                                            wire:model.blur="cartItems.{{ $loop->index }}.quantity"
                                                            wire:change="updateQuantity({{ $item->id }}, $event.target.value)"
                                                            class="appearance-textfield w-12 px-2 py-1 text-center border-t border-b border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100">
-                                                    <button class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-r-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                                                    <button class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-r-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
                                                             wire:click="increment({{ $item->id }})">
                                                         <i class="fas fa-plus text-xs"></i>
                                                     </button>
