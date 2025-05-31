@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8',
             'gender' => 'required|in:M,F',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
             'nif' => 'nullable|string|max:9',
             'default_delivery_address' => 'nullable|string|max:255',
             'default_payment_type' => 'nullable|string|in:Visa,PayPal,MB WAY',

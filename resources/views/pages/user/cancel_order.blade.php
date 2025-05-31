@@ -56,21 +56,24 @@
                 @foreach($order->products as $item)
                     <div class="flex items-center p-4 border-b border-neutral-200 dark:border-neutral-700 last:border-b-0">
                         <div class="w-16 h-16 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700">
-                            <img src="{{ asset('storage/products/' . $item->product->photo) }}"
+                            <img src="{{ $item->product->getImage() }}"
                                  alt="{{ $item->product->name }}"
                                  class="w-full h-full object-cover">
                         </div>
                         <div class="ml-4 flex-1">
-                            <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $item->product->name }}</h3>
-                            <p class="text-xs text-neutral-600 dark:text-neutral-400">
-                                Quantity: {{ $item->quantity }}</p>
-                            @if($item->discount > 0)
-                                <div
-                                        class="text-green-600 dark:text-green-400 text-xs mt-1">
-                                    Discount:
-                                    {{ number_format(($item->discount / $item->product->price) * 100) }}%
-                                </div>
-                            @endif
+                            <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-100 mb-3">
+                                {{ $item->product->name }}
+                            </h3>
+                            <div class="flex items-center">
+                                <span class="text-sm text-neutral-600 dark:text-neutral-400 mr-4">
+                                    Qty: {{ $item->quantity }}
+                                </span>
+                                @if($item->discount > 0)
+                                    <span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                                        {{ number_format(($item->discount / $item->product->price) * 100) }}% OFF
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                         <div class="text-right">
                             <div

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\admin\StockController;
@@ -22,11 +22,12 @@ Route::get('/', function () {
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
+
 
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
     Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
-
 });
 
 /*--------------------------------------------------------------------------
@@ -37,14 +38,16 @@ Route::name('product.')->prefix('product/{product}')->group(function () {
 */
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'show_login'])->name('login');
-    Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::get('register', [AuthController::class, 'show_register'])->name('register');
-    Route::post('register', [AuthController::class, 'register'])->name('register');
-    Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+    Route::middleware('throttle:6,1')->group(function () { // throttle max 6 requests per minute
+        Route::post('login', [AuthController::class, 'login'])->name('login');
+        Route::post('register', [AuthController::class, 'register'])->name('register');
+        Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+    });
 });
 
 /*--------------------------------------------------------------------------
-| Pssword reset routes
+| Password reset routes
 |---------------------------------------------------------------------------
 | Routes for password reset functionality.
 |
@@ -80,6 +83,12 @@ Route::middleware('auth')->group(function () {
         Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
     });
 
+    /*--------------------------------------------------------------------------
+    | Admin routes
+    |---------------------------------------------------------------------------
+    | Routes that are accessible only to authenticated users with admin role.
+    |
+    */
     Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
         Route::get('/', function () {
             return view('pages.admin.dash');
@@ -102,15 +111,6 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
-
-/*--------------------------------------------------------------------------
-| Admin routes
-|---------------------------------------------------------------------------
-| Routes that are accessible only to authenticated users with admin role.
-|
-*/
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
 
 /*!--------------------------------------------------------------------------
 ! DEVELOPMENT ONLY LOGIN ROUTE

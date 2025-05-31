@@ -209,25 +209,25 @@
                                             <div
                                                     class="flex items-start gap-4 p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
                                                 <div class="flex-shrink-0 relative">
-                                                    <img src="{{ asset('storage/products/' . $item->product->photo) }}"
+                                                    <img src="{{ $item->product->getImage() }}"
                                                          alt="{{ $item->product->name }}"
                                                          class="w-16 h-16 object-cover rounded-lg border border-neutral-200 dark:border-neutral-600">
                                                 </div>
 
                                                 <div class="flex-1 min-w-0">
-                                                    <h4 class="text-sm font-semibold text-neutral-800 dark:text-neutral-100 truncate">
+                                                    <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-100 mb-3">
                                                         {{ $item->product->name }}
-                                                    </h4>
-                                                    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                                                        Quantity: <span class="font-medium">{{ $item->quantity }}</span>
-                                                    </p>
-                                                    @if($item->discount > 0)
-                                                        <div
-                                                                class="text-green-600 dark:text-green-400 text-xs mt-1">
-                                                            Discount:
-                                                            {{ number_format(($item->discount / $item->product->price) * 100) }}%
-                                                        </div>
-                                                    @endif
+                                                    </h3>
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-neutral-600 dark:text-neutral-400 mr-4">
+                                                            Qty: {{ $item->quantity }}
+                                                        </span>
+                                                        @if($item->discount > 0)
+                                                            <span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                                                                {{ number_format(($item->discount / $item->product->price) * 100) }}% OFF
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                 </div>
 
                                                 <div class="flex flex-col items-end">
@@ -237,7 +237,7 @@
                                                     </div>
                                                     <div class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                                                         {{ $item->quantity }} ×
-                                                        €{{ number_format($item->product->price - $item->discount, 2) }}
+                                                        €{{ number_format($item->unit_price - $item->discount, 2) }}
                                                     </div>
                                                     @if($item->discount > 0)
                                                         <div class="text-xs text-green-600 dark:text-green-400 mt-1">
