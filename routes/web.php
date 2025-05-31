@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         })->name('index');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
+        Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
             Route::post('store', [SupplyController::class, 'store'])->name('store');
