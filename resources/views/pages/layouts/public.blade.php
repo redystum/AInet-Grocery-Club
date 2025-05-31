@@ -21,7 +21,6 @@
 
 <x-toast/>
 
-
 <main class="h-main">
     @yield('content')
 </main>

@@ -5,7 +5,8 @@
     editOrderId: null,
     editQuantity: 0,
     showConfirmModal: false,
-    confirmOrderId: null
+    confirmOrderId: null,
+    maxQuantity: 0,
 }"
      x-init="document.addEventListener('click', () => { activeDropdown = null })"
      @scroll.window="activeDropdown = null"
@@ -48,7 +49,7 @@
                  class="fixed inset-0 bg-black/65 transition-opacity"
                  aria-hidden="true"
                  @click="showConfirmModal = false"></div>
-    
+
             <!-- Modal panel -->
             <div x-show="showConfirmModal"
                  x-transition:enter="transition ease-out duration-300"
@@ -70,7 +71,8 @@
                             </h3>
                             <div class="mt-2">
                                 <p class="text-sm text-neutral-600 dark:text-neutral-400">
-                                    Are you sure you want to mark this supply order as received? This action will update your inventory levels.
+                                    Are you sure you want to mark this supply order as received? This action will update
+                                    your inventory levels.
                                 </p>
                             </div>
                         </div>
@@ -90,7 +92,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Edit Quantity Modal -->
     <div x-show="showEditModal"
          x-cloak
@@ -143,9 +145,13 @@
                                 <div class="mt-4">
                                     <label for="quantity"
                                            class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
-                                    <input type="number" id="quantity" x-model="editQuantity" name="quantity" min="1"
-                                           required
+                                    <input type="number" id="quantity" x-model="editQuantity" name="quantity"
+                                           required min="1" :max="maxQuantity"
+                                           x-effect="if(showEditModal) $nextTick(() => $el.focus())"
                                            class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                    <div x-show="editQuantity < 1 || editQuantity > maxQuantity" class="mt-1 text-sm text-red-600 dark:text-red-400">
+                                        Quantity must be between 1 and <span x-text="maxQuantity"></span>.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +159,8 @@
                     <div class="bg-neutral-50 dark:bg-neutral-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit"
                                 @click="showEditModal = false;"
-                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                :disabled="editQuantity < 1 || editQuantity > maxQuantity"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             Save Changes
                         </button>
                         <button type="button"
@@ -319,6 +326,7 @@
                                                     editQuantity = {{ $order->quantity }};
                                                     showEditModal = true;
                                                     activeDropdown = null;
+                                                    maxQuantity = {{ $order->product->stock_upper_limit - $order->product->stock }};
                                                 "
                                                         class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                         role="menuitem">
@@ -335,13 +343,13 @@
                                             @endif
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED)
                                                 <button
-                                                   @click="
+                                                        @click="
                                                         confirmOrderId = '{{ $order->id }}';
                                                         showConfirmModal = true;
                                                         activeDropdown = null;
                                                    "
-                                                   class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
+                                                        class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                        role="menuitem">
                                                     <i class="fas fa-check mr-3 text-green-400"></i>
                                                     Mark as Received
                                                 </button>

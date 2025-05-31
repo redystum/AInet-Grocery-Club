@@ -25,7 +25,7 @@
                 <a
                         href="{{ $result['url'] }}"
                         class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 {{ $selectedIndex === $index ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
-                        wire:click.prevent="$set('selectedIndex', {{ $index }}); selectItem()"
+                        wire:click.prevent="selectItem({{ $index }})"
                         wire:key="search-result-{{ $index }}"
                 >
                     @if($result['type'] == "page")

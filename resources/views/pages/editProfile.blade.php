@@ -28,7 +28,7 @@
                         <div
                                 class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
                             <img id="profilePreview"
-                                 src="{{ $user->photo ? asset('storage/users/' . $user->photo) : asset('storage/users/anonymous.png') }}"
+                                 src="{{ $user->getImage() }}"
                                  alt="Current Profile Photo"
                                  class="w-full h-full object-cover">
                         </div>

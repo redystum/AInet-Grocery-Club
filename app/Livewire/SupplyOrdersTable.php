@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\SupplyOrder;
+use App\Utils\CustomFieldManager;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -143,22 +144,21 @@ class SupplyOrdersTable extends Component
         $supplyOrders = $query->paginate(50);
 
         foreach ($supplyOrders as $supplyOrder) {
-            $custom = json_decode($supplyOrder->custom, true);
-            if ($custom == null) {
+            $custom = new CustomFieldManager($supplyOrder);
+
+            if (!$custom->exists()) {
                 $supplyOrder->setAttribute('delivered_at', "-");
                 continue;
             }
 
-            $delivered_at = $custom['delivered_at'] ?? null;
-            if ($delivered_at != null) {
+            if (($delivered_at = $custom->get('delivered_at')) != null) {
                 $delivered_at = Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
                 $supplyOrder->setAttribute('delivered_at', $delivered_at);
                 continue;
             }
 
-            $delivered_at = $custom['expected_delivery_date'] ?? null;
-            if ($delivered_at != null) {
-                $delivered_at = "Expected: " . Carbon::parse($supplyOrder->created_at)->format('d/m/Y H:i:s');
+            if (($delivered_at = $custom->get('expected_delivery_date')) != null) {
+                $delivered_at = "Expected: " . Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
                 $supplyOrder->setAttribute('delivered_at', $delivered_at);
                 continue;
             }

@@ -4,33 +4,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Hero Carousel -->
-        <div class="relative rounded-xl overflow-hidden shadow-md mb-8 h-80" id="carousel">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-20"></div>
-            <div class="flex h-full transition-transform duration-500 ease-in-out">
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight1.jpg') }}" alt="Highlight 1"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight2.jpg') }}" alt="Highlight 2"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex-shrink-0 w-full h-full carouselSlide">
-                    <img src="{{ asset('storage/products/highlight3.jpg') }}" alt="Highlight 3"
-                         class="w-full h-full object-cover">
-                </div>
-            </div>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2" id="carouselIndicators">
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-                <button
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity focus:outline-none"></button>
-            </div>
-        </div>
-
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Sidebar Filters -->
@@ -43,7 +16,7 @@
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300
                                        dark:border-neutral-700 focus:ring-2 focus:ring-blue-500
                                        focus:border-transparent dark:bg-neutral-800 dark:text-neutral-100
-                                       placeholder-gray-400 dark:placeholder-neutral-500">
+                                       placeholder-gray-400 dark:placeholder-neutral-500 cursor-pointer">
                             <option value="discount_desc" {{ request('sort') === 'discount_desc' ? 'selected' : '' }}>
                                 Best Discounts
                             </option>
@@ -85,7 +58,7 @@
                                        class="flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors categoryLink {{ request('category') == $category->id ? 'font-bold' : '' }}">
                                         <div
                                                 class="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700">
-                                            <img src="{{ asset('storage/categories/' . $category->image) }}"
+                                            <img src="{{ $category->getImage() }}"
                                                  alt="{{ $category->name }}" class="w-full h-full object-cover">
                                         </div>
                                         <span class="flex-1">{{ $category->name }}</span>
@@ -122,68 +95,7 @@
                 @if($products->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         @foreach($products as $product)
-                            <div
-                                    class="product-card bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md relative group">
-                                <!-- Wishlist Button (shown on hover) -->
-                                <button
-                                        class="absolute top-3 right-3 z-10 w-8 h-8 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center shadow-md hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors wishlist-btn opacity-0 group-hover:opacity-100 cursor-pointer"
-                                        data-product-id="{{ $product->id }}">
-                                    <i class="far fa-heart text-neutral-600 dark:text-neutral-300"></i>
-                                </button>
-
-                                <!-- Product Image -->
-                                <div class="relative overflow-hidden h-48 cursor-pointer">
-                                    <img src="{{ asset('storage/products/' . $product->photo) }}"
-                                         alt="{{ $product->name }}"
-                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-
-                                    <!-- Discount Badge -->
-                                    @if($product->discount > 0)
-                                        <div
-                                                class="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-md">
-                                            -{{ $product->discount }}%
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <!-- Product Info -->
-                                <div class="p-5">
-                                    <h3 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-2 cursor-pointer">{{ $product->name }}</h3>
-
-                                    <!-- Price Display -->
-                                    <div class="flex items-center justify-between mb-3">
-                                        @if($product->discount > 0)
-                                            <div>
-                                                <span
-                                                        class="text-red-600 dark:text-red-400 font-bold text-lg">€{{ number_format($product->price * (1 - $product->discount/100), 2) }}</span>
-                                                <span
-                                                        class="ml-2 text-neutral-500 dark:text-neutral-400 text-sm line-through">€{{ number_format($product->price, 2) }}</span>
-                                            </div>
-                                        @else
-                                            <span
-                                                    class="text-blue-600 dark:text-blue-400 font-bold text-lg">€{{ number_format($product->price, 2) }}</span>
-                                        @endif
-
-                                        <span
-                                                class="text-sm {{ $product->stock > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                                            {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                                        </span>
-                                    </div>
-
-                                    <!-- Action Buttons -->
-                                    <div class="flex justify-between items-center">
-                                        <a href="#"
-                                           class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm">
-                                            View Details
-                                        </a>
-                                        <button
-                                                class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition-colors add-to-cart-btn cursor-pointer"
-                                                {{ $product->stock <= 0 ? 'disabled' : '' }}>
-                                            <i class="fas fa-shopping-cart mr-1"></i> Add
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-product-card :product="$product" />
                         @endforeach
                     </div>
 

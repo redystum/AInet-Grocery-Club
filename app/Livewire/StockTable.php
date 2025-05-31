@@ -116,10 +116,12 @@ class StockTable extends Component
 
         if ($this->search) {
             $sanitizedSearch = e($this->search);
-            return Product::where('name', 'like', '%' . $sanitizedSearch . '%')
-                ->orWhereHas('category', function ($query) use ($sanitizedSearch) {
-                    $query->where('name', 'like', '%' . $sanitizedSearch . '%');
-                });
+            $query->where(function ($query) use ($sanitizedSearch) {
+                $query->where('name', 'like', '%' . $sanitizedSearch . '%')
+                    ->orWhereHas('category', function ($query) use ($sanitizedSearch) {
+                        $query->where('name', 'like', '%' . $sanitizedSearch . '%');
+                    });
+            });
         }
 
         if ($this->category) {

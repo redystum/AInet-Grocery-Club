@@ -13,11 +13,7 @@
                 <div
                         class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
 
-                    <img @if($user->photo)
-                             src="{{ asset('storage/users/' . $user->photo) }}"
-                         @else
-                             src="{{ asset('storage/users/anonymous.png') }}"
-                         @endif
+                    <img src="{{ $user->getImage() }}"
                          alt="Profile" class="w-full h-full object-cover">
                 </div>
 

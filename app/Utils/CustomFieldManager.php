@@ -23,16 +23,6 @@ class CustomFieldManager
     }
 
     /**
-     * Checks if a custom field exists in the eloquent model instance
-     *
-     * @return bool True if the custom field exists, otherwise false
-     */
-    private function exists(): bool
-    {
-        return isset($this->eloquent_instance->custom);
-    }
-
-    /**
      * Retrieve a value associated with the specified key from the custom property of the eloquent instance.
      *
      * @param string $key The key used to access the value in the custom property.
@@ -45,7 +35,19 @@ class CustomFieldManager
         if (!$this->exists()) {
             return $default;
         }
+
+        $this->not_array_convert_it();
         return $this->eloquent_instance->custom[$key] ?? $default;
+    }
+
+    /**
+     * Checks if a custom field exists in the eloquent model instance
+     *
+     * @return bool True if the custom field exists, otherwise false
+     */
+    public function exists(): bool
+    {
+        return isset($this->eloquent_instance->custom);
     }
 
     /**
@@ -58,11 +60,11 @@ class CustomFieldManager
      */
     public function set(string $key, mixed $value): void
     {
+        $this->not_array_convert_it();
         $custom = $this->eloquent_instance->custom ?? [];
         $custom[$key] = $value;
         $this->eloquent_instance->custom = $custom;
     }
-
 
     /**
      * Assigns all key-value pairs from the custom property of the eloquent instance as attributes of the instance.
@@ -75,15 +77,26 @@ class CustomFieldManager
     public function to_attribute(): void
     {
         if ($this->exists()) {
+            $this->not_array_convert_it();
             foreach ($this->eloquent_instance->custom as $key => $value) {
                 $this->eloquent_instance->setAttribute($key, $value);
             }
         }
     }
 
+    private function not_array_convert_it(): void
+    {
+        if (!$this->exists()) {
+            return;
+        }
 
+        if (!is_array($this->eloquent_instance->custom)) {
+            $this->eloquent_instance->custom = json_decode($this->eloquent_instance->custom, true);
+        }
+    }
 
     // Region Static methods
+
 
     /**
      * Sets custom fields as attributes on the model
@@ -188,6 +201,7 @@ class CustomFieldManager
         }
         return $custom;
     }
+
 
     // End Region
 }
