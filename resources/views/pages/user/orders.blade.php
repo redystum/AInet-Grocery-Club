@@ -30,14 +30,49 @@
         </div>
     @else
 
-        <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="container mx-auto px-4 py-8 max-w-6xl" x-data="{ 
+            openOrderId: null,
+            init() {
+                // Check URL parameters for pre-selected order
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderParam = urlParams.get('order');
+                if (orderParam) {
+                    this.openOrderId = 'order-' + orderParam;
+                    // Scroll to the order after a small delay to ensure rendering is complete
+                    setTimeout(() => {
+                        const element = document.querySelector(`[data-order='order-${orderParam}']`);
+                        if (element) element.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    }, 100);
+                }
+            },
+            toggleOrder(orderId) {
+                this.openOrderId = this.openOrderId === orderId ? null : orderId;
+            },
+            updateQueryParam(key, value) {
+                const url = new URL(window.location.href);
+                const params = new URLSearchParams(url.search);
+
+                // Reset to first page when changing filters
+                if (key !== 'page') {
+                    params.delete('page');
+                }
+
+                if (value) {
+                    params.set(key, value);
+                } else {
+                    params.delete(key);
+                }
+
+                window.location.href = `${url.pathname}?${params.toString()}`;
+            }
+        }">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Order History</h1>
                 <div class="flex items-center space-x-4">
                     <!-- Items Per Page Selector -->
                     <div class="relative">
                         <select
-                                onchange="updateQueryParam('per_page', this.value)" autocomplete="off"
+                                @change="updateQueryParam('per_page', $event.target.value)" autocomplete="off"
                                 class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                             <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>Show 20 per page
                             </option>
@@ -54,7 +89,7 @@
                     <!-- Date Range Selector -->
                     <div class="relative">
                         <select
-                                onchange="updateQueryParam('date_range', this.value)" autocomplete="off"
+                                @change="updateQueryParam('date_range', $event.target.value)" autocomplete="off"
                                 class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                             <option value="">All Orders</option>
                             <option value="30" {{ request('date_range') == '30' ? 'selected' : '' }}>Last 30 Days
@@ -72,7 +107,7 @@
                     <!-- Order By Selector -->
                     <div class="relative">
                         <select
-                                onchange="updateQueryParam('sort', this.value)" autocomplete="off"
+                                @change="updateQueryParam('sort', $event.target.value)" autocomplete="off"
                                 class="appearance-none bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 py-2 pl-4 pr-8 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                             <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Order
                                 by newest
@@ -131,11 +166,12 @@
                         </th>
                     </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700"
-                           id="ordersTable">
+                    <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                     @foreach($orders as $order)
-                        <tr class="orderRow transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer"
-                            data-order="order-{{ $order->id }}">
+                        <tr @click="toggleOrder('order-{{ $order->id }}')" 
+                            data-order="order-{{ $order->id }}"
+                            :class="{'bg-neutral-50 dark:bg-neutral-700/50': openOrderId === 'order-{{ $order->id }}'}"
+                            class="transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div
@@ -190,16 +226,22 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
+                                @if($order->pdf_receipt)
+                                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank" @click.stop>
                                     <button
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mr-3 cursor-pointer">
                                         <i class="fas fa-receipt"></i> Receipt
                                     </button>
                                 </a>
+                                @else
+                                    <span class="text-neutral-500 dark:text-neutral-400">
+                                        No Receipt
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                         <!-- Details (Collapsible) -->
-                        <tr class="orderDetails hidden" id="order-{{ $order->id }}">
+                        <tr id="order-{{ $order->id }}" x-show="openOrderId === 'order-{{ $order->id }}'" x-cloak>
                             <td colspan="6" class="bg-neutral-50 dark:bg-neutral-700/30 px-6 py-4">
                                 <div class="border-t border-neutral-200 dark:border-neutral-600 pt-4">
                                     <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-100 mb-4">
@@ -314,12 +356,12 @@
                                             <i class="fas fa-redo mr-2"></i> Reorder
                                         </a>
                                         @if($order->status == Order::STATUS_PENDING && $order->cancellationStatus == null)
-                                            <a href="{{ route('orders.cancel', $order->id) }}"
+                                            <a href="{{ route('orders.cancel', $order->id) }}" @click.stop
                                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-red-500 dark:text-red-400 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer">
                                                 <i class="fas fa-cancel mr-2"></i> Cancel
                                             </a>
                                         @endif
-                                        <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
+                                        <a href="{{ route('orders.receipt', $order->id) }}" target="_blank" @click.stop
                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer">
                                             <i class="fas fa-receipt mr-2"></i> Download Receipt
                                         </a>
@@ -327,7 +369,7 @@
 
                                     @if($order->status == Order::STATUS_CANCELED)
                                         <div
-                                             class="mt-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
+                                                class="mt-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 mb-8 rounded-r-lg">
                                             <div class="flex items start">
                                                 <div class="flex-shrink-0">
                                                     <i class="fas fa-times-circle text-red-500 dark:text-red-400"></i>
@@ -351,7 +393,7 @@
 
                                     @if($order->cancellationStatus == Order::CANCEL_STATUS_REFUSED)
                                         <div
-                                             class="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 dark:border-yellow-400 p-4 mb-8 rounded-r-lg">
+                                                class="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 dark:border-yellow-400 p-4 mb-8 rounded-r-lg">
                                             <div class="flex items start">
                                                 <div class="flex-shrink-0">
                                                     <i class="fas fa-exclamation-triangle text-yellow-500 dark:text-yellow-400"></i>
@@ -366,7 +408,8 @@
                                                         <strong>Your reason:</strong> {{ $order->cancel_reason }}
                                                     </p>
                                                     <p class="text-sm text-yellow-700 dark:text-yellow-300">
-                                                        <strong>Your details:</strong> {{ $order->cancellationDetails ?? "N/A" }}
+                                                        <strong>Your
+                                                            details:</strong> {{ $order->cancellationDetails ?? "N/A" }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -414,71 +457,8 @@
                         </span>
                     @endif
                 </div>
-
             </div>
         </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Get all order rows and details
-                const orderRows = document.querySelectorAll('.orderRow');
-                const orderDetails = document.querySelectorAll('.orderDetails');
-
-                // Add click event to each order row
-                orderRows.forEach(row => {
-                    row.addEventListener('click', function () {
-                        const orderId = this.getAttribute('data-order');
-                        const detailsRow = document.getElementById(orderId);
-
-                        // Toggle the clicked order details
-                        detailsRow.classList.toggle('hidden');
-
-                        // Add/remove active class to the parent row for styling
-                        this.classList.toggle('bg-neutral-50', !detailsRow.classList.contains('hidden'));
-                        this.classList.toggle('dark:bg-neutral-700/50', !detailsRow.classList.contains('hidden'));
-
-                        // Close other open details
-                        orderDetails.forEach(detail => {
-                            if (detail.id !== orderId && !detail.classList.contains('hidden')) {
-                                detail.classList.add('hidden');
-                                // Remove active class from other rows
-                                const otherRow = document.querySelector(`.orderRow[data-order="${detail.id}"]`);
-                                if (otherRow) {
-                                    otherRow.classList.remove('bg-neutral-100', 'dark:bg-neutral-700');
-                                }
-                            }
-                        });
-                    });
-                });
-
-                // Prevent event propagation when clicking on action buttons
-                const actionButtons = document.querySelectorAll('.orderRow button, .orderRow a');
-                actionButtons.forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                    });
-                });
-            });
-
-            function updateQueryParam(key, value) {
-                const url = new URL(window.location.href);
-                const params = new URLSearchParams(url.search);
-
-                // Reset to first page when changing filters
-                if (key !== 'page') {
-                    params.delete('page');
-                }
-
-                if (value) {
-                    params.set(key, value);
-                } else {
-                    params.delete(key);
-                }
-
-                window.location.href = `${url.pathname}?${params.toString()}`;
-            }
-        </script>
-
     @endif
 
 @endsection

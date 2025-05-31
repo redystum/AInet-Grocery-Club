@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderFilterRequest;
 use App\Models\Order;
+use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 use ZipArchive;
-use App\Utils\CustomFieldManager;
 
 class OrderController extends Controller
 {
@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
         $request->validated();
 
-        $orders = $this->getOrderWithFilters($request);
+        $orders = $this->getOrderWithFilters($request, $request->input('order', null));
 
         foreach ($orders as $order) {
             $total_items = 0;
@@ -29,6 +29,14 @@ class OrderController extends Controller
             $order->setAttribute("total_discount", $total_discount);
 
             CustomFieldManager::self_custom_to_attribute($order);
+        }
+
+        if ($request->has('order')) {
+            $orderId = $request->input('order');
+            $specificOrder = auth()->user()->orders()->with(['products'])->find($orderId);
+            if ($specificOrder) {
+                $orders->setCollection($orders->getCollection()->prepend($specificOrder));
+            }
         }
 
         return view('pages.user.orders', compact('orders'));
