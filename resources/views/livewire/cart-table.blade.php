@@ -7,11 +7,11 @@
                 <!-- Cart Items List -->
                 <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm divide-y divide-neutral-200 dark:divide-neutral-700">
                     @foreach($cartItems as $item)
-                        <div class="p-4 hover:bg-neutral-100/50 dark:hover:bg-neutral-700/50 transition-colors" id="cart-item-{{ $item->id }}" wire:key="cart-item-{{ $item->id }}">
+                        <div class="p-4 hover:bg-neutral-100/50 dark:hover:bg-neutral-700/50 rounded-lg transition-colors" id="cart-item-{{ $item->id }}" wire:key="cart-item-{{ $item->id }}">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Product Image -->
                                 <div class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-white dark:bg-neutral-700">
-                                    <img class="w-full h-full object-contain" src="{{ $item->product->getImage() }}" alt="{{ $item->product->name }}">
+                                    <img class="w-full h-full object-cover" src="{{ $item->product->getImage() }}" alt="{{ $item->product->name }}">
                                 </div>
 
                                 <!-- Product Details -->

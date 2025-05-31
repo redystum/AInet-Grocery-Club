@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Product;
 use App\Models\Card;
+use App\Models\Product;
+use Livewire\Component;
 
 class CartTable extends Component
 {
@@ -126,7 +126,7 @@ class CartTable extends Component
 
         if ($product) {
             // Ensure quantity doesn't exceed stock
-            $newQuantity = min($newQuantity, $product->stock);
+            $newQuantity = min($newQuantity, $product->stock_upper_limit);
 
             if ($newQuantity === 0) {
                 // Remove item if quantity is zero
@@ -154,19 +154,21 @@ class CartTable extends Component
         $product = Product::find($productId);
 
         if ($product && isset($cart[$productId])) {
-            // Don't exceed stock
-            if ($cart[$productId] < $product->stock) {
+            if ($cart[$productId] < $product->stock_upper_limit) {
                 $cart[$productId]++;
-
-                if (auth()->check()) {
-                    $card->custom = $cart;
-                    $card->save();
-                } else {
-                    session(['guest_cart' => $cart]);
-                }
-
-                $this->refreshCart();
+            } else {
+                // Set to upper limit if it would exceed
+                $cart[$productId] = $product->stock_upper_limit;
             }
+
+            if (auth()->check()) {
+                $card->custom = $cart;
+                $card->save();
+            } else {
+                session(['guest_cart' => $cart]);
+            }
+
+            $this->refreshCart();
         }
     }
 
@@ -174,10 +176,15 @@ class CartTable extends Component
     {
         $card = $this->getCard();
         $cart = $card->custom ?? [];
+        $product = Product::find($productId);
 
-        if (isset($cart[$productId])) {
+        if (isset($cart[$productId]) && $product) {
             if ($cart[$productId] > 1) {
-                $cart[$productId]--;
+                if ($cart[$productId] > $product->stock_upper_limit) {
+                    $cart[$productId] = $product->stock_upper_limit;
+                } else {
+                    $cart[$productId]--;
+                }
             } else {
                 // Remove if quantity reaches zero
                 unset($cart[$productId]);
