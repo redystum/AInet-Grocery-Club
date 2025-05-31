@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
@@ -18,7 +19,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function show_login(): Factory|View|Application|RedirectResponse
+    public function show_login()
     {
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
@@ -26,7 +27,7 @@ class AuthController extends Controller
         return view('pages.auth.login');
     }
 
-    public function show_register(): Factory|View|Application|RedirectResponse
+    public function show_register()
     {
         if (Auth::check()) {
             return redirect()->route('home')->with('success', 'You are already logged in.');
@@ -34,7 +35,7 @@ class AuthController extends Controller
         return view('pages.auth.register');
     }
 
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request)
     {
         $request->validated();
 
@@ -61,7 +62,7 @@ class AuthController extends Controller
         ])->onlyInput('email', 'remember');
     }
 
-    public function register(RegisterRequest $request): RedirectResponse
+    public function register(RegisterRequest $request)
     {
         $request->validated();
 
@@ -84,7 +85,7 @@ class AuthController extends Controller
         return back()->with('success', 'Registration successful. Please check your email to activate your account.');
     }
 
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
@@ -93,7 +94,7 @@ class AuthController extends Controller
         return redirect()->route('home')->with('success', 'Logged out successfully.');
     }
 
-    public function activate(Request $request, $id, $hash): RedirectResponse
+    public function activate(Request $request, $id, $hash)
     {
         $user = User::findOrFail($id);
 

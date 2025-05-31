@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -35,14 +35,16 @@ Route::name('product.')->prefix('product/{product}')->group(function () {
 */
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'show_login'])->name('login');
-    Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::get('register', [AuthController::class, 'show_register'])->name('register');
-    Route::post('register', [AuthController::class, 'register'])->name('register');
-    Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+    Route::middleware('throttle:6,1')->group(function () { // throttle max 6 requests per minute
+        Route::post('login', [AuthController::class, 'login'])->name('login');
+        Route::post('register', [AuthController::class, 'register'])->name('register');
+        Route::get('/activate/{id}/{hash}', [AuthController::class, 'activate'])->name('activation');
+    });
 });
 
 /*--------------------------------------------------------------------------
-| Pssword reset routes
+| Password reset routes
 |---------------------------------------------------------------------------
 | Routes for password reset functionality.
 |

@@ -57,15 +57,16 @@ class ProductController extends Controller
 
         $delivery_prices = ShippingCosts::orderBy('min_value_threshold', 'asc')->get();
 
-        $random_products = Product::where('id', '!=', $product->id)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
             ->inRandomOrder()
             ->take(4)
             ->get();
 
         // TODO: replce this with the custom column
-        $images = [$product->photo, $random_products->first()->photo, $random_products->last()->photo, $product->photo];
+        $images = [$product->photo, $relatedProducts->first()->photo, $relatedProducts->last()->photo, $product->photo];
 
-        return view('pages.product', compact('product', 'delivery_prices', 'random_products', 'images'));
+        return view('pages.product', compact('product', 'delivery_prices', 'relatedProducts', 'images'));
     }
 
 }

@@ -35,10 +35,10 @@
             <!-- Search button and user dropdown -->
             <div class="flex items-center space-x-4">
                 <div>
-                    <button
-                            class="p-2 text-gray-500 dark:text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none cursor-pointer"
-                            id="searchButton">
+                    <button type="button" id="searchButton"
+                            class="cursor-pointer inline-flex items-center gap-1 rounded-full bg-gray-950/2 px-2 py-1 inset-ring inset-ring-gray-950/8 dark:bg-white/5 dark:inset-ring-white/2">
                         <i class="fas fa-search"></i>
+                        <kbd class="font-sans text-xs/4 text-gray-500  dark:text-gray-400">Ctrl K</kbd>
                     </button>
                 </div>
 
@@ -51,11 +51,7 @@
                         @endguest
                         @auth
                             <img class="h-8 w-8 rounded-full flex items-center justify-center"
-                                 @if(auth()->user()->photo)
-                                     src="{{ asset('storage/users/' . auth()->user()->photo) }}"
-                                 @else
-                                     src="{{ asset('storage/users/anonymous.png') }}"
-                                 @endif
+                                 src="{{ auth()->user()->getImage() }}"
                                  alt="Account"/>
                             <span
                                     class="hidden md:inline text-gray-700 dark:text-neutral-300 text-sm font-medium">{{ auth()->user()->name }}</span>
@@ -120,7 +116,7 @@
 
         <!-- Search bar -->
         <div class="hidden px-2 py-2" id="searchBar">
-            <livewire:search-dropdown />
+            <livewire:search-dropdown/>
         </div>
     </div>
 
@@ -143,7 +139,7 @@
                 <div class="flex-shrink-0">
                     @auth
                         <img class="h-10 w-10 rounded-full"
-                             src="{{ asset('storage/users/' . auth()->user()->photo) }}" alt="Account"/>
+                             src="{{ auth()->user()->getImage() }}" alt="Account"/>
                     @else
                         <img class="h-10 w-10 rounded-full"
                              src="{{ asset('storage/users/anonymous.png') }}" alt="Account"/>
