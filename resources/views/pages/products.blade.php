@@ -170,38 +170,6 @@
     </button>
 
     <script>
-        // Carousel functionality
-        const carousel = document.getElementById('carousel');
-        const slides = document.getElementsByClassName('carouselSlide');
-        const indicators = document.querySelectorAll('#carouselIndicators button');
-        let currentIndex = 0;
-
-        function updateCarousel() {
-            const offset = -currentIndex * 100;
-            carousel.querySelector('.flex').style.transform = `translateX(${offset}%)`;
-
-            indicators.forEach((indicator, index) => {
-                if (index === currentIndex) {
-                    indicator.classList.remove('opacity-70');
-                } else {
-                    indicator.classList.add('opacity-70');
-                }
-            });
-        }
-
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                currentIndex = index;
-                updateCarousel();
-            });
-        });
-
-        // Auto-rotate carousel
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % slides.length;
-            updateCarousel();
-        }, 5000);
-
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
 
