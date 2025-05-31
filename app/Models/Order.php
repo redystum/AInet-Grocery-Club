@@ -43,6 +43,10 @@ class Order extends Model
         'custom',
     ];
 
+    protected $casts = [
+        'custom' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'member_id')->withTrashed();

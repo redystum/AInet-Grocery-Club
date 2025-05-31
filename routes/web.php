@@ -136,6 +136,10 @@ if (!app()->isProduction()) {
         return redirect()->back();
     })->name('force_login');
 
+    Route::any('debug', function () {
+        return view('debug');
+    })->name('debug');
+
     // Error Pages
     Route::get('401', function () {
         abort(401);

@@ -119,8 +119,8 @@ class OrdersTable extends Component
         }
 
         if ($this->tab == 'pending') {
-            $query->where('status', Order::STATUS_PENDING);
-//                  ->whereRaw("(JSON_EXTRACT(custom, '$.cancellationStatus') IS NULL OR JSON_EXTRACT(custom, '$.cancellationStatus') != ?)", [Order::CANCEL_STATUS_PENDING]);
+            $query->where('status', Order::STATUS_PENDING)
+                  ->whereRaw("(JSON_EXTRACT(custom, '$.cancellationStatus') IS NULL OR JSON_EXTRACT(custom, '$.cancellationStatus') != ?)", [Order::CANCEL_STATUS_PENDING]);
         } elseif ($this->tab == 'received') {
             $query->where('status', Order::STATUS_COMPLETED);
         } elseif ($this->tab == 'cancellation') {

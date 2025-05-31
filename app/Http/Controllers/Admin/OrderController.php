@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Notifications\CancelledOrder;
+use App\Notifications\OrderCompleted;
 use App\Notifications\RefusedCancellationOrder;
 use App\Utils\CustomFieldManager;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -59,11 +62,51 @@ class OrderController extends Controller
         }
 
         $order->status = Order::STATUS_COMPLETED;
+        $order->custom = CustomFieldManager::update_or_create_array($order->custom, [
+            'deliveryTime' => now(),
+        ]);
         $order->save();
 
         foreach ($order->items as $item) {
             $item->product->decrement('stock', $item->quantity);
         }
+
+        // Calculate total discount for the receipt
+        $total_discount = 0;
+        foreach ($order->items as $item) {
+            $total_discount += $item->discount * $item->quantity;
+        }
+
+        // Generate PDF receipt
+        $order->load(['user', 'products']);
+        $pdf = PDF::loadView('pdfs.receipt', [
+            'order' => $order,
+            'total_discount' => $total_discount
+        ]);
+
+        $pdfFileName = 'order_receipt_' . $order->id . '.pdf';
+        $pdfPath = 'receipts/' . $pdfFileName;
+        Storage::disk('local')->put($pdfPath, $pdf->output());
+        // Save PDF path in order
+        $order->pdf_receipt = $pdfFileName;
+        $order->save();
+
+        // Send email with order details and receipt
+        $order->user->notify(new OrderCompleted(
+            $order->id,
+            now()->format('d-m-Y H:i'),
+            $order->delivery_address,
+            $order->items->map(function ($item) {
+                return [
+                    'name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'image' => $item->product->getImage(),
+                ];
+            })->toArray(),
+            $pdfPath,
+            $pdfFileName
+        ));
 
         return redirect()->route('board.orders.index')->with('toast', [
             'title' => 'Success',
