@@ -75,10 +75,9 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::middleware('notEmployee')->group(function () {
-        Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
-        Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
-    });
+    Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+    Route::put('profile/update', [UserController::class, 'update'])->name('profile.update')->middleware('notEmployee');
+    Route::put('profile/update/employee', [UserController::class, 'updateEmployee'])->name('profile.update.employee');
 });
 
 /*--------------------------------------------------------------------------

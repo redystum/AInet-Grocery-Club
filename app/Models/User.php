@@ -18,6 +18,11 @@ class User extends Authenticatable
 
     use SoftDeletes;
 
+    const TYPE_MEMBER = 'member';
+    const TYPE_BOARD = 'board';
+    const TYPE_EMPLOYEE = 'employee';
+    const TYPE_PENDING_MEMBER = 'pending_member';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -79,17 +84,22 @@ class User extends Authenticatable
 
     public function isEmployee(): bool
     {
-        return $this->type === 'employee';
+        return $this->type === $this::TYPE_EMPLOYEE;
     }
 
     public function isBoard(): bool
     {
-        return $this->type === 'board';
+        return $this->type === $this::TYPE_BOARD;
     }
 
     public function isMember(): bool
     {
-        return $this->type === 'member';
+        return $this->type === $this::TYPE_MEMBER;
+    }
+
+    public function isPendingMember(): bool
+    {
+        return $this->type === $this::TYPE_PENDING_MEMBER;
     }
 
     public function card()

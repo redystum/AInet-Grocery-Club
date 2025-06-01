@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use App\Notifications\PasswordResetSuccess;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -30,7 +31,7 @@ class UserController extends Controller
 
     public function edit()
     {
-        $user = User::with('card')->find(auth()->user()->id);
+        $user = User::find(auth()->user()->id);
         return view('pages.editProfile', compact('user'));
     }
 
@@ -83,6 +84,30 @@ class UserController extends Controller
             $user->notify(new PasswordResetSuccess());
         }
 
+        $user->notify(new PasswordResetSuccess());
+        return redirect()->route('profile')->with('success', 'Profile updated successfully');
+    }
+
+    public function updateEmployee(Request $request)
+    {
+        $request->validate([
+            'password' => 'string|min:8|confirmed',
+            'password_confirmation' => 'required_with:password|string|min:8',
+            'current_password' => 'required_with:password|string',
+        ]);
+
+        $user = User::find(auth()->user()->id);
+
+        if ($request->has('password') && $request->input('password') !== null) {
+            if (Hash::check($request->input('current_password'), $user->password)) {
+                $user->password = Hash::make($request->input('password'));
+                $user->save();
+            } else {
+                return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect']);
+            }
+        }
+
+        $user->notify(new PasswordResetSuccess());
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 }

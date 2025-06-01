@@ -9,10 +9,6 @@ use App\Models\User;
 use App\Notifications\NewLogin;
 use App\Notifications\Welcome;
 use Carbon\Carbon;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -78,8 +74,9 @@ class AuthController extends Controller
             $request->merge(['photo' => $filename]);
         }
 
-        $user = User::create($request->validated());
-
+        $validatedData = $request->validated();
+        $validatedData['type'] = User::TYPE_PENDING_MEMBER;
+        $user = User::create($validatedData);
         $user->sendEmailVerificationNotification();
 
         return back()->with('success', 'Registration successful. Please check your email to activate your account.');
