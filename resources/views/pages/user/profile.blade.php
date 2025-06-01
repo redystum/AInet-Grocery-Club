@@ -190,7 +190,7 @@
                                 <h3 class="text-xl font-semibold">No Virtual Card Yet</h3>
                                 <p class="text-sm opacity-80 max-w-sm">Create a virtual card to make payments easier and
                                     track your purchases in one place.</p>
-                                <a href="{{ route('profile') }}"
+                                <a href="{{ route('card.create') }}"
                                    class="mt-2 px-6 py-2 bg-white dark:bg-neutral-100 text-blue-700 dark:text-blue-600 rounded-lg transition-colors hover:bg-blue-50 dark:hover:bg-neutral-200 font-medium">
                                     <i class="fas fa-plus-circle mr-2"></i>Create Card
                                 </a>

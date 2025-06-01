@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -78,6 +79,13 @@ Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
     Route::put('profile/update', [UserController::class, 'update'])->name('profile.update')->middleware('notEmployee');
     Route::put('profile/update/employee', [UserController::class, 'updateEmployee'])->name('profile.update.employee');
+
+    Route::middleware('notEmployee')->name('card')->prefix('card/')->group(function () {
+        Route::get('/', [CardController::class, 'index'])->name('.index');
+        Route::get('/create', [CardController::class, 'create'])->name('.create');
+        Route::post('/create', [CardController::class, 'store'])->name('.store');
+        Route::put('/update', [CardController::class, 'update'])->name('.update');
+    });
 });
 
 /*--------------------------------------------------------------------------

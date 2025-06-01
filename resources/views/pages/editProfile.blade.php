@@ -119,6 +119,8 @@
                                     class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                 dark:text-neutral-100 @error('gender') border-red-500 dark:border-red-500 @enderror">
+                                <option value="" disabled {{ old('gender', $user->gender) == '' ? 'selected' : '' }}>Select...
+                                </option>
                                 <option value="M" {{ old('gender', $user->gender) == 'M' ? 'selected' : '' }}>Male
                                 </option>
                                 <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female
@@ -181,9 +183,9 @@
                                         class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                     focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                     dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
-                                    <option
+                                    <option disabled
                                             value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
-                                        None selected
+                                        Select...
                                     </option>
                                     <option
                                             value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
