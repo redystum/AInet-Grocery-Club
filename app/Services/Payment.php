@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Card;
+
 class Payment
 {
     // Invalid Payments with VISA:
@@ -54,5 +56,15 @@ class Payment
             return false;
         }
         return $phone_number % 10 != 2;
+    }
+
+    public static function pay($method, $reference)
+    {
+        return match ($method) {
+            Card::PAYMENT_TYPE_VISA => self::payWithVisa($reference['card_number'], $reference['cvc_code']),
+            Card::PAYMENT_TYPE_PAYPAL => self::payWithPaypal($reference['email_address']),
+            Card::PAYMENT_TYPE_MB_WAY => self::payWithMBway($reference['phone_number']),
+            default => false,
+        };
     }
 }

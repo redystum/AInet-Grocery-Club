@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use App\Models\Settings;
+use App\Services\Payment;
+use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 
 class CardController extends Controller
@@ -50,12 +53,29 @@ class CardController extends Controller
         $user = auth()->user();
 
         if ($user->card) {
-            return redirect()->route('user.card.index')->with('error', 'You already have a card.');
+            return redirect()->route('profile')->with('error', 'You already have a card.');
         }
 
-        //TODO...
+//        Payment::pay(
+//            $user->default_payment_type,
+//            $user->default_payment_reference, // todo: replace this to customManager and save cvv
+//        );
+//
+        $balance = $request->input('amount') - $fee;
 
-        return redirect()->route('user.card.index')->with('success', 'Card created successfully.');
+        $card = $user->card()->create([
+            'balance' => $balance,
+            'card_number' => Card::generate_card_number(),
+            'custom' => CustomFieldManager::update_or_create_array(null, [
+                'nickname' => $request->input('nickname'),
+            ], true)
+        ]);
+
+        if (!$card) {
+            return redirect()->back()->withErrors(['error' => 'Failed to create card. Please try again later.']);
+        }
+
+        return redirect()->route('profile')->with('success', 'Card created successfully.');
 
     }
 }

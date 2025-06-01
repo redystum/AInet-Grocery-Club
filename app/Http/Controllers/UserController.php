@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use App\Notifications\PasswordResetSuccess;
+use App\Utils\CustomFieldManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ class UserController extends Controller
 {
     public function show()
     {
-        $user = User::with('card', 'lastOrders')->find(auth()->user()->id);
+        $user = User::with(['card', 'lastOrders'])->find(auth()->user()->id);
 
         foreach ($user->lastOrders as $order) {
             $total_items = 0;
@@ -26,6 +27,11 @@ class UserController extends Controller
             unset($order->items);
         }
         $lastOrder = $user->lastOrders->last();
+
+        if ($user->card) {
+            CustomFieldManager::self_custom_to_attribute($user->card);
+        }
+
         return view('pages.user.profile', compact('user', 'lastOrder'));
     }
 

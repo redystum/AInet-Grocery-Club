@@ -136,7 +136,7 @@
                             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-8 -ml-8 z-0"></div>
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="text-sm opacity-80">Current Balance</p>
+                                    <p class="text-sm opacity-80">{{ $user->card->nickname ?? "Current" }} Balance</p>
                                     <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
                                 </div>
                                 @if($user->card->deleted_at == null)

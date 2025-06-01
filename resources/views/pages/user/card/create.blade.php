@@ -83,7 +83,7 @@
                             return Math.max(0, this.amount - this.fee);
                         }
                      }"
-                      @submit.prevent="if (canCreateCard && amount >= minAmount) { $dispatch('create-card', { amount, nickname }) }"
+                      @submit.prevent="if (canCreateCard && amount >= minAmount) { $el.submit();  }"
                       action="{{ route('card.store') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
