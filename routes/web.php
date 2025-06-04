@@ -80,10 +80,11 @@ Route::middleware('auth')->group(function () {
     Route::put('profile/update', [UserController::class, 'update'])->name('profile.update')->middleware('notEmployee');
     Route::put('profile/update/employee', [UserController::class, 'updateEmployee'])->name('profile.update.employee');
 
-    Route::middleware('notEmployee')->name('card')->prefix('card/')->group(function () {
+    Route::name('card')->prefix('card/')->middleware('notEmployee')->group(function () {
         Route::get('/', [CardController::class, 'index'])->name('.index');
         Route::get('/create', [CardController::class, 'create'])->name('.create');
         Route::post('/create', [CardController::class, 'store'])->name('.store');
+        Route::get('/charge', [CardController::class, 'charge'])->name('.charge');
         Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
 });

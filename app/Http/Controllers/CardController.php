@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use App\Models\Settings;
-use App\Services\Payment;
 use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 
@@ -77,5 +76,53 @@ class CardController extends Controller
 
         return redirect()->route('profile')->with('success', 'Card created successfully.');
 
+    }
+
+    public function charge()
+    {
+        $user = auth()->user();
+        $card = $user->card;
+
+        if (!$card) {
+            return redirect()->route('home')->with('error', 'No card found for this user.');
+        }
+
+        if ($card->deleted_at) {
+            return redirect()->route('home')->with('error', 'This card has been deleted.');
+        }
+
+        $total_items = 0;
+        $lastOrder = $user->lastOrders->last();
+        foreach ($lastOrder->items as $item) {
+            $total_items += $item->quantity;
+        }
+        $lastOrder->setAttribute('items_count', $total_items);
+        unset($lastOrder->items);
+
+        $canChargeCard = $user->default_payment_type && $user->default_payment_reference;
+        return view('pages.user.card.charge', compact('card', 'user', 'canChargeCard', 'lastOrder'));
+
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        $user = auth()->user();
+        $card = $user->card;
+        if (!$card) {
+            return redirect()->route('home')->with('error', 'No card found for this user.');
+        }
+
+        if ($card->deleted_at) {
+            return redirect()->route('home')->with('error', 'This card has been deleted.');
+        }
+
+        $card->balance += $request->input('amount');
+        $card->save();
+
+        return redirect()->route('profile')->with('success', 'Card balance updated successfully.');
     }
 }

@@ -170,9 +170,9 @@
                         </div>
 
                         <div class="flex justify-between">
-                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                            <a href="{{ route('card.charge') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                                 <i class="fas fa-plus mr-2"></i> Add Funds
-                            </button>
+                            </a>
                             <button
                                     class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
                                 <i class="fas fa-history mr-2"></i> View All
