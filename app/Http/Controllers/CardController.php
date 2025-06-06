@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use App\Models\Settings;
+use App\Models\User;
 use App\Services\Payment;
 use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
@@ -99,6 +100,10 @@ class CardController extends Controller
                 'nickname' => $request->input('nickname'),
             ], true)
         ]);
+
+        auth()->user()->type = User::TYPE_MEMBER;
+        auth()->user()->save();
+
 
         if (!$card) {
             return redirect()->back()->withErrors(['error' => 'Failed to create card. Please try again later.']);
