@@ -206,7 +206,7 @@
                             </div>
 
                             <!-- Payment Reference -->
-                            <div>
+                            <div id="paymentReferenceContainer">
                                 <label for="default_payment_reference"
                                        class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                                     Payment Reference
@@ -216,8 +216,25 @@
                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                    dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                    @error('default_payment_reference') border-red-500 dark:border-red-500 @enderror"
-                                       value="{{ old('default_payment_reference', $user->default_payment_reference) }}">
+                                       value="{{ old('default_payment_reference', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[0] : $user->default_payment_reference) }}">
                                 @error('default_payment_reference')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- CVV (for Visa) -->
+                            <div id="cvvContainer" style="{{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? '' : 'display: none;' }}">
+                                <label for="cvv"
+                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                    CVV
+                                </label>
+                                <input type="text" name="cvv" id="cvv" maxlength="4"
+                                       class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
+                                   dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
+                                   @error('cvv') border-red-500 dark:border-red-500 @enderror"
+                                       value="{{ old('cvv', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[1] : '') }}">
+                                @error('cvv')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -308,6 +325,17 @@
             preview.src = "{{ asset('storage/users/anonymous.png') }}";
             document.getElementById('photo').value = '';
             removePhotoInput.value = '1';
+        });
+
+        // Show/hide CVV field based on payment type
+        document.getElementById('default_payment_type')?.addEventListener('change', function (e) {
+            const cvvContainer = document.getElementById('cvvContainer');
+            if (e.target.value === 'Visa') {
+                cvvContainer.style.display = '';
+            } else {
+                cvvContainer.style.display = 'none';
+                document.getElementById('cvv').value = '';
+            }
         });
     </script>
 @endsection

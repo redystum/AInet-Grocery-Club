@@ -119,10 +119,21 @@
                                     class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-neutral-600 dark:text-neutral-400">Payment Reference</span>
+                            <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv)
+                                    Card number
+                                @else
+                                    Payment Reference
+                                @endif</span>
                             <span
                                     class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
                         </div>
+                        @if($user->cvv)
+                            <div class="flex justify-between">
+                                <span class="text-neutral-600 dark:text-neutral-400">CVV</span>
+                                <span
+                                        class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->cvv }}</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -170,7 +181,8 @@
                         </div>
 
                         <div class="flex justify-between">
-                            <a href="{{ route('card.charge') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                            <a href="{{ route('card.charge') }}"
+                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                                 <i class="fas fa-plus mr-2"></i> Add Funds
                             </a>
                             <button

@@ -75,6 +75,18 @@ class AuthController extends Controller
         }
 
         $validatedData = $request->validated();
+
+        // Combine payment reference and CVV if payment type is Visa
+        if (isset($validatedData['default_payment_type']) && $validatedData['default_payment_type'] === 'Visa'
+            && isset($validatedData['cvv']) && isset($validatedData['default_payment_reference'])) {
+            $validatedData['default_payment_reference'] = $validatedData['default_payment_reference'] . ';' . $validatedData['cvv'];
+        }
+
+        // Remove CVV from validated data as it's not a column in the users table
+        if (isset($validatedData['cvv'])) {
+            unset($validatedData['cvv']);
+        }
+
         $validatedData['type'] = User::TYPE_PENDING_MEMBER;
         $user = User::create($validatedData);
         $user->sendEmailVerificationNotification();

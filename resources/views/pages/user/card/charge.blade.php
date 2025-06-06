@@ -37,9 +37,19 @@
                         <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Reference</span>
-                        <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? 'N/A' }}</span>
+                        <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv)
+                                Card Number
+                            @else
+                                Reference
+                            @endif</span>
+                        <span class="font-medium text-neutral-800 dark:text-neutral-200 @error('reference') !text-red-600 @enderror">{{ $user->default_payment_reference ?? 'N/A' }}</span>
                     </div>
+                    @if($user->cvv)
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">CVV</span>
+                            <span class="font-medium text-neutral-800 dark:text-neutral-200 @error('reference') !text-red-600 @enderror">{{ $user->cvv }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between">
                         <span class="text-neutral-600 dark:text-neutral-400">Name</span>
                         <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->name }}</span>
@@ -88,12 +98,16 @@
                                 Charge Card
                             </button>
                             @unless($canChargeCard)
-                                <p class="mt-2 text-sm text-red-500">You must have a valid payment method to charge your card.</p>
+                                <p class="mt-2 text-sm text-red-500">You must have a valid payment method to charge your
+                                    card.</p>
                                 <a href="{{ route('profile.edit') }}"
                                    class="mt-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                     Add Payment Method
                                 </a>
                             @endunless
+                            @error('reference')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-6 relative overflow-hidden">
@@ -107,7 +121,7 @@
                                         <span x-show="amount > 0" class="text-sm opacity-80">
                                             → €<span x-text="({{ $user->card->balance }} + amount).toFixed(2)"></span>
                                         </span>
-                                    </p>                                </div>
+                                    </p></div>
                                 @if($user->card->deleted_at == null)
                                     <div
                                             class="bg-white dark:bg-neutral-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">

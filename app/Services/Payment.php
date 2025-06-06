@@ -58,12 +58,12 @@ class Payment
         return $phone_number % 10 != 2;
     }
 
-    public static function pay($method, $reference)
+    public static function pay($method, $reference, $cvv = null): bool
     {
         return match ($method) {
-            Card::PAYMENT_TYPE_VISA => self::payWithVisa($reference['card_number'], $reference['cvc_code']),
-            Card::PAYMENT_TYPE_PAYPAL => self::payWithPaypal($reference['email_address']),
-            Card::PAYMENT_TYPE_MB_WAY => self::payWithMBway($reference['phone_number']),
+            Card::PAYMENT_TYPE_VISA => self::payWithVisa($reference, $cvv),
+            Card::PAYMENT_TYPE_PAYPAL => self::payWithPaypal($reference),
+            Card::PAYMENT_TYPE_MB_WAY => self::payWithMBway($reference),
             default => false,
         };
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use App\Models\Settings;
+use App\Services\Payment;
 use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,24 @@ class CardController extends Controller
         $fee = Settings::get()->membership_fee ?? 0.00;
 
         $canCreateCard = $user->default_payment_type && $user->default_payment_reference;
+
+        if ($user->default_payment_type == Card::PAYMENT_TYPE_VISA && $user->default_payment_reference) {
+            $explodedReference = explode(';', $user->default_payment_reference);
+            if (count($explodedReference) == 2) {
+                $user->default_payment_reference = $explodedReference[0];
+                $user->setAttribute('cvv', $explodedReference[1]);
+            }
+        }
+
+        if (Payment::pay(
+                $user->default_payment_type,
+                $user->default_payment_reference,
+                $user->cvv,
+            ) === false) {
+            return view('pages.user.card.create', compact('user', 'fee', 'canCreateCard'))->withErrors(['reference' => 'Invalid payment details. Please check your payment method and try again.']);
+        }
+
+
         return view('pages.user.card.create', compact('user', 'fee', 'canCreateCard'));
     }
 
@@ -55,16 +74,27 @@ class CardController extends Controller
             return redirect()->route('profile')->with('error', 'You already have a card.');
         }
 
-//        Payment::pay(
-//            $user->default_payment_type,
-//            $user->default_payment_reference, // todo: replace this to customManager and save cvv
-//        );
-//
+        if ($user->default_payment_type == Card::PAYMENT_TYPE_VISA && $user->default_payment_reference) {
+            $explodedReference = explode(';', $user->default_payment_reference);
+            if (count($explodedReference) == 2) {
+                $user->default_payment_reference = $explodedReference[0];
+                $user->setAttribute('cvv', $explodedReference[1]);
+            }
+        }
+
+        if (Payment::pay(
+            $user->default_payment_type,
+            $user->default_payment_reference,
+            $user->cvv,
+        ) === false) {
+            return redirect()->back()->withErrors(['reference' => 'Invalid payment details. Please check your payment method and try again.']);
+        }
+
         $balance = $request->input('amount') - $fee;
 
         $card = $user->card()->create([
             'balance' => $balance,
-            'card_number' => Card::generate_card_number(),
+            'card_number' => Card::generate_card_number($user->id),
             'custom' => CustomFieldManager::update_or_create_array(null, [
                 'nickname' => $request->input('nickname'),
             ], true)
@@ -93,13 +123,32 @@ class CardController extends Controller
 
         $total_items = 0;
         $lastOrder = $user->lastOrders->last();
-        foreach ($lastOrder->items as $item) {
-            $total_items += $item->quantity;
+        if ($lastOrder) {
+            foreach ($lastOrder->items as $item) {
+                $total_items += $item->quantity;
+            }
+            $lastOrder->setAttribute('items_count', $total_items);
         }
-        $lastOrder->setAttribute('items_count', $total_items);
         unset($lastOrder->items);
 
         $canChargeCard = $user->default_payment_type && $user->default_payment_reference;
+
+        if ($user->default_payment_type == Card::PAYMENT_TYPE_VISA && $user->default_payment_reference) {
+            $explodedReference = explode(';', $user->default_payment_reference);
+            if (count($explodedReference) == 2) {
+                $user->default_payment_reference = $explodedReference[0];
+                $user->setAttribute('cvv', $explodedReference[1]);
+            }
+        }
+
+        if (Payment::pay(
+                $user->default_payment_type,
+                $user->default_payment_reference,
+                $user->cvv,
+            ) === false) {
+            return view('pages.user.card.charge', compact('card', 'user', 'canChargeCard', 'lastOrder'))->withErrors(['reference' => 'Invalid payment details. Please check your payment method and try again.']);
+        }
+
         return view('pages.user.card.charge', compact('card', 'user', 'canChargeCard', 'lastOrder'));
 
     }
@@ -118,6 +167,14 @@ class CardController extends Controller
 
         if ($card->deleted_at) {
             return redirect()->route('home')->with('error', 'This card has been deleted.');
+        }
+
+        if (Payment::pay(
+                $user->default_payment_type,
+                $user->default_payment_reference,
+                $user->cvv,
+            ) === false) {
+            return redirect()->back()->withErrors(['reference' => 'Invalid payment details. Please check your payment method and try again.']);
         }
 
         $card->balance += $request->input('amount');

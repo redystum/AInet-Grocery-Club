@@ -55,9 +55,15 @@
                         <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">Reference</span>
-                        <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? 'N/A' }}</span>
+                        <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv) Card Number @else Reference @endif</span>
+                        <span class="font-medium text-neutral-800 dark:text-neutral-200 @error('reference') !text-red-600 @enderror">{{ $user->default_payment_reference ?? 'N/A' }}</span>
                     </div>
+                    @if($user->cvv)
+                        <div class="flex justify-between">
+                            <span class="text-neutral-600 dark:text-neutral-400">CVV</span>
+                            <span class="font-medium text-neutral-800 dark:text-neutral-200 @error('reference') !text-red-600 @enderror">{{ $user->cvv }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between">
                         <span class="text-neutral-600 dark:text-neutral-400">Name</span>
                         <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->name }}</span>
@@ -129,6 +135,9 @@
                                     Add Payment Method
                                 </a>
                             @endunless
+                            @error('reference')
+                                <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
+use App\Models\Card;
 use App\Models\User;
 use App\Notifications\PasswordResetSuccess;
 use App\Utils\CustomFieldManager;
@@ -32,6 +33,14 @@ class UserController extends Controller
             CustomFieldManager::self_custom_to_attribute($user->card);
         }
 
+        if ($user->default_payment_type == Card::PAYMENT_TYPE_VISA && $user->default_payment_reference) {
+            $explodedReference = explode(';', $user->default_payment_reference);
+            if (count($explodedReference) == 2) {
+                $user->default_payment_reference = $explodedReference[0];
+                $user->setAttribute('cvv', $explodedReference[1]);
+            }
+        }
+
         return view('pages.user.profile', compact('user', 'lastOrder'));
     }
 
@@ -56,6 +65,10 @@ class UserController extends Controller
             'default_payment_reference' => $request->input('default_payment_reference'),
         ];
 
+        // Combine payment reference and CVV if payment type is Visa
+        if ($request->input('default_payment_type') === 'Visa' && $request->has('cvv')) {
+            $toUpdate['default_payment_reference'] = $request->input('default_payment_reference') . ';' . $request->input('cvv');
+        }
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -90,7 +103,6 @@ class UserController extends Controller
             $user->notify(new PasswordResetSuccess());
         }
 
-        $user->notify(new PasswordResetSuccess());
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 

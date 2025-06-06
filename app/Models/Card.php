@@ -34,10 +34,8 @@ class Card extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function generate_card_number()
+    public static function generate_card_number($id)
     {
-        return self::orderBy('created_at', 'desc')
-            ->first()
-            ?->card_number + 1 ?? 100000; // Start from 100000 if no cards exist
+        return 100000 + $id;
     }
 }
