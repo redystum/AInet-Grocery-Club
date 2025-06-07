@@ -34,8 +34,14 @@ class Card extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function operations()
+    {
+        return $this->hasMany(Operations::class);
+    }
+
     public static function generate_card_number($id)
     {
         return 100000 + $id;
     }
+
 }

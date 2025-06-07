@@ -55,7 +55,11 @@
                         <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv) Card Number @else Reference @endif</span>
+                        <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv)
+                                Card Number
+                            @else
+                                Reference
+                            @endif</span>
                         <span class="font-medium text-neutral-800 dark:text-neutral-200 @error('reference') !text-red-600 @enderror">{{ $user->default_payment_reference ?? 'N/A' }}</span>
                     </div>
                     @if($user->cvv)
@@ -127,17 +131,18 @@
                                     class="disabled:bg-blue-900 disabled:cursor-not-allowed disabled:text-neutral-500 cursor-pointer w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                                 Create Virtual Card
                             </button>
-                            @unless($canCreateCard)
+                            @if(!$canCreateCard)
                                 <p class="mt-2 text-sm text-red-500">You must have a valid payment method to create a
                                     card.</p>
                                 <a href="{{ route('profile.edit') }}"
                                    class="mt-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                     Add Payment Method
                                 </a>
-                            @endunless
-                            @error('reference')
-                                <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
+                            @else
+                                @error('reference')
+                                    <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                            @endif
                         </div>
                     </div>
 
