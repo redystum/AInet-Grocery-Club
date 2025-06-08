@@ -121,6 +121,10 @@ Route::middleware('auth')->group(function () {
             Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
             Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
         });
+
+        Route::get('/settings', function () {
+            return view('pages.admin.settings');
+        })->name('settings');
     });
 });
 
