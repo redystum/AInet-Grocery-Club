@@ -1,6 +1,6 @@
 <!-- Footer Section -->
-<footer class="bg-neutral-800 text-neutral-200 py-12 mt-28">
-    <div class="container mx-auto px-4">
+<footer class="py-8 mt-28">
+    <div class="container mx-auto p-8 dark:border-neutral-700 border-neutral-300 border rounded-lg shadow-lg">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- About Column -->
             <div>

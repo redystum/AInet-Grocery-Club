@@ -26,7 +26,7 @@
         <!-- Featured Categories -->
         <div class="container mx-auto px-4 py-12">
             <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-8">Shop by Category</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 sm:grid-cols-2">
                 @foreach($topCategories as $category)
                     <a href="{{ route('products.category', $category->id) }}"
                        class="group relative rounded-xl overflow-hidden h-48 shadow-md">
