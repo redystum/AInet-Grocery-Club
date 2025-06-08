@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ItemsOrder;
+use App\Models\Product;
 
 class HomeController extends Controller
 {
@@ -18,6 +19,8 @@ class HomeController extends Controller
                 return $item->product;
             });
 
+        $topDiscount = Product::orderBy('discount', 'desc')->take(4)->get();
+
         $topCategories = ItemsOrder::join('products', 'items_orders.product_id', '=', 'products.id')
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->groupBy('products.category_id')
@@ -29,6 +32,6 @@ class HomeController extends Controller
                     return Category::find($item->category_id);
             });
 
-        return view('pages.home', compact('topProducts', 'topCategories'));
+        return view('pages.home', compact('topProducts', 'topCategories', 'topDiscount'));
     }
 }
