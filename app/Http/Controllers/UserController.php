@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
+use App\Models\Card;
 use App\Models\User;
 use App\Notifications\PasswordResetSuccess;
 use App\Utils\CustomFieldManager;

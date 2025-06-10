@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Card Transactions')
 
@@ -15,9 +15,9 @@
                         <span class="font-medium">Current Balance:</span>
                         <span class="font-bold">€{{ number_format($currentBalance, 2) }}</span>
                     </div>
-                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    <a href="{{ route('card.charge') }}" class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                         <i class="fas fa-plus mr-2"></i> Add Funds
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -31,7 +30,6 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
-    Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
 });
 
 /*--------------------------------------------------------------------------

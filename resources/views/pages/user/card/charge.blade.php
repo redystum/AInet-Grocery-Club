@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Charge Card')
 
@@ -11,9 +11,9 @@
                 <p class="text-neutral-600 dark:text-neutral-400">Add funds to your virtual payment card</p>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="{{ route('card.index') }}"
+                <a href="{{ route('profile') }}"
                    class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to Cards
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Profile
                 </a>
             </div>
         </div>
