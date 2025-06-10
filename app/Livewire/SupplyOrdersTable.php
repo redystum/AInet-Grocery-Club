@@ -5,9 +5,12 @@ namespace App\Livewire;
 use App\Models\SupplyOrder;
 use App\Utils\CustomFieldManager;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Storage;
+use ZipArchive;
 
 class SupplyOrdersTable extends Component
 {
@@ -89,10 +92,97 @@ class SupplyOrdersTable extends Component
         $this->setPage((int)$page);
     }
 
+    public function exportReceipts()
+    {
+        $orders = $this->getOrders();
+
+        if (count($orders) == 0) {
+            $this->dispatch('showToast', type: 'error', message: 'No receipts found for the selected orders.');
+            return redirect()->back()->with('error', 'No receipts found for the selected orders.');
+        }
+
+        // Ensure the storage directory exists
+        if (!is_dir(storage_path('app/private/supply_receipts'))) {
+            mkdir(storage_path('app/private/supply_receipts'), 0777, true);
+        }
+
+        // Create zip file
+        $zip = new ZipArchive();
+        $zip_name = 'receipts_' . now()->format('Y-m-d_H-i-s') . '.zip';
+        $zip_path = Storage::disk('local')->path('receipts/' . $zip_name);
+        if ($zip->open($zip_path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            $hasFiles = false;
+
+            foreach ($orders as $order) {
+                $custom = new CustomFieldManager($order);
+                $receipt = $custom->get('pdf_receipt');
+
+                if ($receipt) {
+                    $path = storage_path('app/private/supply_receipts/' . $receipt);
+                    if (file_exists($path)) {
+                        $zip->addFile($path, 'receipt_' . $order->id . '_' . basename($receipt));
+                        $hasFiles = true;
+                    }
+                }
+            }
+
+            $zip->close();
+
+            if (!$hasFiles) {
+                $this->dispatch('showToast', type: 'error', message: 'No receipts found for the selected orders.');
+                return redirect()->back()->with('error', 'No receipts found for the selected orders.');
+            }
+
+            $this->dispatch('showToast', type: 'success', message: 'Receipts exported successfully.');
+            return response()->download($zip_path)->deleteFileAfterSend(true);
+        } else {
+            $this->dispatch('showToast', type: 'error', message: 'Could not create zip file.');
+            return redirect()->back()->with('error', 'Could not create zip file.');
+        }
+    }
+
     public function render()
     {
         $this->validateInputs();
 
+        $supplyOrders = $this->getOrders();
+
+        foreach ($supplyOrders as $supplyOrder) {
+            $custom = new CustomFieldManager($supplyOrder);
+
+            $supplyOrder->setAttribute('pdf_receipt', $custom->get('pdf_receipt'));
+
+            if (!$custom->exists()) {
+                $supplyOrder->setAttribute('delivered_at', "-");
+                continue;
+            }
+
+            if (($delivered_at = $custom->get('delivered_at')) != null) {
+                $delivered_at = Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
+                $supplyOrder->setAttribute('delivered_at', $delivered_at);
+                continue;
+            }
+
+            if (($delivered_at = $custom->get('expected_delivery_date')) != null) {
+                $delivered_at = "Expected: " . Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
+                $supplyOrder->setAttribute('delivered_at', $delivered_at);
+                continue;
+            }
+
+            $supplyOrder->setAttribute('delivered_at', '-');
+        }
+
+        return view('livewire.supply-orders-table', [
+            'supplyOrders' => $supplyOrders,
+        ]);
+    }
+
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    private function getOrders(): \Illuminate\Pagination\LengthAwarePaginator
+    {
         $query = SupplyOrder::query();
 
         if ($this->search) {
@@ -108,6 +198,7 @@ class SupplyOrdersTable extends Component
             $query->where('status', SupplyOrder::STATUS_COMPLETED);
         }
 
+        // Apply same ordering as in the table
         switch ($this->orderBy) {
             case 'date_asc':
                 $query->orderBy('supply_orders.created_at');
@@ -140,34 +231,6 @@ class SupplyOrdersTable extends Component
         } elseif ($this->dateRange == 'year') {
             $query->whereYear('supply_orders.created_at', now()->year);
         }
-
-        $supplyOrders = $query->paginate(50);
-
-        foreach ($supplyOrders as $supplyOrder) {
-            $custom = new CustomFieldManager($supplyOrder);
-
-            if (!$custom->exists()) {
-                $supplyOrder->setAttribute('delivered_at', "-");
-                continue;
-            }
-
-            if (($delivered_at = $custom->get('delivered_at')) != null) {
-                $delivered_at = Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
-                $supplyOrder->setAttribute('delivered_at', $delivered_at);
-                continue;
-            }
-
-            if (($delivered_at = $custom->get('expected_delivery_date')) != null) {
-                $delivered_at = "Expected: " . Carbon::parse($delivered_at)->format('d/m/Y H:i:s');
-                $supplyOrder->setAttribute('delivered_at', $delivered_at);
-                continue;
-            }
-
-            $supplyOrder->setAttribute('delivered_at', '-');
-        }
-
-        return view('livewire.supply-orders-table', [
-            'supplyOrders' => $supplyOrders,
-        ]);
+        return $query->paginate(50);
     }
 }
