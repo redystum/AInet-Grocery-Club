@@ -92,12 +92,6 @@ class User extends Authenticatable
     {
         return $this->type === 'member';
     }
-
-    public function getImage()
-    {
-        return $this->photo ? asset('storage/users/' . $this->photo) : asset('storage/users/anonymous.png');
-    }
-
     public function card()
     {
         return $this->hasOne(Card::class, 'id', 'id');
@@ -113,4 +107,8 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'member_id', 'id')->with('products');
     }
 
+    public function getImage(): string
+    {
+        return $this->photo ? asset('storage/users/' . $this->photo) : asset('storage/users/anonymous.png');
+    }
 }
