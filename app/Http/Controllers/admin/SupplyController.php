@@ -7,7 +7,10 @@ use App\Models\Product;
 use App\Models\SupplyOrder;
 use App\Utils\CustomFieldManager;
 use App\Utils\ToastCreator;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SupplyController extends Controller
 {
@@ -84,18 +87,33 @@ class SupplyController extends Controller
 
     public function complete(SupplyOrder $order)
     {
+        $order->load(['product', 'registeredBy']);
+
+        // Ensure the storage directory exists
+        if (!is_dir(storage_path('app/private/supply_receipts'))) {
+            mkdir(storage_path('app/private/supply_receipts'), 0777, true);
+        }
+
+        $filename = 'supply_receipt_' . $order->id . '_' . time() . '_' . Str::random(8) . '.pdf';
+
+        // Create PDF
+        $pdf = PDF::loadView('pdfs.supply_receipt', [
+            'order' => $order,
+            'date' => now()->format('d-m-Y H:i'),
+        ]);
+        Storage::disk('local')->put('supply_receipts/' . $filename, $pdf->output());
+        
         $order->update([
             'status' => SupplyOrder::STATUS_COMPLETED,
-            'custom' => json_encode([
-                'expected_delivery_date' => null,
+            'custom' =>CustomFieldManager::update_or_create_array($order->custom, [
                 'delivered_at' => now(),
-            ]),
+                'expected_delivery_date' => null,
+                'pdf_receipt' => $filename
+            ])
         ]);
 
-        $order->load('product');
-
         $order->product->increment('stock', $order->quantity);
-
+        
         ToastCreator::success('Supply order completed successfully.');
         return redirect()->route('board.supply.index');
     }
@@ -129,4 +147,29 @@ class SupplyController extends Controller
         return redirect()->route('board.supply.index');
     }
 
+    public function receipt(SupplyOrder $order)
+    {
+        // Check if the order has a receipt
+        $custom = new CustomFieldManager($order);
+        $receiptFilename = $custom->get('pdf_receipt');
+        
+        if (!$receiptFilename) {
+            ToastCreator::error('This supply order does not have a receipt.');
+            return redirect()->route('board.supply.index');
+        }
+        
+        $path = Storage::disk('local')->path('supply_receipts/' . $receiptFilename);
+        
+        if (!file_exists($path)) {
+            ToastCreator::error('Receipt file not found.');
+            return redirect()->route('board.supply.index');
+        }
+        
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $receiptFilename . '"',
+        ];
+        
+        return response()->file($path, $headers);
+    }
 }

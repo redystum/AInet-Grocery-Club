@@ -18,8 +18,13 @@
             <p class="text-neutral-600 dark:text-neutral-400">Manage your pending and received supply orders</p>
         </div>
         <div class="flex gap-3">
-            <button class="px-4 cursor-pointer py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
-                <i class="fas fa-file-export mr-2"></i> Export
+            <button
+                wire:click="exportReceipts"
+                wire:loading.attr="disabled"
+                class="px-4 cursor-pointer py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">
+                <i class="fas fa-file-export mr-2"></i>
+                <span wire:loading.remove wire:target="exportReceipts">Export</span>
+                <span wire:loading wire:target="exportReceipts">Exporting...</span>
             </button>
         </div>
     </div>
@@ -149,7 +154,8 @@
                                            required min="1" :max="maxQuantity"
                                            x-effect="if(showEditModal) $nextTick(() => $el.focus())"
                                            class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
-                                    <div x-show="editQuantity < 1 || editQuantity > maxQuantity" class="mt-1 text-sm text-red-600 dark:text-red-400">
+                                    <div x-show="editQuantity < 1 || editQuantity > maxQuantity"
+                                         class="mt-1 text-sm text-red-600 dark:text-red-400">
                                         Quantity must be between 1 and <span x-text="maxQuantity"></span>.
                                     </div>
                                 </div>
@@ -287,11 +293,18 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if($tab == "received")
-                                <a href="#"
-                                   class="cursor-pointer text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                    <i class="fas fa-receipt mr-3"></i>
-                                    Invoice
-                                </a>
+                                @if($order->pdf_receipt)
+                                    <a href="{{ route('board.supply.receipt', $order->id) }}" target="_blank"
+                                       class="cursor-pointer text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                        <i class="fas fa-receipt mr-1"></i>
+                                        Receipt
+                                    </a>
+                                @else
+                                    <span class="text-right text-sm text-neutral-400 dark:text-neutral-500">
+                                        <i class="fas fa-receipt mr-1"></i>
+                                        No Receipt
+                                    </span>
+                                @endif
                             @else
                                 <div class="relative">
                                     <button @click="$event.stopPropagation(); activeDropdown === 'order-{{ $order->id }}' ? activeDropdown = null : activeDropdown = 'order-{{ $order->id }}'"
@@ -314,13 +327,24 @@
                                          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
-                                            <a href="#"
-                                               class="cursor-pointer flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                               role="menuitem">
-                                                <i class="fas fa-receipt mr-3 text-neutral-400"></i>
-                                                Download Invoice
-                                            </a>
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED && $order->created_at->diffInHours(now(), false) < 24)
+                                                @if($hasReceipt)
+                                                    <a href="{{ route('board.supply.receipt', $order->id) }}"
+                                                       target="_blank"
+                                                       class="cursor-pointer flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                       role="menuitem">
+                                                        <i class="fas fa-receipt mr-3 text-blue-400"></i>
+                                                        Download Receipt
+                                                    </a>
+                                                @else
+                                                    <a href="#"
+                                                       class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-500 cursor-not-allowed"
+                                                       role="menuitem">
+                                                        <i class="fas fa-receipt mr-3 text-neutral-500"></i>
+                                                        No Receipt Available
+                                                    </a>
+                                                @endif
+
                                                 <button @click="
                                                     editOrderId = '{{ $order->id }}';
                                                     editQuantity = {{ $order->quantity }};

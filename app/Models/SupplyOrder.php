@@ -27,4 +27,9 @@ class SupplyOrder extends Model
     {
         return $this->belongsTo(User::class, 'registered_by_user_id');
     }
+    
+    public function registeredBy()
+    {
+        return $this->belongsTo(User::class, 'registered_by_user_id');
+    }
 }

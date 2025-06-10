@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
             Route::get('{order}/cancel', [SupplyController::class, 'cancel'])->name('cancel');
             Route::get('{order}/complete', [SupplyController::class, 'complete'])->name('complete');
             Route::delete('destroy', [SupplyController::class, 'destroy'])->name('destroy');
+            Route::get('{order}/receipt', [SupplyController::class, 'receipt'])->name('receipt');
         });
     });
 });
