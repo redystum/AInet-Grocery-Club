@@ -5,7 +5,7 @@
 
     <!-- Search and Filters -->
     <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div class="md:col-span-2">
                 <label for="search" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">
                     Search Users
@@ -43,6 +43,21 @@
                     <option value="blocked">Blocked</option>
                 </select>
             </div>
+
+            <div>
+                <label for="order-by" class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                    Order By
+                </label>
+                <select wire:model.live="orderBy" id="order-by"
+                        class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 cursor-pointer">
+                    <option value="created_at_desc">Joined (Newest First)</option>
+                    <option value="created_at_asc">Joined (Oldest First)</option>
+                    <option value="name_asc">Name (A-Z)</option>
+                    <option value="name_desc">Name (Z-A)</option>
+                    <option value="orders_count_asc">Orders (Low to High)</option>
+                    <option value="orders_count_desc">Orders (High to Low)</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -67,6 +82,9 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Payment Method
                     </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                        Joined
+                    </th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Actions
                     </th>
@@ -84,7 +102,7 @@
                                          alt="{{ $user->name }}">
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $user->name }}</div>
+                                    <a href="{{ route('board.users.show', $user->id) }}" class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $user->name }}</a>
                                     <div class="text-sm text-neutral-600 dark:text-neutral-400">{{ $user->email }}</div>
                                 </div>
                             </div>
@@ -119,7 +137,7 @@
                                     @endphp
                                     @if($blockReason)
                                         <button @click="$dispatch('open-tooltip', {id: 'block-reason-{{ $user->id }}'})" 
-                                                class="cursor-pointer ml-auto text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100">
+                                                class="cursor-pointer ml-2 text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                         <div x-data="{ open: false }" 
@@ -161,6 +179,13 @@
                                 @else
                                     <span class="text-neutral-500 dark:text-neutral-400">Not set</span>
                                 @endif
+                            </div>
+                        </td>
+
+                        <!-- Joined Date Column -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-neutral-800 dark:text-neutral-100">
+                                {{ $user->created_at->format('M d, Y') }}
                             </div>
                         </td>
 
@@ -224,7 +249,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
+                        <td colspan="7" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                             <div class="flex flex-col items-center">
                                 <i class="fas fa-users text-4xl mb-3 text-neutral-400 dark:text-neutral-600"></i>
                                 <p>No users found</p>

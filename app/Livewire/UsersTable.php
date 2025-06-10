@@ -16,6 +16,7 @@ class UsersTable extends Component
     public $userType = '';
     public $status = '';
     public $perPage = 50;
+    public $orderBy = 'created_at_desc'; // Default order by
     
     // Modal properties
     public $showBlockModal = false;
@@ -30,6 +31,7 @@ class UsersTable extends Component
         'search' => ['except' => ''],
         'userType' => ['except' => ''],
         'status' => ['except' => ''],
+        'orderBy' => ['except' => 'created_at_asc'],
     ];
     
     // Reset pagination when filters change
@@ -44,6 +46,11 @@ class UsersTable extends Component
     }
     
     public function updatedStatus()
+    {
+        $this->resetPage();
+    }
+    
+    public function updatedOrderBy()
     {
         $this->resetPage();
     }
@@ -149,7 +156,24 @@ class UsersTable extends Component
                 }
                 return $query;
             })
-            ->latest()
+            ->when($this->orderBy === 'name_asc', function($query) {
+                return $query->orderBy('name');
+            })
+            ->when($this->orderBy === 'name_desc', function($query) {
+                return $query->orderBy('name', 'desc');
+            })
+            ->when($this->orderBy === 'created_at_asc', function($query) {
+                return $query->orderBy('created_at');
+            })
+            ->when($this->orderBy === 'created_at_desc', function($query) {
+                return $query->orderBy('created_at', 'desc');
+            })
+            ->when($this->orderBy === 'orders_count_asc', function($query) {
+                return $query->orderBy('orders_count');
+            })
+            ->when($this->orderBy === 'orders_count_desc', function($query) {
+                return $query->orderBy('orders_count', 'desc');
+            })
             ->paginate($this->perPage);
             
         return view('livewire.users-table', [

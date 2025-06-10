@@ -65,7 +65,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 | Routes that are accessible only to authenticated users.
 |
 */
-Route::middleware(['auth', 'notBlocked'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
 
 
@@ -132,8 +132,9 @@ Route::middleware(['auth', 'notBlocked'])->group(function () {
         });
 
         Route::resource('users', AdminUserController::class);
-        Route::get('users/{user}/unblock', [AdminUserController::class, 'unblock'])->name('users.unblock');
-        Route::get('users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
+        Route::patch('users/{user}/unblock', [AdminUserController::class, 'unblock'])->name('users.unblock');
+        Route::patch('users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
+        Route::get('users/{user}/transactions', [AdminUserController::class, 'transactions'])->name('users.transactions');
 
         Route::get('/settings', function () {
             return view('pages.admin.settings');

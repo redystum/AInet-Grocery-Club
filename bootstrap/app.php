@@ -16,12 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(isNotBlocked::class);
+
         $middleware->alias([
             'board' => isBoard::class,
             'member' => isMember::class,
             'employee' => isEmployee::class,
             'notEmployee' => isNotEmployee::class,
-            'notBlocked' => isNotBlocked::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

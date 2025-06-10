@@ -1,86 +1,91 @@
-@extends('pages.layouts.public')
+@extends('pages.layouts.admin')
 
 @section('title', ' - Profile')
 
 @section('content')
     @use('App\Models\Order')
+    @use('App\Models\User')
+    <div class="container mx-auto px-4 py-8 max-w-7xl" x-data="{
+        showBlockModal: false, 
+        showUnblockModal: false, 
+        showDeleteModal: false, 
+        blockReason: '' 
+    }">
+        <!-- Admin Toolbar -->
+        <div class="mb-6 rounded-xl shadow-sm p-6 border border-neutral-200 dark:border-neutral-700">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <a href="{{ route('board.users.index') }}"
+                   class="cursor-pointer flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Users List
+                </a>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Profile Header Section -->
-        <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-            <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <!-- Profile Image -->
-                <div
-                        class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('board.users.edit', $user->id) }}"
+                       class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-user-edit mr-2"></i> Edit User
+                    </a>
+                    @if($user->type == User::TYPE_MEMBER || $user->type == User::TYPE_PENDING_MEMBER)
+                        @if($user->blocked)
+                            <button @click="showUnblockModal = true" type="button"
+                                    class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center">
+                                <i class="fas fa-user-check mr-2"></i> Unblock User
+                            </button>
+                        @else
+                            <button @click="showBlockModal = true" type="button"
+                                    class="cursor-pointer px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors flex items-center">
+                                <i class="fas fa-user-lock mr-2"></i> Block User
+                            </button>
+                        @endif
+                    @endif
 
-                    <img src="{{ $user->getImage() }}"
-                         alt="Profile" class="w-full h-full object-cover">
-                </div>
-
-                <!-- Profile Info -->
-                <div class="flex-1">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ $user->name }}</h1>
-                            <p class="text-neutral-600 dark:text-neutral-400">{{ $user->email }}</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span
-                                    class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-sm rounded-full">
-                                <i class="fas fa-crown mr-1"></i>
-                                Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
-                            </span>
-                            @if(auth()->user()->isEmployee())
-                                <a href="{{ route('profile.edit') }}"
-                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                    <i class="fas fa-edit mr-2"></i> Change Password
-                                </a>
-                            @else
-                                <a href="{{ route('profile.edit') }}"
-                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                    <i class="fas fa-edit mr-2"></i> Edit Profile
-                                </a>
-                            @endif
-                        </div>
-                    </div>
+                    @if($user->deleted_at == null && $user->id != auth()->user()->id)
+                        <button @click="showDeleteModal = true" type="button"
+                                class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-user-slash mr-2"></i> Delete User
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
 
-        @unless(auth()->user()->isEmployee())
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <!-- Profile Header Section with Status Badge -->
+            <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6 border border-neutral-200 dark:border-neutral-700">
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                    <!-- Profile Image -->
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md flex-shrink-0">
+                        <img src="{{ $user->getImage() }}"
+                             alt="Profile" class="w-full h-full object-cover">
+                    </div>
 
-            @if(session('success'))
-                <div
-                        class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mt-0.5">
-                            <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-semibold text-green-800 dark:text-green-200">
-                                Success!
-                            </h3>
-                            <div class="mt-1 text-green-700 dark:text-green-300">
-                                <p>{{ session('success') }}</p>
+                    <!-- Profile Info -->
+                    <div class="flex-1">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-3">
+                                    <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ $user->name }}</h1>
+                                </div>
+                                <p class="text-neutral-600 dark:text-neutral-400 mt-1">{{ $user->email }}</p>
                             </div>
-
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-sm rounded-full">
+                                    <i class="fas fa-crown mr-1"></i>
+                                    Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            @endif
+            </div>
 
             <!-- User Details Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <!-- Account Details -->
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 border border-neutral-200 dark:border-neutral-700">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">
                             <i class="fas fa-user-circle mr-2 text-blue-600 dark:text-blue-400"></i>Account Details
                         </h2>
-                        <a href="{{ route('profile.edit') }}"
-                           class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                            <i class="fas fa-edit mr-1"></i> Edit
-                        </a>
                     </div>
 
                     <div class="space-y-4">
@@ -96,6 +101,8 @@
                                 <span class="font-medium text-red-600 dark:text-red-400">Blocked</span>
                             @elseif($user->deleted_at != null)
                                 <span class="font-medium text-red-600 dark:text-red-400">Deleted</span>
+                            @elseif($user->type == User::TYPE_PENDING_MEMBER)
+                                <span class="font-medium text-yellow-600 dark:text-yellow-400">Pending</span>
                             @else
                                 <span class="font-medium text-green-600 dark:text-green-400">Active</span>
                             @endif
@@ -140,10 +147,9 @@
                 </div>
 
                 <!-- Virtual Card Section -->
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 border border-neutral-200 dark:border-neutral-700">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">
                         <i class="fas fa-credit-card mr-2 text-blue-600 dark:text-blue-400"></i>Virtual Card
-
                     </h2>
 
                     @if($user->card)
@@ -152,7 +158,8 @@
                             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-8 -ml-8 z-0"></div>
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="text-sm opacity-80">{{ $user->card->nickname ?? "Current" }} Balance</p>
+                                    <p class="text-sm opacity-80">{{ $user->card->nickname ?? "Current" }}
+                                        Balance</p>
                                     <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
                                 </div>
                                 @if($user->card->deleted_at == null)
@@ -186,13 +193,9 @@
                         </div>
 
                         <div class="flex justify-between">
-                            <a href="{{ route('card.charge') }}"
-                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                <i class="fas fa-plus mr-2"></i> Add Funds
-                            </a>
-                            <a href="{{ route('card.index') }}"
-                                    class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
-                                <i class="fas fa-history mr-2"></i> View All
+                            <a href="{{ route('board.users.transactions', $user->id) }}"
+                               class="cursor-pointer ml-auto px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
+                                <i class="fas fa-history mr-2"></i> View All Transactions
                             </a>
                         </div>
 
@@ -205,12 +208,9 @@
                                     <i class="fas fa-credit-card text-2xl"></i>
                                 </div>
                                 <h3 class="text-xl font-semibold">No Virtual Card Yet</h3>
-                                <p class="text-sm opacity-80 max-w-sm">Create a virtual card to make payments easier and
+                                <p class="text-sm opacity-80 max-w-sm">Create a virtual card to make payments easier
+                                    and
                                     track your purchases in one place.</p>
-                                <a href="{{ route('card.create') }}"
-                                   class="mt-2 px-6 py-2 bg-white dark:bg-neutral-100 text-blue-700 dark:text-blue-600 rounded-lg transition-colors hover:bg-blue-50 dark:hover:bg-neutral-200 font-medium">
-                                    <i class="fas fa-plus-circle mr-2"></i>Create Card
-                                </a>
                             </div>
                         </div>
                     @endif
@@ -219,7 +219,7 @@
 
             <!-- Recent Purchases Section -->
             @if($lastOrder != null)
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 border border-neutral-200 dark:border-neutral-700">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">
                             <i class="fas fa-shopping-bag mr-2 text-blue-600 dark:text-blue-400"></i>Recent Purchases
@@ -306,16 +306,150 @@
                     </div>
                 </div>
             @endif
-        @else
-            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                <div class="text-center">
-                    <p class="text-neutral-800 dark:text-neutral-100">Hi {{ $user->name }}, </p>
-                    <p class="text-neutral-800 dark:text-neutral-100">You are logged in as an employee.</p>
-                    <p class="text-neutral-800 dark:text-neutral-100">Which means you don't have a profile page. If you
-                        need to update any of your information please talk with your superior.</p>
-                    <p class="text-neutral-800 dark:text-neutral-100">Thanks!</p>
+        </div>
+
+        @if($user->type == User::TYPE_MEMBER || $user->type == User::TYPE_PENDING_MEMBER)
+            <!-- Block Modal -->
+            <div x-show="showBlockModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showBlockModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-user-lock text-orange-500 mr-2"></i>Block User {{ $user->name }}
+                        </h3>
+                        <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to block this user? They will not be able to access their account
+                            until unblocked.
+                        </p>
+                        <form action="{{ route('board.users.block', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="mb-4">
+                                <label for="block-reason"
+                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    Block Reason <span class="text-red-500">*</span>
+                                </label>
+                                <textarea x-model="blockReason" name="reason" id="block-reason" rows="3"
+                                          class="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
+                                          placeholder="Please specify why this user is being blocked"
+                                          required></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showBlockModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+                                        :disabled="!blockReason.trim()">
+                                    Block User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        @endunless
+
+            <!-- Unblock Modal -->
+            <div x-show="showUnblockModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showUnblockModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-lock-open text-green-500 mr-2"></i>Unblock User {{ $user->name }}
+                        </h3>
+                        <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to unblock this user? They will regain access to their account.
+                        </p>
+                        @if($user->block_reason)
+                            <div class="mb-4 p-3 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+                                <h4 class="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                                    Current Block Reason:
+                                </h4>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                    {{ $user->block_reason }}
+                                </p>
+                            </div>
+                        @endif
+                        <form action="{{ route('board.users.unblock', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showUnblockModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                    Unblock User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if($user->id != auth()->user()->id)
+            <!-- Delete Modal -->
+            <div x-show="showDeleteModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showDeleteModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Delete User {{ $user->name }}
+                        </h3>
+                        <p class="mb-2 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to delete this user? This action cannot be undone.
+                        </p>
+                        <form action="{{ route('board.users.destroy', $user->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showDeleteModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                                    Delete
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
+
+    <!-- Add x-cloak style to hide modals by default -->
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 @endsection
