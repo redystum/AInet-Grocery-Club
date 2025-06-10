@@ -51,6 +51,14 @@ class AuthController extends Controller
                 ])->onlyInput('email', 'remember');
             }
 
+            if (Auth::user()->blocked) {
+                Auth::logout();
+
+                return back()->withErrors([
+                    'email' => 'Your account is blocked. Please contact support.',
+                ])->onlyInput('email', 'remember');
+            }
+
             $request->session()->regenerate();
 
             Auth::user()->notify(new NewLogin());

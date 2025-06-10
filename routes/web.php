@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
@@ -64,7 +65,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 | Routes that are accessible only to authenticated users.
 |
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'notBlocked'])->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
 
 
@@ -122,6 +123,10 @@ Route::middleware('auth')->group(function () {
             Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
             Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
         });
+
+        Route::resource('users', AdminUserController::class);
+        Route::get('users/{user}/unblock', [AdminUserController::class, 'unblock'])->name('users.unblock');
+        Route::get('users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
 
         Route::get('/settings', function () {
             return view('pages.admin.settings');
