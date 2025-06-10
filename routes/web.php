@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -80,9 +82,16 @@ Route::middleware(['auth', 'notBlocked'])->group(function () {
         });
     });
 
-    Route::middleware('notEmployee')->group(function () {
-        Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
-        Route::put('profile/update', [UserController::class, 'update'])->name('profile.update');
+    Route::get('profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+    Route::put('profile/update', [UserController::class, 'update'])->name('profile.update')->middleware('notEmployee');
+    Route::put('profile/update/employee', [UserController::class, 'updateEmployee'])->name('profile.update.employee');
+
+    Route::name('card')->prefix('card/')->middleware('notEmployee')->group(function () {
+        Route::get('/', [CardController::class, 'index'])->name('.index');
+        Route::get('/create', [CardController::class, 'create'])->name('.create');
+        Route::post('/create', [CardController::class, 'store'])->name('.store');
+        Route::get('/charge', [CardController::class, 'charge'])->name('.charge');
+        Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
 
     /*--------------------------------------------------------------------------

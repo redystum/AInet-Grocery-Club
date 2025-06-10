@@ -33,6 +33,8 @@ class RegisterRequest extends FormRequest
             'nif' => 'nullable|string|max:9',
             'default_delivery_address' => 'nullable|string|max:255',
             'default_payment_type' => 'nullable|string|in:Visa,PayPal,MB WAY',
+            'default_payment_reference' => 'nullable|string|max:255',
+            'cvv' => 'nullable|required_if:default_payment_type,Visa|string|max:3',
             'terms' => 'required|accepted',
         ];
     }
