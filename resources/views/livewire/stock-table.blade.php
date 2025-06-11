@@ -4,7 +4,6 @@
     editProductId: null,
     editQuantity: 0,
     maxQuantity: 0,
-    minQuantity: 0,
 }"
      x-init="document.addEventListener('click', () => { activeDropdown = null })"
      @scroll.window="activeDropdown = null"
@@ -63,11 +62,11 @@
                                     <label for="quantity"
                                            class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
                                     <input type="number" id="quantity" x-model="editQuantity" name="quantity"
-                                           required :min="minQuantity" :max="maxQuantity"
+                                           required min="1" :max="maxQuantity"
                                            x-effect="if(showEditModal) $nextTick(() => $el.focus())"
-                                           class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
-                                    <div x-show="editQuantity < minQuantity || editQuantity > maxQuantity" class="mt-1 text-sm text-red-600 dark:text-red-400">
-                                        Quantity must be between <span x-text="minQuantity"></span> and <span x-text="maxQuantity"></span>.
+                                           class="appearance-textfield w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                    <div x-show="editQuantity < 0 || editQuantity > maxQuantity" class="mt-1 text-sm text-red-600 dark:text-red-400">
+                                        Quantity must be between 0 and <span x-text="maxQuantity"></span>.
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +75,7 @@
                     <div class="bg-neutral-50 dark:bg-neutral-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit"
                                 @click="showEditModal = false;"
-                                :disabled="editQuantity < minQuantity || editQuantity > maxQuantity"
+                                :disabled="editQuantity < 0 || editQuantity > maxQuantity"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             Save Changes
                         </button>
@@ -281,7 +280,6 @@
                                                     showEditModal = true;
                                                     activeDropdown = null;
                                                     maxQuantity = {{ $product->stock_upper_limit }};
-                                                    minQuantity = {{ $product->stock_lower_limit }};
                                                 "
                                                 class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                 role="menuitem">
