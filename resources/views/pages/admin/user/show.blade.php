@@ -208,9 +208,6 @@
                                     <i class="fas fa-credit-card text-2xl"></i>
                                 </div>
                                 <h3 class="text-xl font-semibold">No Virtual Card Yet</h3>
-                                <p class="text-sm opacity-80 max-w-sm">Create a virtual card to make payments easier
-                                    and
-                                    track your purchases in one place.</p>
                             </div>
                         </div>
                     @endif

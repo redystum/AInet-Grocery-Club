@@ -1,3 +1,4 @@
+@use('App\Models\User')
 <div x-data="{ activeDropdown: null }"
      x-init="document.addEventListener('click', () => { activeDropdown = null })"
      @scroll.window="activeDropdown = null"
@@ -111,13 +112,17 @@
                         <!-- Type Column -->
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-neutral-800 dark:text-neutral-100">
-                                @if($user->type === 'board')
+                                @if($user->type === User::TYPE_BOARD)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
                                         Board
                                     </span>
-                                @elseif($user->type === 'employee')
+                                @elseif($user->type === User::TYPE_EMPLOYEE)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200">
                                         Employee
+                                    </span>
+                                @elseif($user->type === User::TYPE_PENDING_MEMBER)
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
+                                        Pending Member
                                     </span>
                                 @else
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">

@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CreateProfileRequest;
 use App\Http\Requests\Admin\UpdateProfileRequest;
 use App\Models\Card;
 use App\Models\User;
-use App\Notifications\ResetPassword;
 use App\Utils\CustomFieldManager;
 use App\Utils\ToastCreator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -58,12 +57,36 @@ class UserController extends Controller
 
     public function create(User $user)
     {
-
+        return view('pages.admin.user.create', compact('user'));
     }
 
-    public function store(Request $request)
+    public function store(CreateProfileRequest $request)
     {
+        $validatedData = $request->validated();
 
+        if ($request->hasFile('photo')) {
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+                        $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('users', $filename, 'public');
+            $validatedData['photo'] = $filename;
+        }
+
+        // Combine payment reference and CVV if payment type is Visa
+        if (isset($validatedData['default_payment_type']) && $validatedData['default_payment_type'] === 'Visa'
+            && isset($validatedData['cvv']) && isset($validatedData['default_payment_reference'])) {
+            $validatedData['default_payment_reference'] = $validatedData['default_payment_reference'] . ';' . $validatedData['cvv'];
+        }
+
+        // Remove CVV from validated data as it's not a column in the users table
+        if (isset($validatedData['cvv'])) {
+            unset($validatedData['cvv']);
+        }
+
+        $validatedData['email_verified_at'] = now();
+        $user = User::create($validatedData);
+
+        ToastCreator::success("User $user->name created successfully.");
+        return redirect()->route('board.users.index');
     }
 
     public function edit(User $user)
@@ -92,13 +115,14 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
-            $file->storeAs('users', $filename, 'public');
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+                        $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('users', $filename, 'public');
             $oldPhoto = $user->photo;
             if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
                 Storage::disk('public')->delete('users/' . $oldPhoto);
             }
+            
             $toUpdate['photo'] = $filename;
         }
 
@@ -114,7 +138,6 @@ class UserController extends Controller
 
         ToastCreator::success('Profile updated successfully.');
         return redirect()->route('board.users.show', $user->id);
-
     }
 
     public function destroy(User $user)
