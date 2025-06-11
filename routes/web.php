@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
@@ -132,9 +132,12 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::resource('users', AdminUserController::class);
-        Route::patch('users/{user}/unblock', [AdminUserController::class, 'unblock'])->name('users.unblock');
-        Route::patch('users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
-        Route::get('users/{user}/transactions', [AdminUserController::class, 'transactions'])->name('users.transactions');
+        Route::name('users.')->prefix('users/{user}/')->group(function () {
+            Route::patch('unblock', [AdminUserController::class, 'unblock'])->name('unblock');
+            Route::patch('block', [AdminUserController::class, 'block'])->name('block');
+            Route::get('transactions', [AdminUserController::class, 'transactions'])->name('transactions');
+            Route::get('resetPassword', [AdminUserController::class, 'resetPwd'])->name('resetPwd');
+        });
 
         Route::get('/settings', function () {
             return view('pages.admin.settings');

@@ -1,296 +1,317 @@
-@extends('pages.layouts.public')
+@extends('pages.layouts.admin')
 
 @section('title', ' - Edit Profile')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
+    @use('App\Models\User')
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl" x-data="{
+        showBlockModal: false,
+        showUnblockModal: false,
+        showDeleteModal: false,
+        blockReason: ''
+    }">
         <!-- Page Header -->
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Edit Your Profile</h1>
-            <a href="{{ route('profile') }}"
+            <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Edit Profile</h1>
+            <a href="{{ route('board.users.index') }}"
                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i> Back to Profile
+                <i class="fas fa-arrow-left mr-2"></i> Back to Users
             </a>
         </div>
 
         <!-- Profile Edit Form -->
-        <form action="{{ auth()->user()->isEmployee() ? route('profile.update.employee') : route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('board.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            @unless(auth()->user()->isEmployee())
+            <!-- Profile Photo Section -->
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Profile Photo</h2>
 
-                <!-- Profile Photo Section -->
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Profile Photo</h2>
-
-                    <div class="flex flex-col md:flex-row items-center gap-6">
-                        <!-- Current Photo -->
-                        <div class="relative">
-                            <div
-                                    class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
-                                <img id="profilePreview"
-                                     src="{{ $user->getImage() }}"
-                                     alt="Current Profile Photo"
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <button type="button" id="removePhoto"
-                                    class="absolute -top-2 -right-2 bg-white hover:bg-neutral-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 text-red-500 py-1 px-3 rounded-full shadow-md transition-colors">
-                                <i class="fas fa-x text-xs"></i>
-                            </button>
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <!-- Current Photo -->
+                    <div class="relative">
+                        <div
+                                class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                            <img id="profilePreview"
+                                 src="{{ $user->getImage() }}"
+                                 alt="Current Profile Photo"
+                                 class="w-full h-full object-cover">
                         </div>
+                        <button type="button" id="removePhoto"
+                                class="absolute -top-2 -right-2 bg-white hover:bg-neutral-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 text-red-500 py-1 px-3 rounded-full shadow-md transition-colors">
+                            <i class="fas fa-x text-xs"></i>
+                        </button>
+                    </div>
 
-                        <!-- Upload Controls -->
-                        <div class="flex-1">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="photo"
-                                           class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                        Upload new photo
-                                    </label>
-                                    <input type="file" name="photo" id="photo"
-                                           class="block w-full text-sm text-neutral-500 dark:text-neutral-400
+                    <!-- Upload Controls -->
+                    <div class="flex-1">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="photo"
+                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                    Upload new photo
+                                </label>
+                                <input type="file" name="photo" id="photo"
+                                       class="block w-full text-sm text-neutral-500 dark:text-neutral-400
                                        file:mr-4 file:py-2 file:px-4
                                        file:rounded-lg file:border-0
                                        file:text-sm file:font-semibold
                                        file:bg-blue-50 dark:file:bg-blue-900/20 file:text-blue-700 dark:file:text-blue-400
                                        hover:file:bg-blue-100 dark:hover:file:bg-blue-900/30
                                        cursor-pointer">
-                                    <input type="hidden" name="remove_photo" id="removePhotoFlag" value="0">
-                                    @error('photo')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                    Recommended size: 500×500 pixels. Max file size: 2MB.
-                                </p>
+                                <input type="hidden" name="remove_photo" id="removePhotoFlag" value="0">
+                                @error('photo')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                Recommended size: 500×500 pixels. Max file size: 2MB.
+                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Personal Information Section -->
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Personal
-                        Information</h2>
+            <!-- Personal Information Section -->
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Personal
+                    Information</h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Name -->
-                        <div>
-                            <label for="name"
-                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                Full Name *
-                            </label>
-                            <input type="text" name="name" id="name" required
-                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="name"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            Full Name *
+                        </label>
+                        <input type="text" name="name" id="name" required
+                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('name') border-red-500 dark:border-red-500 @enderror"
-                                   value="{{ old('name', $user->name) }}">
-                            @error('name')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                               value="{{ old('name', $user->name) }}">
+                        @error('name')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Email -->
-                        <div>
-                            <label for="email"
-                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                Email Address *
-                            </label>
-                            <input type="email" name="email" id="email" required
-                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                    <!-- Email -->
+                    <div>
+                        <label for="email"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            Email Address *
+                        </label>
+                        <input type="email" name="email" id="email" required
+                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('email') border-red-500 dark:border-red-500 @enderror"
-                                   value="{{ old('email', $user->email) }}">
-                            @error('email')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                               value="{{ old('email', $user->email) }}">
+                        @error('email')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Gender -->
-                        <div>
-                            <label for="gender"
-                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                Gender *
-                            </label>
-                            <select name="gender" id="gender" required
-                                    class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                    <!-- Gender -->
+                    <div>
+                        <label for="gender"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            Gender *
+                        </label>
+                        <select name="gender" id="gender" required
+                                class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                 dark:text-neutral-100 @error('gender') border-red-500 dark:border-red-500 @enderror">
-                                <option value="" disabled {{ old('gender', $user->gender) == '' ? 'selected' : '' }}>Select...
-                                </option>
-                                <option value="M" {{ old('gender', $user->gender) == 'M' ? 'selected' : '' }}>Male
-                                </option>
-                                <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female
-                                </option>
-                            </select>
-                            @error('gender')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            <option value="" disabled {{ old('gender', $user->gender) == '' ? 'selected' : '' }}>
+                                Select...
+                            </option>
+                            <option value="M" {{ old('gender', $user->gender) == 'M' ? 'selected' : '' }}>Male
+                            </option>
+                            <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female
+                            </option>
+                        </select>
+                        @error('gender')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- NIF -->
-                        <div>
-                            <label for="nif"
-                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                NIF Number
-                            </label>
-                            <input type="text" name="nif" id="nif" maxlength="9"
-                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                    <!-- NIF -->
+                    <div>
+                        <label for="nif"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            NIF Number
+                        </label>
+                        <input type="text" name="nif" id="nif" maxlength="9"
+                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('nif') border-red-500 dark:border-red-500 @enderror"
-                                   value="{{ old('nif', $user->nif) }}">
-                            @error('nif')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                               value="{{ old('nif', $user->nif) }}">
+                        @error('nif')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
+            </div>
 
-                <!-- Delivery & Payment Section -->
-                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Delivery &
-                        Payment</h2>
+            <!-- Delivery & Payment Section -->
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Delivery &
+                    Payment</h2>
 
-                    <div class="space-y-6">
-                        <!-- Delivery Address -->
-                        <div>
-                            <label for="default_delivery_address"
-                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                Default Delivery Address
-                            </label>
-                            <textarea name="default_delivery_address" id="default_delivery_address" rows="3"
-                                      class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                <div class="space-y-6">
+                    <!-- Delivery Address -->
+                    <div>
+                        <label for="default_delivery_address"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            Default Delivery Address
+                        </label>
+                        <textarea name="default_delivery_address" id="default_delivery_address" rows="3"
+                                  class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                   dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                   @error('default_delivery_address') border-red-500 dark:border-red-500 @enderror">{{ old('default_delivery_address', $user->default_delivery_address) }}</textarea>
-                            @error('default_delivery_address')
+                        @error('default_delivery_address')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Payment Method -->
+                        <div>
+                            <label for="default_payment_type"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                Default Payment Method
+                            </label>
+                            <select name="default_payment_type" id="default_payment_type"
+                                    class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
+                                    dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
+                                <option disabled
+                                        value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
+                                    Select...
+                                </option>
+                                <option
+                                        value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
+                                    Visa
+                                </option>
+                                <option
+                                        value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
+                                    PayPal
+                                </option>
+                                <option
+                                        value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
+                                    MB WAY
+                                </option>
+                            </select>
+                            @error('default_payment_type')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Payment Method -->
-                            <div>
-                                <label for="default_payment_type"
-                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                    Default Payment Method
-                                </label>
-                                <select name="default_payment_type" id="default_payment_type"
-                                        class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
-                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
-                                    dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
-                                    <option disabled
-                                            value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
-                                        Select...
-                                    </option>
-                                    <option
-                                            value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
-                                        Visa
-                                    </option>
-                                    <option
-                                            value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
-                                        PayPal
-                                    </option>
-                                    <option
-                                            value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
-                                        MB WAY
-                                    </option>
-                                </select>
-                                @error('default_payment_type')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Payment Reference -->
-                            <div id="paymentReferenceContainer">
-                                <label for="default_payment_reference"
-                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                    Payment Reference
-                                </label>
-                                <input type="text" name="default_payment_reference" id="default_payment_reference"
-                                       class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                        <!-- Payment Reference -->
+                        <div id="paymentReferenceContainer">
+                            <label for="default_payment_reference"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                Payment Reference
+                            </label>
+                            <input type="text" name="default_payment_reference" id="default_payment_reference"
+                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                    dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                    @error('default_payment_reference') border-red-500 dark:border-red-500 @enderror"
-                                       value="{{ old('default_payment_reference', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[0] : $user->default_payment_reference) }}">
-                                @error('default_payment_reference')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                   value="{{ old('default_payment_reference', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[0] : $user->default_payment_reference) }}">
+                            @error('default_payment_reference')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                            <!-- CVV (for Visa) -->
-                            <div id="cvvContainer" style="{{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? '' : 'display: none;' }}">
-                                <label for="cvv"
-                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                    CVV
-                                </label>
-                                <input type="text" name="cvv" id="cvv" maxlength="4"
-                                       class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                        <!-- CVV (for Visa) -->
+                        <div id="cvvContainer"
+                             style="{{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? '' : 'display: none;' }}">
+                            <label for="cvv"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                CVV
+                            </label>
+                            <input type="text" name="cvv" id="cvv" maxlength="4"
+                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                    dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                    @error('cvv') border-red-500 dark:border-red-500 @enderror"
-                                       value="{{ old('cvv', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[1] : '') }}">
-                                @error('cvv')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                   value="{{ old('cvv', isset($user->default_payment_reference) && strpos($user->default_payment_reference, ';') !== false ? explode(';', $user->default_payment_reference)[1] : '') }}">
+                            @error('cvv')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
+            </div>
 
-            @endunless
-            <!-- Password Change Section (Optional) -->
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Account Settings</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- User Type -->
+                    <div>
+                        <label for="type"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                            User Type
+                        </label>
+                        <select name="type" id="type"
+                                class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                            focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
+                            dark:text-neutral-100 @error('type') border-red-500 dark:border-red-500 @enderror">
+                            <option value="{{ User::TYPE_MEMBER }}" {{ (old('type') !== null ? old('type') : $user->type) == User::TYPE_MEMBER ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_MEMBER) }}
+                            </option>
+                            <option value="{{ User::TYPE_EMPLOYEE }}" {{ (old('type') !== null ? old('type') : $user->type) == User::TYPE_EMPLOYEE ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_EMPLOYEE) }}
+                            </option>
+                            <option value="{{ User::TYPE_BOARD }}" {{ (old('type') !== null ? old('type') : $user->type) == User::TYPE_BOARD ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_BOARD) }}
+                            </option>
+                        </select>
+                        @error('type')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    @if($user->type == User::TYPE_MEMBER || $user->type == User::TYPE_PENDING_MEMBER)
+                        @if($user->blocked)
+                            <button @click="showUnblockModal = true" type="button"
+                                    class="cursor-pointer h-fit self-end px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center">
+                                <i class="fas fa-user-check mr-2"></i> Unblock User
+                            </button>
+                        @else
+                            <button @click="showBlockModal = true" type="button"
+                                    class="cursor-pointer h-fit self-end px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors flex items-center">
+                                <i class="fas fa-user-lock mr-2"></i> Block User
+                            </button>
+                        @endif
+                    @endif
+
+                    @if($user->deleted_at == null && $user->id != auth()->user()->id)
+                        <button @click="showDeleteModal = true" type="button"
+                                class="cursor-pointer h-fit self-end px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-user-slash mr-2"></i> Delete User
+                        </button>
+                    @endif
+                </div>
+            </div>
+
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
                 <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Change Password</h2>
-                <p class="text-neutral-600 dark:text-neutral-400 mb-4">Leave blank to keep current password</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+                    If you want to change user's password, you can send a reset password email. The user will receive an
+                    email with instructions to set a new password.
+                </p>
 
-                <div class="space-y-4">
-                    <div>
-                        <label for="current_password"
-                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            Current Password
-                        </label>
-                        <input type="password" name="current_password" id="current_password"
-                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
-                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
-                               dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
-                               @error('current_password') border-red-500 dark:border-red-500 @enderror">
-                        @error('current_password')
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password"
-                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            New Password
-                        </label>
-                        <input type="password" name="password" id="password" minlength="8"
-                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
-                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
-                               dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
-                               @error('password') border-red-500 dark:border-red-500 @enderror">
-                        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Minimum 8 characters</p>
-                        @error('password')
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password_confirmation"
-                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            Confirm New Password
-                        </label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" minlength="8"
-                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
-                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
-                               dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500">
-                    </div>
-                </div>
+                <a href="{{ route('board.users.resetPwd', $user->id) }}"
+                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-md transition-colors">
+                    Send reset password email
+                </a>
             </div>
 
             <!-- Form Actions -->
@@ -305,6 +326,144 @@
                 </button>
             </div>
         </form>
+
+        @if($user->type == User::TYPE_MEMBER || $user->type == User::TYPE_PENDING_MEMBER)
+            <!-- Block Modal -->
+            <div x-show="showBlockModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showBlockModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-user-lock text-orange-500 mr-2"></i>Block User {{ $user->name }}
+                        </h3>
+                        <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to block this user? They will not be able to access their account
+                            until unblocked.
+                        </p>
+                        <form action="{{ route('board.users.block', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="mb-4">
+                                <label for="block-reason"
+                                       class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    Block Reason <span class="text-red-500">*</span>
+                                </label>
+                                <textarea x-model="blockReason" name="reason" id="block-reason" rows="3"
+                                          class="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
+                                          placeholder="Please specify why this user is being blocked"
+                                          required></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showBlockModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+                                        :disabled="!blockReason.trim()">
+                                    Block User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unblock Modal -->
+            <div x-show="showUnblockModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showUnblockModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-lock-open text-green-500 mr-2"></i>Unblock User {{ $user->name }}
+                        </h3>
+                        <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to unblock this user? They will regain access to their account.
+                        </p>
+                        @if($user->block_reason)
+                            <div class="mb-4 p-3 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+                                <h4 class="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                                    Current Block Reason:
+                                </h4>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                    {{ $user->block_reason }}
+                                </p>
+                            </div>
+                        @endif
+                        <form action="{{ route('board.users.unblock', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showUnblockModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                    Unblock User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if($user->id != auth()->user()->id)
+            <!-- Delete Modal -->
+            <div x-show="showDeleteModal"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div @click.outside="showDeleteModal = false"
+                     class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Delete
+                            User {{ $user->name }}
+                        </h3>
+                        <p class="mb-2 text-neutral-600 dark:text-neutral-400">
+                            Are you sure you want to delete this user? This action cannot be undone.
+                        </p>
+                        <form action="{{ route('board.users.destroy', $user->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" @click="showDeleteModal = false"
+                                        class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                                    Delete
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <script>

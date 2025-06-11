@@ -3,11 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateProfileRequest;
 use App\Models\Card;
 use App\Models\User;
+use App\Notifications\ResetPassword;
 use App\Utils\CustomFieldManager;
 use App\Utils\ToastCreator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -61,11 +68,52 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-
+        return view('pages.admin.user.edit', compact('user'));
     }
 
-    public function update(User $user, Request $request)
+    public function update(User $user, UpdateProfileRequest $request)
     {
+        $request->validated();
+
+        $toUpdate = [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'gender' => $request->input('gender'),
+            'nif' => $request->input('nif'),
+            'default_delivery_address' => $request->input('default_delivery_address'),
+            'default_payment_type' => $request->input('default_payment_type'),
+            'default_payment_reference' => $request->input('default_payment_reference'),
+            'type' => $request->input('type'),
+        ];
+
+        // Combine payment reference and CVV if payment type is Visa
+        if ($request->input('default_payment_type') === 'Visa' && $request->has('cvv')) {
+            $toUpdate['default_payment_reference'] = $request->input('default_payment_reference') . ';' . $request->input('cvv');
+        }
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
+            $file->storeAs('users', $filename, 'public');
+            $oldPhoto = $user->photo;
+            if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
+                Storage::disk('public')->delete('users/' . $oldPhoto);
+            }
+            $toUpdate['photo'] = $filename;
+        }
+
+        if ($request->has('remove_photo') && $request->input('remove_photo') == '1') {
+            $oldPhoto = $user->photo;
+            if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
+                Storage::disk('public')->delete('users/' . $oldPhoto);
+            }
+            $toUpdate['photo'] = null;
+        }
+
+        $user->update($toUpdate);
+
+        ToastCreator::success('Profile updated successfully.');
+        return redirect()->route('board.users.show', $user->id);
 
     }
 
@@ -118,6 +166,21 @@ class UserController extends Controller
         $user->save();
 
         ToastCreator::success('User unblocked successfully.');
+        return redirect()->back();
+    }
+
+    public function resetPwd(User $user)
+    {
+        $status = Password::sendResetLink(
+            ['email' => $user->email]
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            ToastCreator::success('Password reset link sent successfully.');
+            return redirect()->back();
+        }
+
+        ToastCreator::error('Failed to send password reset link: ' . __($status));
         return redirect()->back();
     }
 }
