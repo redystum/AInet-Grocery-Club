@@ -120,12 +120,11 @@ class UserController extends Controller
             if (Hash::check($request->input('current_password'), $user->password)) {
                 $user->password = Hash::make($request->input('password'));
                 $user->save();
+                $user->notify(new PasswordResetSuccess());
             } else {
                 return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect']);
             }
         }
-
-        $user->notify(new PasswordResetSuccess());
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 }
