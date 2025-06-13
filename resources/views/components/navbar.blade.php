@@ -14,20 +14,16 @@
                 <!-- Navigation links -->
                 <div class="hidden md:ml-10 md:flex items-center space-x-8">
                     <a href="{{ route('home') }}"
-                       class="{{ Route::currentRouteName() === 'home' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                       class="{{ request()->routeIs('home') ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
                         Home
                     </a>
                     <a href="{{ route('products.index') }}"
-                       class="{{ Route::currentRouteName() === 'products.index' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                       class="{{request()->routeIs('product*.*') ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
                         Products
                     </a>
-                    <a href="#{{-- {{ route('contacts') }}--}}"
-                       class="{{ Route::currentRouteName() === 'contacts' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
-                        Contacts
-                    </a>
                     <a href="#{{-- {{ route('about') }}--}}"
-                       class="{{ Route::currentRouteName() === 'about' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
-                        Contacts
+                       class="{{ request()->routeIs('about.*') ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
+                        About
                     </a>
                 </div>
             </div>
@@ -70,12 +66,17 @@
                                     Profile
                                 </a>
                                 @if(auth()->user()->isBoard())
-                                    <a href="{{ route('board.index') }}"
+                                    <a href="{{ route('board.dashboard.index') }}"
                                        class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                         <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                         Management
                                     </a>
                                 @endif
+                                <a href="{{ route('dashboard') }}"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                    <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                    Dashboard
+                                </a>
                                 <a href="#"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
@@ -172,7 +173,7 @@
                         Profile
                     </a>
                     @if(auth()->user()->isBoard())
-                        <a href="{{ route('board.index') }}"
+                        <a href="{{ route('board.dashboard.index') }}"
                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                             <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400"></i>
                             Management
@@ -182,6 +183,11 @@
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Cart
+                    </a>
+                    <a href="{{ route('dashboard') }}"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                        <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                        Dashboard
                     </a>
                     <a href="{{ route('logout') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">

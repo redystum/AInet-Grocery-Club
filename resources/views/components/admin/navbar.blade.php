@@ -39,9 +39,9 @@
     <div class="p-4 overflow-y-auto" id="navigationLinks">
         <ul class="space-y-2">
             <li>
-                <a href="{{ route('board.index') }}"
-                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.index') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                    <i class="fas fa-home mr-3 {{ request()->routeIs('board.index') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                <a href="{{ route('board.dashboard.index') }}"
+                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.dashboard.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                    <i class="fas fa-home mr-3 {{ request()->routeIs('board.dashboard.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
                     <span class="whitespace-nowrap transition-all duration-300">Dashboard</span>
                 </a>
             </li>

@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
@@ -66,6 +67,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 */
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
+    Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 
 
     Route::name('orders')->prefix('orders')->group(function () {
@@ -91,9 +93,14 @@ Route::middleware('auth')->group(function () {
     |
     */
     Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
-        Route::get('/', function () {
-            return view('pages.admin.dash');
-        })->name('index');
+        Route::name('dashboard.')->prefix('dashboard/')->group(function () {
+            Route::get('/', [DashboardController::class, 'index'])->name('index');
+            Route::name('export.')->prefix('export/')->group(function () {
+                Route::get('orders', [DashboardController::class, 'exportOrders'])->name('orders');
+                Route::get('products', [DashboardController::class, 'exportProducts'])->name('products');
+                Route::get('users', [DashboardController::class, 'exportMembers'])->name('users');
+            });
+        });
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
