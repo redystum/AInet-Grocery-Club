@@ -72,7 +72,7 @@ class UserController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
             $file->storeAs('users', $filename, 'public');
             $oldPhoto = $user->photo;
             if ($oldPhoto && Storage::disk('public')->exists('users/' . $oldPhoto)) {
@@ -100,7 +100,7 @@ class UserController extends Controller
         $user->update($toUpdate);
 
         if (array_key_exists('password', $toUpdate)) {
-            $user->notify(new PasswordResetSuccess());
+            $user->notify(new PasswordResetSuccess);
         }
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully');

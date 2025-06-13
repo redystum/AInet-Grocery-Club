@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Profile')
 
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        @unless(auth()->user()->isEmployee())
+        @if(!auth()->user()->isEmployee())
 
             @if(session('success'))
                 <div
@@ -308,7 +308,8 @@
                         need to update any of your information please talk with your superior.</p>
                     <p class="text-neutral-800 dark:text-neutral-100">Thanks!</p>
                 </div>
+
             </div>
-        @endunless
+        @endif
     </div>
 @endsection

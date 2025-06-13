@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('content')
     <div class="flex min-h-full">
@@ -32,7 +32,8 @@
                     <!-- Password Field -->
                     <div>
                         <label for="password"
-                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">New Password*</label>
+                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">New
+                            Password*</label>
                         <input type="password" name="password" id="password" required
                                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
@@ -47,7 +48,8 @@
                     <!-- Confirm Password Field -->
                     <div>
                         <label for="password_confirmation"
-                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Confirm Password*</label>
+                               class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Confirm
+                            Password*</label>
                         <input type="password" name="password_confirmation" id="password_confirmation" required
                                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-neutral-700
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
