@@ -75,8 +75,8 @@ class StockController extends Controller
             return redirect()->route('board.stock');
         }
 
-        if ($request->quantity < $product->stock_lower_limit) {
-            ToastCreator::error('Cannot update stock to less than the lower limit.');
+        if ($request->quantity < 0) {
+            ToastCreator::error('Cannot update stock to less than 0. How the hell do you have negative stock?');
             return redirect()->route('board.stock');
         }
 
