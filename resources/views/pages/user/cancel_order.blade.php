@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Cancel Order')
 
@@ -133,69 +133,62 @@
         <!-- Cancellation Form -->
         <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
             <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Cancel Order Request</h2>
+            <form action="{{ route('orders.cancel.confirm', $order->id) }}" method="POST">
+                @csrf
 
-            @if($order->status !== 'pending' && $order->status !== 'processing')
-                <div class="bg-red-100 dark:bg-red-900/50 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg mb-6">
-                    <p>This order cannot be canceled because it's already {{ $order->status }}.</p>
-                </div>
-            @else
-                <form action="{{ route('orders.cancel.confirm', $order->id) }}" method="POST">
-                    @csrf
-
-                    <div class="mb-6">
-                        <label for="reason"
-                               class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2">
-                            Reason for cancellation <span class="text-red-500">*</span>
-                        </label>
-                        @error('reason') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <select id="reason" name="reason" required autocomplete="off"
-                                class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
+                <div class="mb-6">
+                    <label for="reason"
+                           class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2">
+                        Reason for cancellation <span class="text-red-500">*</span>
+                    </label>
+                    @error('reason') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <select id="reason" name="reason" required autocomplete="off"
+                            class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700
                                 text-neutral-800 dark:text-neutral-200
                                 @error('reason') border-red-500 dark:border-red-700 @enderror">
-                            <option value="0" selected disabled>Select a reason...</option>
-                            <option value="1" {{ old('reason') == 1 ? 'selected' : '' }}>Found cheaper elsewhere
-                            </option>
-                            <option value="2" {{ old('reason') == 2 ? 'selected' : '' }}>Changed my mind</option>
-                            <option value="3" {{ old('reason') == 3 ? 'selected' : '' }}>Shipping takes too long
-                            </option>
-                            <option value="4" {{ old('reason') == 4 ? 'selected' : '' }}>Ordered by mistake</option>
-                            <option value="5" {{ old('reason') == 5 ? 'selected' : '' }}>Other reason</option>
-                        </select>
-                    </div>
+                        <option value="0" selected disabled>Select a reason...</option>
+                        <option value="1" {{ old('reason') == 1 ? 'selected' : '' }}>Found cheaper elsewhere
+                        </option>
+                        <option value="2" {{ old('reason') == 2 ? 'selected' : '' }}>Changed my mind</option>
+                        <option value="3" {{ old('reason') == 3 ? 'selected' : '' }}>Shipping takes too long
+                        </option>
+                        <option value="4" {{ old('reason') == 4 ? 'selected' : '' }}>Ordered by mistake</option>
+                        <option value="5" {{ old('reason') == 5 ? 'selected' : '' }}>Other reason</option>
+                    </select>
+                </div>
 
-                    <div class="mb-6">
-                        <label for="details"
-                               class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2">
-                            Additional details (optional but recommended)
-                        </label>
-                        @error('details') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <textarea id="details" name="details" rows="4" maxlength="255"
-                                  class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
+                <div class="mb-6">
+                    <label for="details"
+                           class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2">
+                        Additional details (optional but recommended)
+                    </label>
+                    @error('details') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <textarea id="details" name="details" rows="4" maxlength="255"
+                              class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700
                                   text-neutral-800 dark:text-neutral-200
                                   @error('details') border-red-500 dark:border-red-700 @enderror"
-                                  placeholder="Please provide any additional information about your cancellation...">{{ old('details') }}</textarea>
-                    </div>
+                              placeholder="Please provide any additional information about your cancellation...">{{ old('details') }}</textarea>
+                </div>
 
-                    <div class="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded-lg mb-6">
-                        <p><i class="fas fa-exclamation-circle mr-2"></i> Please note that cancellation requests may
-                            take up to 24 hours to process. If your order has already been shipped, you may need to
-                            return it instead.</p>
-                    </div>
+                <div class="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded-lg mb-6">
+                    <p><i class="fas fa-exclamation-circle mr-2"></i> Please note that cancellation requests may
+                        take up to 24 hours to process. If your order has already been shipped, you may need to
+                        return it instead.</p>
+                </div>
 
-                    <div class="flex items-center justify-between">
-                        <a href="{{ route('orders') }}"
-                           class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
-                            <i class="fas fa-arrow-left mr-2"></i> Go Back
-                        </a>
-                        <button type="submit"
-                                class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-                            <i class="fas fa-times-circle mr-2"></i> Send Cancellation Request
-                        </button>
-                    </div>
-                </form>
-            @endif
+                <div class="flex items-center justify-between">
+                    <a href="{{ route('orders') }}"
+                       class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-200 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Go Back
+                    </a>
+                    <button type="submit"
+                            class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-times-circle mr-2"></i> Send Cancellation Request
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

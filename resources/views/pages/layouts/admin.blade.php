@@ -11,21 +11,22 @@
     <link rel="shortcut icon" href="" type="image/x-icon">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
 
 </head>
 
 <body class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-100">
 
-<x-navbar/>
+<x-toast/>
 
-<main class="h-main">
+<x-admin.navbar/>
+
+<main class="lg:ml-64 pt-16 lg:pt-0 transition-all duration-300" id="mainContent">
     @yield('content')
 </main>
 
-<x-footer/>
+{{--    <x-footer/>--}}
 
-@livewireScripts
+@vite(['resources/js/adminNavBar.js'])
 </body>
 
 </html>

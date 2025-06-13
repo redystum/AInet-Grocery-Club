@@ -2,13 +2,26 @@
 
 namespace App\Models;
 
+use App\Utils\CustomFieldManager;
 use Illuminate\Database\Eloquent\Model;
 
+
+/**
+ * @property CustomFieldManager $customManager
+ *
+ * @property string $cancellationStatus
+ * @property string $cancellationTime
+ * @property string $cancellationDetails
+ */
 class Order extends Model
 {
     const STATUS_COMPLETED = "completed";
     const STATUS_PENDING = "pending";
     const STATUS_CANCELED = "canceled";
+
+    const CANCEL_STATUS_PENDING = "pending";
+    const CANCEL_STATUS_REFUSED = "refused";
+    const CANCEL_STATUS_ACCEPTED = "accepted";
 
     /**
      * The attributes that are mass assignable.
@@ -30,9 +43,13 @@ class Order extends Model
         'custom',
     ];
 
+    protected $casts = [
+        'custom' => 'array',
+    ];
+
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'member_id')->withTrashed();
     }
 
     public function items()
