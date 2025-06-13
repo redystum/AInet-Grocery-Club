@@ -53,7 +53,7 @@ class CardHistory extends Component
     {
         $this->setPage($this->page + 1);
     }
-    
+
     public function setPage($page)
     {
         $this->page = $page;
@@ -86,6 +86,12 @@ class CardHistory extends Component
 
         $operations = $query->paginate(10, ['*'], 'page', $this->page);
         
+        // Ensure the requested page does not exceed the last page
+        if ($this->page > $operations->lastPage()) {
+            $this->page = $operations->lastPage();
+            $operations = $query->paginate(10, ['*'], 'page', $this->page);
+        }
+
         // Calculate running balance for each operation
         if ($operations->count() > 0) {
             $currentBalance = $user->card->balance;
