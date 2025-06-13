@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 /*--------------------------------------------------------------------------
 | Everyone routes
@@ -91,33 +91,33 @@ Route::middleware('auth')->group(function () {
         Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
 
-/*--------------------------------------------------------------------------
-| Admin routes
-|---------------------------------------------------------------------------
-| Routes that are accessible only to authenticated users with admin role.
-|
-*/
-Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
-    Route::get('/', function () {
-        return view('pages.admin.dash');
-    })->name('index');
+    /*--------------------------------------------------------------------------
+    | Admin routes
+    |---------------------------------------------------------------------------
+    | Routes that are accessible only to authenticated users with admin role.
+    |
+    */
+    Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
+        Route::get('/', function () {
+            return view('pages.admin.dash');
+        })->name('index');
 
-    Route::get('/stock', [StockController::class, 'index'])->name('stock');
-    Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
-    Route::name('restock.')->prefix('restock/')->group(function () {
-        Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
-        Route::post('store', [SupplyController::class, 'store'])->name('store');
-        Route::get('{product}', [StockController::class, 'restock'])->name('product');
-    });
+        Route::get('/stock', [StockController::class, 'index'])->name('stock');
+        Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
+        Route::name('restock.')->prefix('restock/')->group(function () {
+            Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
+            Route::post('store', [SupplyController::class, 'store'])->name('store');
+            Route::get('{product}', [StockController::class, 'restock'])->name('product');
+        });
 
-    Route::name('supply.')->prefix('supply/')->group(function () {
-        Route::get('/', [SupplyController::class, 'index'])->name('index');
-        Route::put('{order}', [SupplyController::class, 'update'])->name('update');
-        Route::get('{order}/cancel', [SupplyController::class, 'cancel'])->name('cancel');
-        Route::get('{order}/complete', [SupplyController::class, 'complete'])->name('complete');
-        Route::delete('destroy', [SupplyController::class, 'destroy'])->name('destroy');
-        Route::get('{order}/receipt', [SupplyController::class, 'receipt'])->name('receipt');
-    });
+        Route::name('supply.')->prefix('supply/')->group(function () {
+            Route::get('/', [SupplyController::class, 'index'])->name('index');
+            Route::put('{order}', [SupplyController::class, 'update'])->name('update');
+            Route::get('{order}/cancel', [SupplyController::class, 'cancel'])->name('cancel');
+            Route::get('{order}/complete', [SupplyController::class, 'complete'])->name('complete');
+            Route::delete('destroy', [SupplyController::class, 'destroy'])->name('destroy');
+            Route::get('{order}/receipt', [SupplyController::class, 'receipt'])->name('receipt');
+        });
 
         Route::name('orders.')->prefix('orders/')->group(function () {
             Route::get('/', [AdminOrderController::class, 'index'])->name('index');
