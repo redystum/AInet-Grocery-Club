@@ -39,7 +39,7 @@ class Welcome extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Welcome to '.$this->appName)
+            ->subject('Welcome to ' . $this->appName)
             ->view('emails.pages.welcome', [
                 'userName' => $notifiable->name,
                 'userPhoto' => $notifiable->photo ?: 'anonymous.png',

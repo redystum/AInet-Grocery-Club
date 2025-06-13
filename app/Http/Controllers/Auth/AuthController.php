@@ -73,7 +73,7 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $filename = Carbon::now()->format('dmYHis') . "_" . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
             $request->file('photo')->storeAs('users', $filename, 'public');
             $request->merge(['photo' => $filename]);
         }

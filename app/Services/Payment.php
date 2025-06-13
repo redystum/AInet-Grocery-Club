@@ -17,14 +17,14 @@ class Payment
         if (!$card_number) {
             return false;
         }
-        if (($card_number<1000000000000000) || ($card_number>9999999999999999))  {
+        if (($card_number < 1000000000000000) || ($card_number > 9999999999999999)) {
             return false;
         }
         $cvc_code = filter_var($cvc_code, FILTER_VALIDATE_INT);
         if (!$cvc_code) {
             return false;
         }
-        if (($cvc_code<100) || ($cvc_code>999))  {
+        if (($cvc_code < 100) || ($cvc_code > 999)) {
             return false;
         }
         return ($card_number % 10 != 2) && ($cvc_code % 10 != 2);
@@ -50,7 +50,7 @@ class Payment
         if (!$phone_number) {
             return false;
         }
-        if (($phone_number<900000000) || ($phone_number>999999999))  {
+        if (($phone_number < 900000000) || ($phone_number > 999999999)) {
             return false;
         }
         return $phone_number % 10 != 2;

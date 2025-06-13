@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Edit Profile')
 
@@ -26,7 +26,7 @@
                     <!-- Current Photo -->
                     <div class="relative">
                         <div
-                            class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                                class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
                             <img id="profilePreview"
                                  src="{{ $user->getImage() }}"
                                  alt="Current Profile Photo"
@@ -175,19 +175,19 @@
                                     focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                     dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
                                 <option
-                                    value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
+                                        value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
                                     None selected
                                 </option>
                                 <option
-                                    value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
+                                        value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
                                     Visa
                                 </option>
                                 <option
-                                    value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
+                                        value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
                                     PayPal
                                 </option>
                                 <option
-                                    value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
+                                        value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
                                     MB WAY
                                 </option>
                             </select>

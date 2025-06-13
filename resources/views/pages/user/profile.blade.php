@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Profile')
 
@@ -259,6 +259,6 @@
                     </div>
                 </div>
             @endif
-        @endunless  
+        @endunless
     </div>
 @endsection
