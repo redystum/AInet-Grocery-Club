@@ -149,7 +149,7 @@
                                 </h3>
                                 <div class="mt-4">
                                     <label for="quantity"
-                                           class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
+                                           class="appearance-textfield block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Quantity</label>
                                     <input type="number" id="quantity" x-model="editQuantity" name="quantity"
                                            required min="1" :max="maxQuantity"
                                            x-effect="if(showEditModal) $nextTick(() => $el.focus())"

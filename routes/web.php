@@ -5,9 +5,13 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -19,14 +23,11 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
-Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products?category={category}', [ProductController::class, 'index'])->name('products.category');
-
 
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
