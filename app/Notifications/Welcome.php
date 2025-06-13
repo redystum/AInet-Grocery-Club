@@ -40,7 +40,7 @@ class Welcome extends Notification
     {
         return (new MailMessage)
             ->subject('Welcome to '.$this->appName)
-            ->view('emails.pages.welcome', [
+            ->view('emails.build.welcome', [
                 'userName' => $notifiable->name,
                 'userPhoto' => $notifiable->photo ?: 'anonymous.png',
                 'logoUrl' => $this->logoUrl,

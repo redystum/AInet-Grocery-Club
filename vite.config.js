@@ -17,6 +17,7 @@ export default defineConfig({
                 '**/vendor/**',
                 '**/node_modules/**',
                 '**/database/**',
+                '**/maizzle/**',
             ]
         }
     }

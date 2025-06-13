@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------------------------------------------------------------
@@ -98,10 +99,18 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 !
 !*/
 if (!app()->isProduction()) {
-    Route::get('force_login/{user}', function ($user) {
-        auth()->loginUsingId($user);
+    Route::get('force_login/{user}', function (User $user) {
+        auth()->logout();
+        auth()->loginUsingId($user->id);
+
+        $user->notify(new \App\Notifications\NewLogin());
+
         return redirect()->back();
     })->name('force_login');
+
+    Route::get('debug', function () {
+        return view('debug');
+    })->name('debug');
 
     // Error Pages
     Route::get('401', function () {
