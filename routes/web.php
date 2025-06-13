@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -18,9 +19,7 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
-Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -90,7 +89,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/charge', [CardController::class, 'charge'])->name('.charge');
         Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
-
     /*--------------------------------------------------------------------------
     | Admin routes
     |---------------------------------------------------------------------------
