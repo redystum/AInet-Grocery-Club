@@ -27,7 +27,7 @@
                     </a>
                     <a href="#{{-- {{ route('about') }}--}}"
                        class="{{ Route::currentRouteName() === 'about' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
-                        Contacts
+                        About
                     </a>
                 </div>
             </div>
