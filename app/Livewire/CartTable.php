@@ -6,6 +6,8 @@ use App\Models\Card;
 use App\Models\Product;
 use Livewire\Component;
 
+use App\Models\User;
+
 class CartTable extends Component
 {
     public $cartItems = [];
@@ -24,16 +26,16 @@ class CartTable extends Component
     {
         if (auth()->check()) {
             $user = auth()->user();
-            $card = Card::firstOrCreate(['id' => $user->id]);
+
             // Ensure custom field is an array
-            if (!is_array($card->custom)) {
-                $card->custom = [];
+            if (!is_array($user->custom)) {
+                $user->custom = [];
             }
 
             // If there was a guest cart in session, merge it with the user's cart
             if (session()->has('guest_cart')) {
                 $guestCart = session('guest_cart', []);
-                $userCart = $card->custom;
+                $userCart = $user->custom;
 
                 // Merge guest cart items into user cart
                 foreach ($guestCart as $productId => $quantity) {
@@ -44,31 +46,31 @@ class CartTable extends Component
                     }
                 }
 
-                $card->custom = $userCart;
-                $card->save();
+                $user->custom = $userCart;
+                $user->save();
 
                 // Clear the guest cart from session
                 session()->forget('guest_cart');
             }
 
-            return $card;
+            return $user;
         } else {
             // For guest users, use session instead
             if (!session()->has('guest_cart')) {
                 session(['guest_cart' => []]);
             }
 
-            // Create a virtual card object to maintain consistency
-            $card = new Card();
-            $card->custom = session('guest_cart', []);
-            return $card;
+            // Create a virtual user object to maintain consistency
+            $user = new User();
+            $user->custom = session('guest_cart', []);
+            return $user;
         }
     }
 
     private function refreshCart()
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         $this->cartItems = [];
         $this->subtotal = 0;
         $this->discounts = 0;
@@ -117,8 +119,8 @@ class CartTable extends Component
 
     public function updateQuantity($productId, $newQuantity)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
 
         // Validate quantity
         $newQuantity = max(0, intval($newQuantity));
@@ -137,8 +139,8 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $card->custom = $cart;
-                $card->save();
+                $user->custom = $cart;
+                $user->save();
             } else {
                 session(['guest_cart' => $cart]);
             }
@@ -149,8 +151,8 @@ class CartTable extends Component
 
     public function increment($productId)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         $product = Product::find($productId);
 
         if ($product && isset($cart[$productId])) {
@@ -162,8 +164,8 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $card->custom = $cart;
-                $card->save();
+                $user->custom = $cart;
+                $user->save();
             } else {
                 session(['guest_cart' => $cart]);
             }
@@ -174,8 +176,8 @@ class CartTable extends Component
 
     public function decrement($productId)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         $product = Product::find($productId);
 
         if (isset($cart[$productId]) && $product) {
@@ -191,8 +193,8 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $card->custom = $cart;
-                $card->save();
+                $user->custom = $cart;
+                $user->save();
             } else {
                 session(['guest_cart' => $cart]);
             }
@@ -203,15 +205,15 @@ class CartTable extends Component
 
     public function removeItem($productId)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
 
         if (isset($cart[$productId])) {
             unset($cart[$productId]);
 
             if (auth()->check()) {
-                $card->custom = $cart;
-                $card->save();
+                $user->custom = $cart;
+                $user->save();
             } else {
                 session(['guest_cart' => $cart]);
             }

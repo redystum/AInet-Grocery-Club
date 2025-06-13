@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Card;
 
+use App\Models\User;
+
 class CartController extends Controller
 {
     // Helper to get card data for both authenticated and guest users
@@ -13,16 +15,16 @@ class CartController extends Controller
     {
         if (auth()->check()) {
             $user = auth()->user();
-            $card = Card::firstOrCreate(['id' => $user->id]);
+
             // Ensure the custom field is an array
-            if (!is_array($card->custom)) {
-                $card->custom = [];
+            if (!is_array($user->custom)) {
+                $user->custom = [];
             }
 
             // If there was a guest cart in session, merge it with the user's cart
             if (session()->has('guest_cart')) {
                 $guestCart = session('guest_cart', []);
-                $userCart = $card->custom;
+                $userCart = $user->custom;
 
                 // Merge guest cart items into user cart
                 foreach ($guestCart as $productId => $quantity) {
@@ -33,24 +35,24 @@ class CartController extends Controller
                     }
                 }
 
-                $card->custom = $userCart;
-                $card->save();
+                $user->custom = $userCart;
+                $user->save();
 
                 // Clear the guest cart from session
                 session()->forget('guest_cart');
             }
 
-            return $card;
+            return $user;
         } else {
             // For guest users, use session instead
             if (!session()->has('guest_cart')) {
                 session(['guest_cart' => []]);
             }
 
-            // Create a virtual card object to maintain consistency
-            $card = new Card();
-            $card->custom = session('guest_cart', []);
-            return $card;
+            // Create a virtual user object to maintain consistency
+            $user = new User();
+            $user->custom = session('guest_cart', []);
+            return $user;
         }
     }
 
@@ -63,8 +65,8 @@ class CartController extends Controller
 
     public function add($productId, Request $request)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         $quantity = intval($request->input('quantity', 1));
         if (isset($cart[$productId])) {
             $cart[$productId] += $quantity;
@@ -73,8 +75,8 @@ class CartController extends Controller
         }
 
         if (auth()->check()) {
-            $card->custom = $cart;
-            $card->save();
+            $user->custom = $cart;
+            $user->save();
         } else {
             session(['guest_cart' => $cart]);
         }
@@ -93,8 +95,8 @@ class CartController extends Controller
 
     public function changeQuantity($id, Request $request)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         $quantity = max(0, intval($request->input('quantity')));
         if (isset($cart[$id])) {
             // If quantity is zero, remove the item from cart
@@ -105,8 +107,8 @@ class CartController extends Controller
             }
 
             if (auth()->check()) {
-                $card->custom = $cart;
-                $card->save();
+                $user->custom = $cart;
+                $user->save();
             } else {
                 session(['guest_cart' => $cart]);
             }
@@ -117,15 +119,15 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $items = $request->input('items', []);
-        $card = $this->getCard();
+        $user = $this->getCard();
         $cart = [];
         foreach ($items as $item) {
             $cart[$item['id']] = max(1, intval($item['quantity']));
         }
 
         if (auth()->check()) {
-            $card->custom = $cart;
-            $card->save();
+            $user->custom = $cart;
+            $user->save();
         } else {
             session(['guest_cart' => $cart]);
         }
@@ -135,13 +137,13 @@ class CartController extends Controller
 
     public function remove($id)
     {
-        $card = $this->getCard();
-        $cart = $card->custom ?? [];
+        $user = $this->getCard();
+        $cart = $user->custom ?? [];
         unset($cart[$id]);
 
         if (auth()->check()) {
-            $card->custom = $cart;
-            $card->save();
+            $user->custom = $cart;
+            $user->save();
         } else {
             session(['guest_cart' => $cart]);
         }
