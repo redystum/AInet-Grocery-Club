@@ -47,7 +47,7 @@ class UserController extends Controller
     public function edit()
     {
         $user = User::find(auth()->user()->id);
-        return view('pages.editProfile', compact('user'));
+        return view('pages.user.editProfile', compact('user'));
     }
 
     public function update(UpdateProfileRequest $request)
@@ -100,7 +100,7 @@ class UserController extends Controller
         $user->update($toUpdate);
 
         if (array_key_exists('password', $toUpdate)) {
-            $user->notify(new PasswordResetSuccess);
+            $user->notify(new PasswordResetSuccess());
         }
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
@@ -120,12 +120,11 @@ class UserController extends Controller
             if (Hash::check($request->input('current_password'), $user->password)) {
                 $user->password = Hash::make($request->input('password'));
                 $user->save();
+                $user->notify(new PasswordResetSuccess());
             } else {
                 return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect']);
             }
         }
-
-        $user->notify(new PasswordResetSuccess());
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 }

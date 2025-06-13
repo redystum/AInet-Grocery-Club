@@ -51,7 +51,7 @@
                                     <input type="file" name="photo" id="photo" class="hidden" accept="image/*">
                                 </label>
                             </div>
-                            <span class="text-sm text-gray-500 dark:text-neutral-400">Upload a profile photo
+                            <span class="text-sm text-gray-500 dark:text-neutral-400">Upload a profile photo, max 10MB
                                 (optional)</span>
                             @error('photo')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

@@ -84,7 +84,7 @@
                         <td class="px-6 py-4 text-sm text-neutral-800 dark:text-neutral-200">
                             @if($operation->debit_type === Operations::TYPE_DEBIT_ORDER)
                                 Purchase: @if($operation->order_id)
-                                    <a href="{{ route('orders', $operation->order_id) }}"
+                                    <a href="{{ route('orders', ['order' => $operation->order_id]) }}"
                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                         #{{ $operation->order_id }}
                                     </a>

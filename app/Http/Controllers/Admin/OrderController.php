@@ -266,4 +266,18 @@ class OrderController extends Controller
             'type' => 'success',
         ]);
     }
+
+    public function receipt(Order $order)
+    {
+        $path = storage_path('app/private/receipts/' . $order->pdf_receipt);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $order->pdf_receipt . '"',
+        ];
+        return response()->file($path, $headers);
+    }
 }
