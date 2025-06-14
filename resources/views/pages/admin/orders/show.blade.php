@@ -42,7 +42,7 @@
                         <i class="fas fa-arrow-left mr-2"></i> Back to Orders
                     </button>
                 </a>
-                <a href="{{ route('board.orders.receipt', $order->id) }}" target="_blank">
+                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank">
                     <button class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                         <i class="fas fa-receipt mr-2"></i> View Receipt
                     </button>

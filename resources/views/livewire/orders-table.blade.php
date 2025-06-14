@@ -95,22 +95,31 @@
 
     <!-- Tabs -->
     <div class="flex border-b border-neutral-200 dark:border-neutral-700 mb-6">
-        <button wire:click="$set('tab', 'pending')"
-                class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'pending' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
-            Pending Orders
-        </button>
-        <button wire:click="$set('tab', 'cancellation')"
-                class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'cancellation' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
-            Canceled Orders
-        </button>
-        <button wire:click="$set('tab', 'received')"
-                class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'received' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
-            Completed Orders
-        </button>
-        <button wire:click="$set('tab', 'all')"
-                class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'all' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
-            All Orders
-        </button>
+        @can('admin-pending-orders')
+            <button wire:click="$set('tab', 'pending')"
+                    class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'pending' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
+                Pending Orders
+            </button>
+        @endcan
+        @can('admin-cancel-orders')
+            <button wire:click="$set('tab', 'cancellation')"
+                    class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'cancellation' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
+                Canceled Orders
+            </button>
+        @endcan
+        @can('admin-complete-orders')
+            <button wire:click="$set('tab', 'received')"
+                    class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'received' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
+                Completed Orders
+            </button>
+        @endcan
+        @can(['admin-pending-orders', 'admin-cancel-orders', 'admin-complete-orders'])
+
+            <button wire:click="$set('tab', 'all')"
+                    class="cursor-pointer px-4 py-2 font-medium text-sm border-b-2 {{ $tab === 'all' ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'border-transparent text-neutral-600 dark:text-neutral-400' }}">
+                All Orders
+            </button>
+        @endcan
     </div>
 
     <!-- Filters -->
@@ -245,7 +254,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if($tab == "received" || ($tab == "cancellation" && $order->status == Order::STATUS_CANCELED))
-                                <a href="{{ route('board.orders.receipt', $order->id) }}" target="_blank"
+                                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
                                    class="text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                     <i class="fas fa-receipt mr-3"></i>
                                     Invoice
@@ -272,27 +281,31 @@
                                          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
-                                            <a href="{{ route('board.orders.receipt', $order->id) }}" target="_blank"
-                                               class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                               role="menuitem">
-                                                <i class="fas fa-receipt mr-3 text-neutral-400"></i>
-                                                Download Invoice
-                                            </a>
+                                            @if($tab === 'received' || $tab === 'all')
+                                                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
+                                                   class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                   role="menuitem">
+                                                    <i class="fas fa-receipt mr-3 text-neutral-400"></i>
+                                                    Download Invoice
+                                                </a>
+                                            @endif
                                             @if($order->status == Order::STATUS_PENDING)
-                                                @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
-                                                    <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
+                                                @can('admin-cancel-orders')
+                                                    @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
+                                                        <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
+                                                           class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                           role="menuitem">
+                                                            <i class="fas fa-scroll mr-3 text-red-400"></i>
+                                                            View cancellation request
+                                                        </a>
+                                                    @endif
+                                                    <a href="{{ route('board.orders.cancel.show', $order->id) }}"
                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                        role="menuitem">
-                                                        <i class="fas fa-scroll mr-3 text-red-400"></i>
-                                                        View cancellation request
+                                                        <i class="fas fa-times mr-3 text-red-400"></i>
+                                                        Cancel Order
                                                     </a>
-                                                @endif
-                                                <a href="{{ route('board.orders.cancel.show', $order->id) }}"
-                                                   class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
-                                                    <i class="fas fa-times mr-3 text-red-400"></i>
-                                                    Cancel Order
-                                                </a>
+                                                @endcan
                                                 @if($order->can_be_delivered)
                                                     <button
                                                             @click="

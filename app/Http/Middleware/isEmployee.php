@@ -15,7 +15,7 @@ class isEmployee
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->isEmployee()) {
+        if (auth()->check() && auth()->user()->isEmployee() || auth()->user()->isBoard()) {
             return $next($request);
         }
 

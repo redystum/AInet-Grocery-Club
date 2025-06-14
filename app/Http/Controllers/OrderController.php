@@ -44,8 +44,8 @@ class OrderController extends Controller
 
     public function receipt(Order $order)
     {
-        if ($order->member_id != auth()->user()->id) {
-            abort(404);
+        if (auth()->user()->cannot('view-order', $order)) {
+            abort(403);
         }
 
         $path = storage_path('app/private/receipts/' . $order->pdf_receipt);

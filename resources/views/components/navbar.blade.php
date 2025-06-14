@@ -38,16 +38,18 @@
                     </button>
                 </div>
                 <!-- Cart Button -->
-                <div>
-                    <button id="cartButton" type="button"
-                            class="cursor-pointer relative text-neutral-900 dark:text-neutral-300 p-2 rounded-full transition-colors focus:outline-none shadow">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cartCount"
-                              class="absolute -top-2 -right-2 bg-green-300 dark:bg-green-700 text-xs rounded-full px-2 py-0.5 font-bold">
-                            @livewire('cart-count')
-                        </span>
-                    </button>
-                </div>
+                @can('cart')
+                    <div>
+                        <button id="cartButton" type="button"
+                                class="cursor-pointer relative text-neutral-900 dark:text-neutral-300 p-2 rounded-full transition-colors focus:outline-none shadow">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cartCount"
+                                  class="absolute -top-2 -right-2 bg-green-300 dark:bg-green-700 text-xs rounded-full px-2 py-0.5 font-bold">
+                                @livewire('cart-count')
+                            </span>
+                        </button>
+                    </div>
+                @endcan
                 <!-- User dropdown -->
                 <div class="relative ml-2 hidden md:block">
                     <div class="flex items-center space-x-1 focus:outline-none cursor-pointer" id="userNav">
@@ -75,18 +77,20 @@
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
-                                @if(auth()->user()->isBoard())
-                                    <a href="{{ route('board.dashboard.index') }}"
+                                @if(auth()->user()->isBoard() || auth()->user()->isEmployee())
+                                    <a href="{{ route('board.index') }}"
                                        class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                         <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                         Management
                                     </a>
                                 @endif
-                                <a href="{{ route('dashboard') }}"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
-                                    <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
-                                    Dashboard
-                                </a>
+                                @if(!auth()->user()->isEmployee())
+                                    <a href="{{ route('dashboard') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                        <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                        Dashboard
+                                    </a>
+                                @endif
                                 <a href="{{ route("logout") }}"
                                    class="flex items-center rounded-b-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-out-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
@@ -96,7 +100,7 @@
 
                             @guest
                                 <a href="{{ route("login")  }}"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                   class="flex items-center rounded-t-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Sign in
                                 </a>
@@ -136,9 +140,9 @@
     <!-- Mobile menu -->
     <div class="hidden md:hidden" id="mobileMenu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="#"
+            <a href="{{ route('home') }}"
                class="block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 dark:bg-indigo-700">Home</a>
-            <a href="#"
+            <a href="{{ route('products.index') }}"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">Products</a>
             <a href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">About
@@ -176,7 +180,7 @@
                         Profile
                     </a>
                     @if(auth()->user()->isBoard())
-                        <a href="{{ route('board.dashboard.index') }}"
+                        <a href="{{ route('board.index') }}"
                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                             <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400"></i>
                             Management
@@ -248,12 +252,14 @@
     });
 
     // Cart button functionality
+    @can('cart')
     const cartButton = document.getElementById('cartButton');
     if (cartButton) {
         cartButton.addEventListener('click', function () {
             window.dispatchEvent(new CustomEvent('open-cart'));
         });
     }
+    @endcan
 
     // Search bar functionality
     const searchBtn = document.getElementById('searchButton');
