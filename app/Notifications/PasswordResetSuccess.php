@@ -69,7 +69,7 @@ class PasswordResetSuccess extends Notification
     {
         return (new MailMessage)
             ->subject('Your password has been updated')
-            ->view('emails.pages.passwordResetSuccess', [
+            ->view('emails.build.passwordResetSuccess', [
                 'appName' => $this->appName,
                 'loginTime' => $this->loginTime,
                 'ipAddress' => $this->ipAddress,

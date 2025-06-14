@@ -46,7 +46,7 @@ class AccountActivation extends Notification
 
         return (new MailMessage)
             ->subject('Account Activation')
-            ->view('emails.pages.activateAccount', [
+            ->view('emails.build.activateAccount', [
                 'url' => $this->url,
                 'appName' => $this->appName,
                 'userName' => $userName,
