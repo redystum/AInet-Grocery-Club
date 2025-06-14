@@ -328,7 +328,7 @@
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
                                             @if($order->status != SupplyOrder::STATUS_COMPLETED && $order->created_at->diffInHours(now(), false) < 24)
-                                                @if($hasReceipt)
+                                                @if($order->pdf_receipt)
                                                     <a href="{{ route('board.supply.receipt', $order->id) }}"
                                                        target="_blank"
                                                        class="cursor-pointer flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"

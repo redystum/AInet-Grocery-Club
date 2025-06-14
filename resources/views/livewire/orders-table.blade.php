@@ -245,7 +245,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if($tab == "received" || ($tab == "cancellation" && $order->status == Order::STATUS_CANCELED))
-                                <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
+                                <a href="{{ route('board.orders.receipt', $order->id) }}" target="_blank"
                                    class="text-right text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                     <i class="fas fa-receipt mr-3"></i>
                                     Invoice
@@ -272,7 +272,7 @@
                                          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                                          role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div role="none">
-                                            <a href="{{ route('orders.receipt', $order->id) }}" target="_blank"
+                                            <a href="{{ route('board.orders.receipt', $order->id) }}" target="_blank"
                                                class="flex items-center rounded-t-md px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                role="menuitem">
                                                 <i class="fas fa-receipt mr-3 text-neutral-400"></i>

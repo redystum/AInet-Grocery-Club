@@ -1,41 +1,43 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class RegisterRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::guest();
+        return Auth::check() && Auth::user()->isBoard();
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        $member = User::TYPE_MEMBER;
+        $employee = User::TYPE_EMPLOYEE;
+        $board = User::TYPE_BOARD;
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required|string|min:8',
+            'email' => 'required|email|unique:users,email,' . $this->route('user')->id,
             'gender' => 'required|in:M,F',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nif' => 'nullable|string|max:9',
             'default_delivery_address' => 'nullable|string|max:255',
             'default_payment_type' => 'nullable|string|in:Visa,PayPal,MB WAY',
             'default_payment_reference' => 'nullable|string|max:255',
             'cvv' => 'nullable|required_if:default_payment_type,Visa|string|max:3',
-            'terms' => 'required|accepted',
+            'remove_photo' => 'nullable|string|in:0,1',
+            'type' => "required|string|in:$member,$employee,$board",
         ];
     }
 }

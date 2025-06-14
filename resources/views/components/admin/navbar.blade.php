@@ -46,10 +46,10 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('products.index') }}"
-                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('products.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                    <i class="fas fa-shopping-bag mr-3 {{ request()->routeIs('products.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
-                    <span class="whitespace-nowrap transition-all duration-300">Products</span>
+                <a href="{{ route('board.users.index') }}"
+                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.users.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                    <i class="fas fa-user mr-3 {{ request()->routeIs('board.users.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                    <span class="whitespace-nowrap transition-all duration-300">Users</span>
                 </a>
             </li>
             <li>
@@ -74,7 +74,7 @@
                 </a>
             </li>
             <li>
-                <a href="#"
+                <a href="{{ route('board.settings') }}"
                    class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.settings.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
                     <i class="fas fa-cog mr-3 {{ request()->routeIs('board.settings.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
                     <span class="whitespace-nowrap transition-all duration-300">Settings</span>

@@ -11,6 +11,10 @@ class Card extends Model
 
     public $incrementing = false;
 
+    const PAYMENT_TYPE_VISA = 'Visa';
+    const PAYMENT_TYPE_PAYPAL = 'PayPal';
+    const PAYMENT_TYPE_MB_WAY = 'MB WAY';
+
 
     /**
      * The attributes that are mass assignable.
@@ -29,4 +33,15 @@ class Card extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function operations()
+    {
+        return $this->hasMany(Operations::class);
+    }
+
+    public static function generate_card_number($id)
+    {
+        return 100000 + $id;
+    }
+
 }

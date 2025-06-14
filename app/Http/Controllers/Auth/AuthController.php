@@ -9,12 +9,9 @@ use App\Models\User;
 use App\Notifications\NewLogin;
 use App\Notifications\Welcome;
 use Carbon\Carbon;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -51,6 +48,14 @@ class AuthController extends Controller
                 ])->onlyInput('email', 'remember');
             }
 
+            if (Auth::user()->blocked) {
+                Auth::logout();
+
+                return back()->withErrors([
+                    'email' => 'Your account is blocked. Please contact support.',
+                ])->onlyInput('email', 'remember');
+            }
+
             $request->session()->regenerate();
 
             Auth::user()->notify(new NewLogin());
@@ -64,7 +69,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $request->validated();
+        $validatedData = $request->validated();
 
         if (!$request->only('terms')) {
             return back()->withErrors([
@@ -73,13 +78,25 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+                        $request->file('photo')->getClientOriginalExtension();
             $request->file('photo')->storeAs('users', $filename, 'public');
-            $request->merge(['photo' => $filename]);
+            $validatedData['photo'] = $filename;
         }
 
-        $user = User::create($request->validated());
+        // Combine payment reference and CVV if payment type is Visa
+        if (isset($validatedData['default_payment_type']) && $validatedData['default_payment_type'] === 'Visa'
+            && isset($validatedData['cvv']) && isset($validatedData['default_payment_reference'])) {
+            $validatedData['default_payment_reference'] = $validatedData['default_payment_reference'] . ';' . $validatedData['cvv'];
+        }
 
+        // Remove CVV from validated data as it's not a column in the users table
+        if (isset($validatedData['cvv'])) {
+            unset($validatedData['cvv']);
+        }
+
+        $validatedData['type'] = User::TYPE_PENDING_MEMBER;
+        $user = User::create($validatedData);
         $user->sendEmailVerificationNotification();
 
         return back()->with('success', 'Registration successful. Please check your email to activate your account.');
