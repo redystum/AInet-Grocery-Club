@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Utils\CustomFieldManager;
-use Illuminate\Http\Request;
+use App\Models\Card;
+use App\Models\ItemsOrder;
+use App\Models\Operations;
+use App\Models\Order;
 use App\Models\Product;
-
+use App\Models\ShippingCosts;
 use App\Models\User;
+use App\Utils\CustomFieldManager;
+use DB;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
@@ -78,10 +83,10 @@ class CartController extends Controller
 
             // Clear the guest cart from session
             session()->forget('guest_cart');
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -202,5 +207,97 @@ class CartController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function store(Request $request)
+    {
+//        $request->validate([
+//            'nif' => 'required|string|size:9',
+//        ]);
+
+
+        $user = $this->getCart();
+
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
+
+        if (empty($cart)) {
+            return back()->with('error', 'Your cart is empty.');
+        }
+
+        return DB::transaction(function () use ($request, $user, $cart) {
+
+            $order = Order::create([
+                'member_id' => $user->id,
+                'status' => Order::STATUS_PENDING,
+                'date' => now()->format('Y-m-d'),
+                'total_items' => count($cart),
+                'shipping_cost' => 0,
+                'total' => 0,
+                'nif' => $request->input('nif', ''),
+                'delivery_address' => $user->default_delivery_address,
+            ]);
+
+            $total = 0;
+            foreach ($cart as $productId => $quantity) {
+                $product = Product::find($productId);
+                if (!$product) {
+                    return back()->with('error', 'Product not found.');
+                }
+
+                if ($quantity > $product->stock_upper_limit) {
+                    return back()->with('error', 'Cannot add more items. Maximum available stock is ' . $product->stock_upper_limit);
+                }
+
+                $total += $product->price * $quantity - $product->discount * $quantity;
+
+                ItemsOrder::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price,
+                    'discount' => $product->discount ?? 0,
+                    'subtotal' => ($product->price - $product->discount) * $quantity,
+                ]);
+            }
+
+            $shipping = 0;
+            $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
+
+            foreach ($shippingRates as $rate) {
+                if ($total >= $rate->min_value_threshold && $total <= $rate->max_value_threshold) {
+                    $shipping = $rate->shipping_cost;
+                    break;
+                }
+            }
+
+            $order->shipping_cost = $shipping;
+            $order->total = $total + $shipping;
+            $order->save();
+
+            Card::where('id', $user->id)->decrement('balance', $total + $shipping);
+
+            Operations::create([
+                'card_id' => $user->id,
+                'type' => Operations::TYPE_DEBIT,
+                'value' => $total + $shipping,
+                'date' => now()->format('Y-m-d'),
+                'debit_type' => Operations::TYPE_DEBIT_ORDER,
+                'credit_type' => null,
+                'payment_type' => null,
+                'payment_reference' => null,
+                'order_id' => $order->id
+            ]);
+
+            // Clear the cart after order creation
+            if (auth()->check()) {
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => []]);
+                $user->save();
+            } else {
+                session(['guest_cart' => []]);
+            }
+
+
+            return redirect()->route('after-purchase');
+        });
     }
 }

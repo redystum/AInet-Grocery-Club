@@ -33,13 +33,14 @@ Route::name('product.')->prefix('product/{product}')->group(function () {
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::post('/cart/update', [CartController::class, 'update']); // Para atualizar todas as quantidades
+Route::put('/cart/checkout', [CartController::class, 'store'])->name('cart.store')->middleware('auth');
 Route::put('/cart/{id}', [CartController::class, 'changeQuantity']); // AJAX update individual
 Route::delete('/cart/{id}', [CartController::class, 'remove']); // AJAX remove
 Route::get('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 
 Route::get('/after-purchase', function () {
     return view('pages/after-purchase');
-});
+})->name('after-purchase');
 
 
 /*--------------------------------------------------------------------------

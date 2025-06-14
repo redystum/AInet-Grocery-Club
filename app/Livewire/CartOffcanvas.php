@@ -33,20 +33,30 @@ class CartOffcanvas extends Component
             $product = Product::find($productId);
             if ($product) {
                 // Calculate discount if applicable
-                $discountedPrice = $product->price;
-                $discountPercentage = 0;
-
-                if ($product->discount > 0) {
-                    $discountPercentage = $product->discount;
-                    $discountedPrice = round($product->price * (1 - $product->discount / 100), 2);
+                $originalPrice = $product->price;
+                $discountedPrice = $originalPrice;
+                
+                // Get the minimum quantity required for discount
+                $minQuantityForDiscount = $product->discount_min_qty ?? 0;
+                $hasDiscount = ($product->discount > 0 && $minQuantityForDiscount > 0);
+                $discountApplied = ($hasDiscount && $quantity >= $minQuantityForDiscount);
+                
+                // Calculate discount percentage for display
+                $discountPercentage = $hasDiscount ? round(($product->discount / $product->price) * 100) : 0;
+                
+                // Apply discount if conditions are met
+                if ($discountApplied) {
+                    $discountedPrice = $originalPrice - $product->discount;
                 }
 
                 $this->cartItems[] = [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->price,
+                    'price' => $originalPrice,
                     'discounted_price' => $discountedPrice,
                     'discount_percentage' => $discountPercentage,
+                    'discount_applied' => $discountApplied,
+                    'min_quantity_for_discount' => $minQuantityForDiscount,
                     'quantity' => $quantity,
                     'photo' => $product->getImage(),
                     'upper_limit' => $product->stock_upper_limit,
@@ -70,7 +80,7 @@ class CartOffcanvas extends Component
     }
 
     // Sync cart changes to session/database
-    private function syncCart()
+    public function syncCart()
     {
         $cart = [];
         foreach ($this->cartItems as $item) {
@@ -86,7 +96,8 @@ class CartOffcanvas extends Component
             session(['guest_cart' => $cart]);
         }
 
-        $this->calculateTotal();
+        // Reload items to recalculate discounts based on updated quantities
+        $this->loadCartItems();
     }
 
     public function updateCartItem($itemId, $quantity)
@@ -151,8 +162,8 @@ class CartOffcanvas extends Component
     private function calculateTotal()
     {
         $this->totalAmount = array_reduce($this->cartItems, function ($carry, $item) {
-            // Use discounted price if available
-            $price = isset($item['discounted_price']) ? $item['discounted_price'] : $item['price'];
+            // Use discounted price only if discount is actually applied
+            $price = $item['discount_applied'] ? $item['discounted_price'] : $item['price'];
             return $carry + ($price * $item['quantity']);
         }, 0);
     }

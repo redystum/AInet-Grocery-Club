@@ -66,11 +66,20 @@
                                 <!-- Price and discount section -->
                                 <div class="mt-1">
                                     @if($item['discount_percentage'] > 0)
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-green-500 font-medium">-{{ $item['discount_percentage'] }}%</span>
-                                            <span class="line-through text-neutral-500 text-sm">€{{ number_format($item['price'], 2) }}</span>
-                                            <span class="font-medium">€{{ number_format($item['discounted_price'], 2) }}</span>
-                                        </div>
+                                        @if($item['discount_applied'])
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-green-500 font-medium">-{{ $item['discount_percentage'] }}%</span>
+                                                <span class="line-through text-neutral-500 text-sm">€{{ number_format($item['price'], 2) }}</span>
+                                                <span class="font-medium">€{{ number_format($item['discounted_price'], 2) }}</span>
+                                            </div>
+                                        @else
+                                            <div class="flex flex-col">
+                                                <span class="font-medium">€{{ number_format($item['price'], 2) }}</span>
+                                                <span class="text-amber-500 text-xs mt-1">
+                                                    Buy {{ $item['min_quantity_for_discount'] }} or more to get {{ $item['discount_percentage'] }}% discount
+                                                </span>
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="font-medium">€{{ number_format($item['price'], 2) }}</span>
                                     @endif
@@ -95,7 +104,7 @@
                                     </span>
                                     
                                     <span class="ml-auto font-medium">
-                                        €{{ number_format($item['discount_percentage'] > 0 ? $item['discounted_price'] * $item['quantity'] : $item['price'] * $item['quantity'], 2) }}
+                                        €{{ number_format($item['discount_applied'] ? $item['discounted_price'] * $item['quantity'] : $item['price'] * $item['quantity'], 2) }}
                                     </span>
                                 </div>
                             </div>

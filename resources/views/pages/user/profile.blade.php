@@ -191,7 +191,7 @@
                                 <i class="fas fa-plus mr-2"></i> Add Funds
                             </a>
                             <a href="{{ route('card.index') }}"
-                                    class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
+                               class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
                                 <i class="fas fa-history mr-2"></i> View All
                             </a>
                         </div>
@@ -268,7 +268,9 @@
                                         {{ $order->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400">
+                                        <a href="{{ route('orders', ['order' => $order->id]) }}" class="hover:underline">
                                         #{{ $order->id }}
+                                        </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                                         {{ $order->items_count }} item{{ $order->items_count > 1 ? "s":"" }}
@@ -295,9 +297,15 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                        <a href="{{ route('orders.receipt', $order->id) }}"><i
-                                                    class="fas fa-receipt mr-1"></i>
-                                            Receipt</a>
+                                        @if($order->pdf_receipt)
+                                            <a href="{{ route('orders.receipt', $order->id) }}"><i
+                                                        class="fas fa-receipt mr-1"></i>
+                                                Receipt</a>
+                                        @else
+                                            <span class="text-neutral-500 dark:text-neutral-400">
+                                                No Receipt
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

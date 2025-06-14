@@ -47,7 +47,7 @@
                             class="cursor-pointer relative text-neutral-900 dark:text-neutral-300 p-2 rounded-full transition-colors focus:outline-none shadow">
                         <i class="fas fa-shopping-cart"></i>
                         <span id="cartCount"
-                              class="absolute -top-2 -right-2 bg-red-300 dark:bg-red-700 text-xs rounded-full px-2 py-0.5 font-bold">
+                              class="absolute -top-2 -right-2 bg-green-300 dark:bg-green-700 text-xs rounded-full px-2 py-0.5 font-bold">
                             @livewire('cart-count')
                         </span>
                     </button>
