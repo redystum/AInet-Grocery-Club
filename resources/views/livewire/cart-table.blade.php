@@ -143,8 +143,8 @@
                         </div>
 
                         <div class="pt-6">
-                            <a href="{{ route('checkout') }}" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors flex items-center justify-center">
-                                Proceed to Checkout
+                            <a href="#" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors flex items-center justify-center">
+                                Pay
                                 <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>
