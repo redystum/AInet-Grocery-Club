@@ -13,12 +13,12 @@
 
             <div class="flex gap-3">
                 <a href="{{ route("board.categories.create") }}"
-                   class="px-4 py-2 border bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
+                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center cursor-pointer">
                     <i class="fas fa-boxes-stacked mr-2"></i> Add New Category
                 </a>
             </div>
         </div>
 
-        @livewire('category-manager')
+        <livewire:category-table />
     </div>
 @endsection

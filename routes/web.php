@@ -121,13 +121,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
         });
 
-        Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
-        Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
-        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
-        Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/categories/{category}/delete', [CategoryController::class, 'destroy'])->name('categories.delete');
+        Route::resource('categories', CategoryController::class)->except(['show']);
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
