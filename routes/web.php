@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
@@ -109,6 +110,24 @@ Route::middleware('auth')->group(function () {
                 Route::get('users', [AdminDashboardController::class, 'exportMembers'])->name('users');
             });
         });
+
+        Route::prefix('board/categories')->name('board.categories')->group(function () {
+            Route::get('/', [CategoryController::class, 'index'])->name('index');
+            Route::get('/create', [CategoryController::class, 'create'])->name('create');
+            Route::post('/', [CategoryController::class, 'store'])->name('store');
+            Route::get('/{category}', [CategoryController::class, 'show'])->name('show');
+            Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+            Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+            Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
+        Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+        Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}/delete', [CategoryController::class, 'destroy'])->name('categories.delete');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
