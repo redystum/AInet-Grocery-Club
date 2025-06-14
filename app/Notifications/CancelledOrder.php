@@ -29,7 +29,7 @@ class CancelledOrder extends Notification
         string $refundAmount = '0.00',
     ) {
         $this->appName = config('app.name');
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
         $this->orderId = $orderId;
         $this->orderDate = $orderDate;
         $this->cancellationReason = $cancellationReason;
@@ -58,7 +58,7 @@ class CancelledOrder extends Notification
 
         return (new MailMessage)
             ->subject('Order Cancellation Notification')
-            ->view('emails.pages.cancelledOrder', [
+            ->view('emails.build.cancelledOrder', [
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
                 'orderId' => $this->orderId,

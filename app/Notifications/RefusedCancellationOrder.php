@@ -28,7 +28,7 @@ class RefusedCancellationOrder extends Notification
     )
     {
         $this->appName = config('app.name');
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
         $this->orderId = $orderId;
         $this->cancellationReason = $cancellationReason;
         $this->cancellationDetails = $cancellationDetails;
@@ -56,7 +56,7 @@ class RefusedCancellationOrder extends Notification
 
         return (new MailMessage)
             ->subject('Cancellation Request Denied - Order #' . $this->orderId)
-            ->view('emails.pages.refusedCancellationOrder', [
+            ->view('emails.build.refusedCancellationOrder', [
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
                 'orderId' => $this->orderId,

@@ -28,7 +28,7 @@
                 </div>
             </div>
 
-            <!-- Search button and user dropdown -->
+            <!-- Search button, cart button and user dropdown -->
             <div class="flex items-center space-x-4">
                 <div>
                     <button type="button" id="searchButton"
@@ -37,7 +37,17 @@
                         <kbd class="font-sans text-xs/4 text-gray-500  dark:text-gray-400">Ctrl K</kbd>
                     </button>
                 </div>
-
+                <!-- Cart Button -->
+                <div>
+                    <button id="cartButton" type="button"
+                            class="cursor-pointer relative text-neutral-900 dark:text-neutral-300 p-2 rounded-full transition-colors focus:outline-none shadow">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartCount"
+                              class="absolute -top-2 -right-2 bg-green-300 dark:bg-green-700 text-xs rounded-full px-2 py-0.5 font-bold">
+                            @livewire('cart-count')
+                        </span>
+                    </button>
+                </div>
                 <!-- User dropdown -->
                 <div class="relative ml-2 hidden md:block">
                     <div class="flex items-center space-x-1 focus:outline-none cursor-pointer" id="userNav">
@@ -77,11 +87,6 @@
                                     <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Dashboard
                                 </a>
-                                <a href="#"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
-                                    <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
-                                    Cart
-                                </a>
                                 <a href="{{ route("logout") }}"
                                    class="flex items-center rounded-b-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-out-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
@@ -91,7 +96,7 @@
 
                             @guest
                                 <a href="{{ route("login")  }}"
-                                   class="flex items-center rounded-t-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Sign in
                                 </a>
@@ -136,8 +141,6 @@
             <a href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">Products</a>
             <a href="#"
-               class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">Contacts</a>
-            <a href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">About
                 us</a>
         </div>
@@ -179,11 +182,6 @@
                             Management
                         </a>
                     @endif
-                    <a href="#"
-                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
-                        <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
-                        Cart
-                    </a>
                     <a href="{{ route('dashboard') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-dashboard mr-3 text-indigo-500 dark:text-indigo-400"></i>
@@ -249,6 +247,15 @@
         }
     });
 
+    // Cart button functionality
+    const cartButton = document.getElementById('cartButton');
+    if (cartButton) {
+        cartButton.addEventListener('click', function () {
+            window.dispatchEvent(new CustomEvent('open-cart'));
+        });
+    }
+
+    // Search bar functionality
     const searchBtn = document.getElementById('searchButton');
     const searchBar = document.getElementById('searchBar');
 
