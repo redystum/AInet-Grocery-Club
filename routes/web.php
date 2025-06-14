@@ -104,9 +104,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
+        Route::put('/stock/{product}/updateStock', [StockController::class, 'updateStock'])->name('stock.updateStock');
         Route::get('/stock/{product}/edit', [StockController::class, 'edit'])->name('stock.edit');
         Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
         Route::post('/stock/store', [StockController::class, 'store'])->name('stock.store');
+        Route::post('/stock/{product}/delete', [StockController::class, 'delete'])->name('stock.delete');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
             Route::post('store', [SupplyController::class, 'store'])->name('store');

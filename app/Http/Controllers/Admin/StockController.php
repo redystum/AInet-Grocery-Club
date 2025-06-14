@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreStockRequest;
+use App\Http\Requests\UpdateStockRequest;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\StockAdjustments;
 use App\Models\SupplyOrder;
 use App\Utils\ToastCreator;
-use App\Models\Category;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class StockController extends Controller
 {
@@ -23,24 +28,15 @@ class StockController extends Controller
         return view('pages.admin.stock.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreStockRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048',
-            'discount_min_qty' => 'nullable|integer|min:1',
-            'discount' => 'nullable|numeric|min:0',
-            'stock_lower_limit' => 'nullable|integer|min:0',
-            'stock_upper_limit' => 'nullable|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('products', 'public');
-            $validated['photo'] = basename($validated['photo']);
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+                $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('products', $filename, 'public');
+            $validated['photo'] = $filename;
         }
 
         Product::create($validated);
@@ -97,55 +93,49 @@ class StockController extends Controller
         return view('pages.admin.stock.restock', compact('products', 'alreadyExists'));
     }
 
-    public function update(Product $product, Request $request)
+    public function updateStock(Product $product, Request $request)
     {
-        // If only updating stock quantity (from quick modal)
-        if ($request->has('quantity') && count($request->all()) <= 3) {
-            $request->validate([
-                'quantity' => ['required', 'integer'],
-            ]);
+        $request->validate([
+            'quantity' => ['required', 'integer'],
+        ]);
 
-            if ($request->quantity > $product->stock_upper_limit) {
-                ToastCreator::error('Cannot update stock to more than the upper limit.');
-                return redirect()->route('board.stock');
-            }
-
-            if ($request->quantity < 0) {
-                ToastCreator::error('Cannot update stock to less than 0.');
-                return redirect()->route('board.stock');
-            }
-
-            $changedQuantity = $request->input('quantity') - $product->stock;
-
-            $product->update(['stock' => $request->input('quantity')]);
-
-            StockAdjustments::create([
-                'product_id' => $product->id,
-                'quantity_changed' => $changedQuantity,
-                'registered_by_user_id' => auth()->id(),
-            ]);
-
-            ToastCreator::success('Stock updated successfully.');
+        if ($request->quantity > $product->stock_upper_limit) {
+            ToastCreator::error('Cannot update stock to more than the upper limit.');
             return redirect()->route('board.stock');
         }
 
-        // Full product update (from edit form)
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048',
-            'discount_min_qty' => 'nullable|integer|min:1',
-            'discount' => 'nullable|numeric|min:0',
-            'stock_lower_limit' => 'nullable|integer|min:0',
-            'stock_upper_limit' => 'nullable|integer|min:0',
+        if ($request->quantity < 0) {
+            ToastCreator::error('Cannot update stock to less than 0.');
+            return redirect()->route('board.stock');
+        }
+
+        $changedQuantity = $request->input('quantity') - $product->stock;
+
+        $product->update(['stock' => $request->input('quantity')]);
+
+        StockAdjustments::create([
+            'product_id' => $product->id,
+            'quantity_changed' => $changedQuantity,
+            'registered_by_user_id' => auth()->id(),
         ]);
 
+        ToastCreator::success('Stock updated successfully.');
+        return redirect()->route('board.stock');
+    }
+
+    public function update(Product $product, UpdateStockRequest $request)
+    {
+        $validated = $request->validated();
+
         if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('products', 'public');
-            $validated['photo'] = basename($validated['photo']);
+            $file = $request->file('photo');
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
+            $file->storeAs('products', $filename, 'public');
+            $oldPhoto = $product->photo;
+            if ($oldPhoto && Storage::disk('public')->exists('products/' . $oldPhoto)) {
+                Storage::disk('public')->delete('products/' . $oldPhoto);
+            }
+            $validated['photo'] = $filename;
         }
 
         $product->update($validated);
@@ -158,5 +148,13 @@ class StockController extends Controller
     {
         $categories = \App\Models\Category::all();
         return view('pages.admin.stock.edit', compact('product', 'categories'));
+    }
+
+    public function delete(Product $product)
+    {
+        $product->delete();
+
+        ToastCreator::success('Product deleted successfully.');
+        return redirect()->route('board.stock');
     }
 }
