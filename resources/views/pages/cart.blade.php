@@ -42,4 +42,16 @@
             });
         });
     </script>
+
+    <!-- Wishlist Section -->
+    <div class="container mx-auto px-4 py-8 mb-8 max-w-7xl">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Your Wishlist</h2>
+            <a href="{{ route('wishlist') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2">
+                <span>View All</span> <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        @livewire('wishlist-preview')
+    </div>
 @endsection

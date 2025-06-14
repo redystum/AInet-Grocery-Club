@@ -1,5 +1,84 @@
 import './bootstrap';
 
+// Check if product is in wishlist and update icon
+window.checkWishlistStatus = function() {
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        const productId = button.dataset.productId;
+        const icon = button.querySelector('.wishlist-icon');
+
+        fetch(`/wishlist/check/${productId}`, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.in_wishlist) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                button.classList.remove('opacity-0');
+                button.classList.add('opacity-100');
+            }
+        })
+        .catch(error => console.error('Error checking wishlist status:', error));
+    });
+};
+
+// Toggle wishlist status
+window.toggleWishlist = function(productId, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const buttons = document.querySelectorAll(`.wishlist-btn[data-product-id="${productId}"]`);
+
+    fetch(`/wishlist/toggle/${productId}`, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            buttons.forEach(button => {
+                const icon = button.querySelector('.wishlist-icon');
+
+                if (data.in_wishlist) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            });
+
+            // If product was removed from wishlist, dispatch event to update Livewire components
+            if (!data.in_wishlist) {
+                // Use Livewire's dispatch method if available in the current context
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('productRemovedFromWishlist');
+                }
+            }
+
+            window.showToast(data.message, 'success');
+        } else {
+            window.showToast('Failed to update wishlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        window.showToast('An error occurred while updating wishlist', 'error');
+    });
+};
+
+// Setup for checking wishlist status when page loads
+window.setupWishlistStatus = function() {
+
+    // Check wishlist status for all products
+    checkWishlistStatus();
+};
+
 // Global toast notification functionality
 window.showToast = function(message, type = 'success') {
     const container = document.getElementById('toast-container');
@@ -7,8 +86,8 @@ window.showToast = function(message, type = 'success') {
 
     // Set classes based on type
     const baseClasses = 'flex items-center p-4 mb-3 rounded-lg shadow-md transition-all duration-300 transform translate-x-full';
-    const typeClasses = type === 'success' 
-        ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
+    const typeClasses = type === 'success'
+        ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200'
         : 'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
 
     toast.className = `${baseClasses} ${typeClasses}`;
