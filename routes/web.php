@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -103,6 +104,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
+        Route::get('/stock/{product}/edit', [StockController::class, 'edit'])->name('stock.edit');
+        Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
+        Route::post('/stock/store', [StockController::class, 'store'])->name('stock.store');
         Route::name('restock.')->prefix('restock/')->group(function () {
             Route::get('auto', [StockController::class, 'restockAuto'])->name('auto');
             Route::post('store', [SupplyController::class, 'store'])->name('store');
