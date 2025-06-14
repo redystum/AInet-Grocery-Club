@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Product;
 use App\Utils\ToastCreator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -29,22 +29,15 @@ class CategoryController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Handle image upload
-        $image = $request->file('image');
-        $filename = Str::slug($validated['name']) . '-' . time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('public/categories', $filename);
+        $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+            $request->file('image')->getClientOriginalExtension();
+        $request->file('image')->storeAs('categories', $filename, 'public');
         $validated['image'] = $filename;
 
         Category::create($validated);
 
         ToastCreator::success('Category created successfully.');
-        return redirect()->route('board.categories');
-    }
-
-    public function show(Category $category)
-    {
-        $category->load('products');
-        return view('pages.admin.categories.show', compact('category'));
+        return redirect()->route('board.categories.index');
     }
 
     public function edit(Category $category)
@@ -57,25 +50,35 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'remove_image' => 'nullable|in:1,on',
         ]);
 
-        // Handle image upload if new image is provided
-        if ($request->hasFile('image')) {
+        if ($request->input('remove_image')) {
             // Delete old image
-            if ($category->image) {
-                Storage::delete('public/categories/' . $category->image);
+            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+                Storage::disk('public')->delete('categories/' . $category->image);
+            }
+            $validated['image'] = null;
+        }
+
+        // Handle image upload if new image is provided
+        if ($request->hasFile('image') && !$request->input('remove_image')) {
+
+            // Delete old image
+            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+                Storage::disk('public')->delete('categories/' . $category->image);
             }
 
-            $image = $request->file('image');
-            $filename = Str::slug($validated['name']) . '-' . time() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('public/categories', $filename);
+            $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' .
+                $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->storeAs('categories', $filename, 'public');
             $validated['image'] = $filename;
         }
 
         $category->update($validated);
 
         ToastCreator::success('Category updated successfully.');
-        return redirect()->route('board.categories');
+        return redirect()->route('board.categories.index');
     }
 
     public function destroy(Category $category)

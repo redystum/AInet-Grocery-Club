@@ -6,7 +6,7 @@
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Edit Category</h1>
-            <a href="{{ route('board.categories') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center">
+            <a href="{{ route('board.categories.index') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Categories
             </a>
         </div>
@@ -23,7 +23,10 @@
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Category Name *</label>
                             <input type="text" name="name" value="{{ old('name', $category->name) }}" required
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                   class="w-full px-4 py-2 border @error('name') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -34,7 +37,7 @@
                     <div class="flex flex-col sm:flex-row items-start gap-6">
                         <div class="w-40 h-40 rounded-lg bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center overflow-hidden">
                             <div id="image-preview" class="{{ $category->image ? 'w-full h-full' : 'hidden' }}">
-                                <img id="preview-image" class="w-full h-full object-cover" src="{{ $category->image ? asset('storage/' . $category->image) : '#' }}" alt="Current Image">
+                                <img id="preview-image" class="w-full h-full object-cover" src="{{ $category->getImage() }}" alt="Current Image">
                             </div>
                             <div id="image-placeholder" class="{{ $category->image ? 'hidden' : 'text-neutral-400 dark:text-neutral-500 text-center p-4' }}">
                                 <i class="fas fa-image text-3xl mb-2"></i>
@@ -44,13 +47,16 @@
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Change Category Photo</label>
                             <input type="file" name="image" id="photo-input" accept="image/*"
-                                   class="block w-full text-sm text-neutral-600 dark:text-neutral-400
+                                   class="block w-full text-sm @error('image') text-red-500 @else text-neutral-600 dark:text-neutral-400 @enderror
                                       file:mr-4 file:py-2 file:px-4
                                       file:rounded-lg file:border-0
                                       file:text-sm file:font-semibold
-                                      file:bg-blue-50 dark:file:bg-neutral-700 file:text-blue-700 dark:file:text-blue-400
-                                      hover:file:bg-blue-100 dark:hover:file:bg-neutral-600">
+                                      @error('image') file:bg-red-100 file:text-red-700 @else file:bg-blue-50 dark:file:bg-neutral-700 file:text-blue-700 dark:file:text-blue-400 @enderror
+                                      @error('image') hover:file:bg-red-200 @else hover:file:bg-blue-100 dark:hover:file:bg-neutral-600 @enderror">
                             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">JPG, PNG or GIF (Max 2MB)</p>
+                            @error('image')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                             @if($category->image)
                                 <div class="mt-2 flex items-center">
                                     <input type="checkbox" name="remove_image" id="remove_image" class="mr-2">

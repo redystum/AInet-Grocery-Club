@@ -1,18 +1,18 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\StockController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -102,6 +102,10 @@ Route::middleware('auth')->group(function () {
     |
     */
     Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('board.dashboard.index');
+        })->name('index');
+
         Route::name('dashboard.')->prefix('dashboard/')->group(function () {
             Route::get('/', [AdminDashboardController::class, 'index'])->name('index');
             Route::name('export.')->prefix('export/')->group(function () {
