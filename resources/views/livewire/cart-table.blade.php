@@ -1,3 +1,4 @@
+
 <div>
     <!-- Cart Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -35,9 +36,11 @@
                                             <td class="w-1/4 text-lg font-medium text-neutral-800 dark:text-neutral-100 align-middle">
                                                 <div class="min-w-[120px]">
                                                     @if($item->is_discounted)
-                                                        <span class="text-red-600 dark:text-red-400">€{{ number_format($item->unit_price, 2) }}</span>
-                                                        <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">€{{ number_format($item->original_unit_price, 2) }}</span>
-                                                        <span class="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">{{ $item->discount_percent }}% OFF</span>
+                                                        <div class="inline-flex items-center flex-nowrap">
+                                                            <span class="text-red-600 dark:text-red-400">€{{ number_format($item->unit_price, 2) }}</span>
+                                                            <span class="ml-2 text-sm text-neutral-500 dark:text-neutral-400 line-through">€{{ number_format($item->original_unit_price, 2) }}</span>
+                                                            <span class="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full whitespace-nowrap">{{ $item->discount_percent }}% OFF</span>
+                                                        </div>
                                                     @else
                                                         €{{ number_format($item->original_unit_price, 2) }}
                                                     @endif
@@ -140,8 +143,8 @@
                         </div>
 
                         <div class="pt-6">
-                            <a href="{{ route('checkout') }}" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors flex items-center justify-center">
-                                Proceed to Checkout
+                            <a href="#" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors flex items-center justify-center">
+                                Pay
                                 <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>

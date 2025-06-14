@@ -86,10 +86,9 @@ Route::put('/cart/{id}', [CartController::class, 'changeQuantity']); // AJAX upd
 Route::delete('/cart/{id}', [CartController::class, 'remove']); // AJAX remove
 Route::get('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 
-//--> NÃO MEXER NISTO ENQUANTO O CHECKOUT NÃO ESTIVER PRONTO!!! <--
-Route::get('/checkout', function () {
-    return 'Página de checkout em construção!';
-})->name('checkout');
+Route::get('/after-purchase', function () {
+    return view('pages/after-purchase');
+});
 
 /*--------------------------------------------------------------------------
 | Admin routes

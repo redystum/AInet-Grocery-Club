@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Card;
 
 use App\Models\User;
 
@@ -69,15 +68,31 @@ class CartController extends Controller
         if (!$product) {
             return response()->json([
                 'success' => false,
-                'message' => 'Product not found',
-            ], 404);
+                'message' => 'Product not found'
+            ]);
+        }
+
+        $quantity = intval($request->input('quantity', 1));
+
+        // Check if the requested quantity exceeds available stock
+        if ($quantity > $product->stock_upper_limit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot add to cart. Maximum available stock is ' . $product->stock
+            ]);
         }
 
         $user = $this->getCard();
         $cart = $user->custom ?? [];
-        $quantity = intval($request->input('quantity', 1));
-        
+
         if (isset($cart[$productId])) {
+            // Check if the current cart quantity plus new quantity exceeds stock
+            if (($cart[$productId] + $quantity) > $product->stock_upper_limit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot add more items. Maximum available stock is ' . $product->stock_upper_limit
+                ]);
+            }
             $cart[$productId] += $quantity;
         } else {
             $cart[$productId] = $quantity;
@@ -90,9 +105,11 @@ class CartController extends Controller
             session(['guest_cart' => $cart]);
         }
 
+        $productName = $product->name;
+
         return response()->json([
             'success' => true,
-            'message' => "{$product->name} added to your cart",
+            'message' => "$productName added to your cart",
             'quantity' => $quantity
         ]);
     }

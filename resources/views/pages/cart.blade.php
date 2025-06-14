@@ -17,7 +17,7 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 invisible">
+    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 invisible crusor-pointer">
         <i class="fas fa-chevron-up"></i>
     </button>
 
