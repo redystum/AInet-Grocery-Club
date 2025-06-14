@@ -24,6 +24,9 @@ class Card extends Model
         'custom',
     ];
 
+    protected $casts = [
+        'custom' => 'array',
+    ];
 
     public function user()
     {

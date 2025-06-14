@@ -79,7 +79,7 @@
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('cart') }}"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Cart
@@ -92,8 +92,13 @@
                             @endauth
 
                             @guest
-                                <a href="{{ route("login")  }}"
+                                <a href="{{ route('cart') }}"
                                    class="flex items-center rounded-t-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                    <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                    Cart
+                                </a>
+                                <a href="{{ route("login")  }}"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Sign in
                                 </a>
@@ -174,7 +179,7 @@
                         <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Profile
                     </a>
-                    <a href="#"
+                    <a href="{{ route('cart') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Cart
@@ -185,6 +190,11 @@
                         Sign out
                     </a>
                 @else
+                    <a href="{{ route('cart') }}"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                        <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                        Cart
+                    </a>
                     <a href="{{ route('login') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-sign-in-alt mr-3 text-indigo-500 dark:text-indigo-400"></i>

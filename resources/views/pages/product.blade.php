@@ -123,7 +123,8 @@
                         </div>
 
                         <!-- Add to Cart Button -->
-                        <button
+                        <button type="button"
+                                onclick="addToCart({{ $product->id }})"
                                 class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center cursor-pointer">
                             <i class="fas fa-shopping-cart mr-2"></i> <span class="block md:hidden lg:block">Add to
                                 Cart</span>
@@ -177,8 +178,8 @@
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">You May Also Like</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @foreach($random_products as $randomProduct)
-                    <x-product-card :product="$randomProduct"/>
+                @foreach($relatedProducts as $related)
+                    <x-product-card :product="$related"/>
                 @endforeach
             </div>
         </div>
@@ -265,5 +266,44 @@
             element.parentElement.classList.remove('border', 'border-neutral-200', 'dark:border-neutral-700', 'hover:border-blue-500');
             element.parentElement.classList.add('border-2', 'border-blue-500');
         }
+
+        // Toast functions now available globally from app.js
+
+        function addToCart(productId) {
+            let quantity = document.getElementById('quantity').value;
+            const addToCartBtn = document.querySelector('button[onclick^="addToCart"]');
+            const originalBtnText = addToCartBtn.innerHTML;
+
+            // Show loading state
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            addToCartBtn.disabled = true;
+
+            fetch(`/cart/add/${productId}?quantity=${quantity}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.showToast(`${data.message} (${data.quantity}x)`, 'success');
+                } else {
+                    window.showToast('Failed to add product to cart', 'error');
+                }
+
+                // Reset button state
+                addToCartBtn.innerHTML = originalBtnText;
+                addToCartBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.showToast('An error occurred while adding to cart', 'error');
+
+                // Reset button state
+                addToCartBtn.innerHTML = originalBtnText;
+                addToCartBtn.disabled = false;
+            });
+        }
+
     </script>
 @endsection

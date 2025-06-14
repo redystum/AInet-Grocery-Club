@@ -58,6 +58,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'custom' => 'array',
         ];
     }
 
@@ -110,5 +111,10 @@ class User extends Authenticatable
     public function getImage(): string
     {
         return $this->photo ? asset('storage/users/' . $this->photo) : asset('storage/users/anonymous.png');
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(\App\Models\CartItem::class, 'user_id', 'id');
     }
 }

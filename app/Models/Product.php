@@ -42,4 +42,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function getPrice()
+    {
+        return $this->discount_price ?? $this->price;
+    }
+
 }
