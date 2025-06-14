@@ -69,6 +69,11 @@
                                                         <i class="fas fa-plus text-xs"></i>
                                                     </button>
                                                 </div>
+                                                @if($item->quantity > $item->product->stock)
+                                                    <p class="text-xs text-amber-500 mt-1">
+                                                        Delivery may be delayed due to limited stock availability.
+                                                    </p>
+                                                @endif
                                             </td>
 
                                             <!-- Item Total Column -->

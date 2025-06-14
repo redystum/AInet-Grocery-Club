@@ -20,7 +20,7 @@ class Welcome extends Notification
     public function __construct()
     {
         $this->appName = config('app.name');
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
     }
 
     /**

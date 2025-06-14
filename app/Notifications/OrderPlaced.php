@@ -5,9 +5,8 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Storage;
 
-class OrderCompleted extends Notification
+class OrderPlaced extends Notification
 {
     use Queueable;
 
@@ -17,8 +16,7 @@ class OrderCompleted extends Notification
     private string $deliveryDate;
     private string $deliveryLocation;
     private array $items;
-    private string $pdfUrl;
-    private string $pdfName;
+    private bool $delayed;
 
 
     /**
@@ -29,8 +27,7 @@ class OrderCompleted extends Notification
         string $deliveryDate,
         string $deliveryLocation,
         array  $items = [],
-        string $pdfUrl = '',
-        string $pdfName = '',
+        bool   $delayed = false,
     )
     {
         $this->appName = config('app.name');
@@ -39,8 +36,7 @@ class OrderCompleted extends Notification
         $this->deliveryDate = $deliveryDate;
         $this->deliveryLocation = $deliveryLocation;
         $this->items = $items;
-        $this->pdfUrl = $pdfUrl;
-        $this->pdfName = $pdfName ?: 'order_' . $orderId . '.pdf';
+        $this->delayed = $delayed;
     }
 
     /**
@@ -64,7 +60,7 @@ class OrderCompleted extends Notification
 
         $mailMessage = (new MailMessage)
             ->subject('Order Completion Notification')
-            ->view('emails.build.OrderDelivered', [
+            ->view('emails.build.OrderPlaced', [
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
                 'orderId' => $this->orderId,
@@ -74,15 +70,8 @@ class OrderCompleted extends Notification
                 'deliveryDate' => $this->deliveryDate,
                 'deliveryLocation' => $this->deliveryLocation,
                 'items' => $this->items,
+                'delayed' => $this->delayed,
             ]);
-
-        // Attach PDF if available
-        if (!empty($this->pdfUrl) && file_exists(public_path($this->pdfUrl))) {
-            $mailMessage->attach(Storage::disk('local')->path($this->pdfUrl), [
-                'as' => $this->pdfName,
-                'mime' => 'application/pdf',
-            ]);
-        }
 
         return $mailMessage;
     }

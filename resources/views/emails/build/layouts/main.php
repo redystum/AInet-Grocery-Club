@@ -103,6 +103,9 @@
       .dark-bg-red-900-30 {
         background-color: rgb(127 29 29 / 0.3) !important
       }
+      .dark-bg-yellow-900-30 {
+        background-color: rgb(113 63 18 / 0.3) !important
+      }
       .dark-text-amber-300 {
         color: #fcd34d !important
       }
@@ -141,6 +144,12 @@
       }
       .dark-text-red-400 {
         color: #f87171 !important
+      }
+      .dark-text-yellow-300 {
+        color: #fde047 !important
+      }
+      .dark-text-yellow-400 {
+        color: #facc15 !important
       }
       .dark-hover-bg-neutral-700:hover {
         background-color: #404040 !important

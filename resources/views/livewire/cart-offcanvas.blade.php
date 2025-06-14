@@ -93,20 +93,25 @@
                                     <span class="w-10 h-8 flex items-center justify-center border-t border-b border-neutral-300 dark:border-neutral-700">{{ $item['quantity'] }}</span>
                                     <button wire:click="incrementQuantity({{ $item['id'] }})"
                                             class="w-8 h-8 flex items-center justify-center border border-neutral-300 dark:border-neutral-700 rounded-r-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                                            {{ $item['quantity'] >= $item['upper_limit'] ? 'disabled' : '' }}
-                                            {{ $item['quantity'] >= $item['upper_limit'] ? 'class="opacity-50 cursor-not-allowed"' : '' }}>
+                                            {{ $item['quantity'] >= $item['stock'] ? 'disabled' : '' }}
+                                            {{ $item['quantity'] >= $item['stock'] ? 'class="opacity-50 cursor-not-allowed"' : '' }}>
                                         +
                                     </button>
                                     
                                     <!-- Max quantity indicator -->
                                     <span class="ml-2 text-xs text-neutral-500">
-                                        (Max: {{ $item['upper_limit'] }})
+                                        (Max: {{ $item['stock'] }})
                                     </span>
                                     
                                     <span class="ml-auto font-medium">
                                         €{{ number_format($item['discount_applied'] ? $item['discounted_price'] * $item['quantity'] : $item['price'] * $item['quantity'], 2) }}
                                     </span>
                                 </div>
+                                @if($item['quantity'] > $item['stock'])
+                                    <p class="text-xs text-amber-500 mt-1">
+                                        Delivery may be delayed due to limited stock availability.
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     @empty

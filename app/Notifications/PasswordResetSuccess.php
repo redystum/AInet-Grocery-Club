@@ -32,7 +32,7 @@ class PasswordResetSuccess extends Notification
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
         $this->ipAddress = app()->isProduction() ? request()->ip() : '194.210.216.34';
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
 
         // Parse device info using Jenssegers Agent
         $agent = new Agent;

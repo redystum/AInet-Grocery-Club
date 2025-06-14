@@ -59,7 +59,7 @@ class CartOffcanvas extends Component
                     'min_quantity_for_discount' => $minQuantityForDiscount,
                     'quantity' => $quantity,
                     'photo' => $product->getImage(),
-                    'upper_limit' => $product->stock_upper_limit,
+                    'stock' => $product->stock, // Ensure stock limit is passed
                 ];
             }
         }

@@ -96,7 +96,8 @@ class CartTable extends Component
                 'unit_price' => $unitPrice,
                 'original_unit_price' => $product->price,
                 'is_discounted' => $isDiscounted,
-                'discount_percent' => $hasDiscount ? round(($product->discount / $product->price) * 100) : 0
+                'discount_percent' => $hasDiscount ? round(($product->discount / $product->price) * 100) : 0,
+                'stock' => $product->stock // Add stock for comparison
             ];
 
             $this->subtotal += $lineSubtotal;

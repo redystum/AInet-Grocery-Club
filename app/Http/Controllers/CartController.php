@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingCosts;
 use App\Models\User;
+use App\Notifications\OrderPlaced;
 use App\Utils\CustomFieldManager;
 use DB;
 use Illuminate\Http\Request;
@@ -211,10 +212,9 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-//        $request->validate([
-//            'nif' => 'required|string|size:9',
-//        ]);
-
+        $request->validate([
+            'nif' => 'required|string|size:9',
+        ]);
 
         $user = $this->getCart();
 
@@ -238,6 +238,8 @@ class CartController extends Controller
             ]);
 
             $total = 0;
+            $delayed = false;
+            $products = [];
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
                 if (!$product) {
@@ -250,6 +252,10 @@ class CartController extends Controller
 
                 $total += $product->price * $quantity - $product->discount * $quantity;
 
+                if ($quantity > $product->stock) {
+                    $delayed = true;
+                }
+
                 ItemsOrder::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
@@ -258,6 +264,13 @@ class CartController extends Controller
                     'discount' => $product->discount ?? 0,
                     'subtotal' => ($product->price - $product->discount) * $quantity,
                 ]);
+
+                $products[] = [
+                    'name' => $product->name,
+                    'quantity' => $product->quantity,
+                    'price' => $product->price,
+                    'image' => $product->getImage(),
+                ];
             }
 
             $shipping = 0;
@@ -296,6 +309,13 @@ class CartController extends Controller
                 session(['guest_cart' => []]);
             }
 
+            $user->notify(new OrderPlaced(
+                $order->id,
+                $order->date,
+                $order->delivery_address,
+                $products,
+                $delayed
+            ));
 
             return redirect()->route('after-purchase');
         });
