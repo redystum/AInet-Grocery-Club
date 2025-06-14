@@ -198,7 +198,6 @@
         const spendingChart = new Chart(spendingCtx, {
             type: 'bar',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
                     label: 'Monthly Spending',
                     data: @json($monthlySpendingData),

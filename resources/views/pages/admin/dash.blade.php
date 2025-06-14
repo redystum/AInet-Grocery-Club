@@ -22,7 +22,8 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-neutral-600 dark:text-neutral-400">Monthly Revenue</p>
-                        <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">€{{ number_format($monthlyRevenue, 2) }}</h3>
+                        <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">
+                            €{{ number_format($monthlyRevenue, 2) }}</h3>
                     </div>
                     <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300">
                         <i class="fas fa-euro-sign text-xl"></i>
@@ -61,7 +62,8 @@
             <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Monthly Revenue</h2>
-                    <select id="revenueYear" class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                    <select id="revenueYear"
+                            class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                         @foreach($existentYears as $year)
                             <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
                         @endforeach
@@ -76,7 +78,8 @@
             <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Sales by Category</h2>
-                    <select id="categoryYear" class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                    <select id="categoryYear"
+                            class="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                         @foreach($existentYears as $year)
                             <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
                         @endforeach
@@ -94,7 +97,8 @@
             <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Recent Orders</h2>
-                    <a href="{{ route('board.orders.index') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                    <a href="{{ route('board.orders.index') }}"
+                       class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                         View All <i class="fas fa-arrow-right ml-1"></i>
                     </a>
                 </div>
@@ -102,18 +106,35 @@
                     <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                         <thead class="bg-neutral-100 dark:bg-neutral-700">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Order #</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Member</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Total</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Order #
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Member
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Total
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Status
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                         @foreach($recentOrders as $order)
                             <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400">#{{ $order->id }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-200">{{ $order->user->name }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-200">€{{ number_format($order->total, 2) }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400">
+                                    <a href="{{ route('board.orders.show', $order->id) }}">
+                                       #{{ $order->id }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-200">
+                                    <a href="{{ route('board.users.show', $order->user->id) }}" >
+                                        {{ $order->user->name }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-800 dark:text-neutral-200">
+                                    €{{ number_format($order->total, 2) }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
                                     {{ $order->status === 'completed' ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' :
@@ -133,7 +154,8 @@
             <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Low Stock Items</h2>
-                    <a href="{{ route('board.stock') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                    <a href="{{ route('board.stock') }}"
+                       class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                         View All <i class="fas fa-arrow-right ml-1"></i>
                     </a>
                 </div>
@@ -141,9 +163,15 @@
                     <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                         <thead class="bg-neutral-100 dark:bg-neutral-700">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Category</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">Stock</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Product
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Category
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                                Stock
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
@@ -164,21 +192,24 @@
         <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
             <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Export Data</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <a href="{{ route('board.dashboard.export.orders') }}" class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                <a href="{{ route('board.dashboard.export.orders') }}"
+                   class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                     <div>
                         <h3 class="font-medium text-neutral-800 dark:text-neutral-200">Orders</h3>
                         <p class="text-sm text-neutral-600 dark:text-neutral-400">Export all order data</p>
                     </div>
                     <i class="fas fa-file-excel text-green-600 dark:text-green-400"></i>
                 </a>
-                <a href="{{ route('board.dashboard.export.users') }}" class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                <a href="{{ route('board.dashboard.export.users') }}"
+                   class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                     <div>
                         <h3 class="font-medium text-neutral-800 dark:text-neutral-200">Members</h3>
                         <p class="text-sm text-neutral-600 dark:text-neutral-400">Export member information</p>
                     </div>
                     <i class="fas fa-file-excel text-green-600 dark:text-green-400"></i>
                 </a>
-                <a href="{{ route('board.dashboard.export.products') }}" class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
+                <a href="{{ route('board.dashboard.export.products') }}"
+                   class="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                     <div>
                         <h3 class="font-medium text-neutral-800 dark:text-neutral-200">Products</h3>
                         <p class="text-sm text-neutral-600 dark:text-neutral-400">Export product inventory</p>
@@ -262,14 +293,14 @@
         });
 
         // Year select change handlers
-        document.getElementById('revenueYear').addEventListener('change', function() {
+        document.getElementById('revenueYear').addEventListener('change', function () {
             const selectedYear = this.value;
             const url = new URL(window.location.href);
             url.searchParams.set('year', selectedYear);
             window.location.href = url.toString();
         });
 
-        document.getElementById('categoryYear').addEventListener('change', function() {
+        document.getElementById('categoryYear').addEventListener('change', function () {
             const selectedYear = this.value;
             const url = new URL(window.location.href);
             url.searchParams.set('year', selectedYear);

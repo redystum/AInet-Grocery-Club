@@ -27,9 +27,37 @@ class DashboardController extends Controller
             'lowStockItems' => Product::whereColumn('stock', '<=', 'stock_lower_limit')->count(),
         ];
 
-        $monthlyRevenueData = $this->getMonthlyRevenueData($request->input('year', now()->year));
+        $year = $request->input('year', now()->year);
 
-        $categoryData = $this->getCategorySalesData($request->input('year', now()->year));
+        $monthlyRevenueData = Order::selectRaw('MONTH(date) as month, SUM(total) as total')
+            ->where('status', Order::STATUS_COMPLETED)
+            ->whereYear('date', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->month - 1 => $item->total];
+            })
+            ->toArray();
+
+
+        $categoryData = Category::with(['products.items' => function ($query) use ($year) {
+            $query->whereHas('order', function ($q) use ($year) {
+                $q->where('status', Order::STATUS_COMPLETED)
+                    ->whereYear('date', $year);
+            });
+        }])->get()
+            ->map(function ($category) {
+                $total = $category->products->flatMap->items->sum('subtotal');
+                return (object)[
+                    'name' => $category->name,
+                    'total' => $total,
+                ];
+            })
+            ->filter(function ($item) {
+                return $item->total > 0;
+            })
+            ->values();
 
         $recentOrders = Order::with('user')
             ->latest()
@@ -55,42 +83,6 @@ class DashboardController extends Controller
             'lowStockProducts' => $lowStockProducts,
             'existentYears' => $existentYears,
         ]));
-    }
-
-    public function getMonthlyRevenueData($year)
-    {
-        return Order::selectRaw('MONTH(date) as month, SUM(total) as total')
-            ->where('status', Order::STATUS_COMPLETED)
-            ->whereYear('date', $year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->mapWithKeys(function ($item) {
-                return [$item->month - 1 => $item->total];
-            })
-            ->toArray();
-    }
-
-    public function getCategorySalesData($year)
-    {
-        return Category::with(['products.items' => function ($query) use ($year) {
-            $query->whereHas('order', function ($q) use ($year) {
-                $q->where('status', Order::STATUS_COMPLETED)
-                    ->whereYear('date', $year);
-            });
-        }])
-            ->get()
-            ->map(function ($category) {
-                $total = $category->products->flatMap->items->sum('subtotal');
-                return (object)[
-                    'name' => $category->name,
-                    'total' => $total,
-                ];
-            })
-            ->filter(function ($item) {
-                return $item->total > 0;
-            })
-            ->values();
     }
 
     public function exportOrders()
