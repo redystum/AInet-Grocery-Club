@@ -42,6 +42,7 @@ class User extends Authenticatable
         'default_payment_type',
         'default_payment_reference',
         'custom',
+        'email_verified_at'
     ];
 
     /**

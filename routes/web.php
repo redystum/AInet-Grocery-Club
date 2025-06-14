@@ -3,12 +3,13 @@
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -28,7 +29,6 @@ Route::get('/products?category={category}', [ProductController::class, 'index'])
 
 Route::name('product.')->prefix('product/{product}')->group(function () {
     Route::get('/', [ProductController::class, 'show'])->name('show');
-    Route::get('add_to_cart', [ProductController::class, 'add_to_cart'])->name('add_to_cart');
 });
 
 /*--------------------------------------------------------------------------
@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/charge', [CardController::class, 'charge'])->name('.charge');
         Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
+
     /*--------------------------------------------------------------------------
     | Admin routes
     |---------------------------------------------------------------------------
@@ -127,6 +128,14 @@ Route::middleware('auth')->group(function () {
             Route::put('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
             Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
             Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
+        });
+
+        Route::resource('users', AdminUserController::class);
+        Route::name('users.')->prefix('users/{user}/')->group(function () {
+            Route::patch('unblock', [AdminUserController::class, 'unblock'])->name('unblock');
+            Route::patch('block', [AdminUserController::class, 'block'])->name('block');
+            Route::get('transactions', [AdminUserController::class, 'transactions'])->name('transactions');
+            Route::get('resetPassword', [AdminUserController::class, 'resetPwd'])->name('resetPwd');
         });
 
         Route::get('/settings', function () {

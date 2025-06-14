@@ -14,6 +14,12 @@ class CardHistory extends Component
     public $start_date = '';
     public $end_date = '';
     public $page = 1;
+    public $user;
+
+    public function mount($user = null)
+    {
+        $this->user = $user ?: Auth::user();
+    }
 
     protected $queryString = [
         'type' => ['except' => ''],
@@ -61,9 +67,8 @@ class CardHistory extends Component
 
     public function render()
     {
-        $user = Auth::user();
 
-        $query = $user->card->operations()->orderByDesc('date');
+        $query = $this->user->card->operations()->orderByDesc('date');
 
         if ($this->type) {
             if ($this->type == 'order') {
@@ -94,7 +99,7 @@ class CardHistory extends Component
 
         // Calculate running balance for each operation
         if ($operations->count() > 0) {
-            $currentBalance = $user->card->balance;
+            $currentBalance = $this->user->card->balance;
             $operationsCollection = $operations->getCollection();
             
             // Sort operations by date and ID in descending order (newest first)
@@ -125,7 +130,7 @@ class CardHistory extends Component
 
         return view('livewire.card-history', [
             'operations' => $operations,
-            'currentBalance' => $user->card->balance ?? 0,
+            'currentBalance' => $this->user->card->balance ?? 0,
         ]);
     }
 }
