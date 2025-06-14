@@ -15,7 +15,7 @@
 
     <footer class="text-center text-neutral-500 dark:text-neutral-400 text-sm mb-6">
         <p class="mb-2">This is an automated message. Please do not reply.</p>
-        <p>© {{ now()->year }} {{ $appName }}. All rights reserved.</p>
+        <p>&copy; {{ now()->year }} {{ $appName }}. All rights reserved.</p>
         <div class="mt-4">
             <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mr-4">
                 Help Center
@@ -29,3 +29,4 @@
 
 </body>
 </html>
+

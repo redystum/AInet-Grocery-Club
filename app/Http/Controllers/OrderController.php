@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderFilterRequest;
 use App\Models\Order;
+use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 use ZipArchive;
 
@@ -13,7 +14,7 @@ class OrderController extends Controller
     {
         $request->validated();
 
-        $orders = $this->getOrderWithFilters($request);
+        $orders = $this->getOrderWithFilters($request, $request->input('order', null));
 
         foreach ($orders as $order) {
             $total_items = 0;
@@ -26,6 +27,16 @@ class OrderController extends Controller
 
             $order->setAttribute("items_count", $total_items);
             $order->setAttribute("total_discount", $total_discount);
+
+            CustomFieldManager::self_custom_to_attribute($order);
+        }
+
+        if ($request->has('order')) {
+            $orderId = $request->input('order');
+            $specificOrder = auth()->user()->orders()->with(['products'])->find($orderId);
+            if ($specificOrder) {
+                $orders->setCollection($orders->getCollection()->prepend($specificOrder));
+            }
         }
 
         return view('pages.user.orders', compact('orders'));
@@ -79,6 +90,20 @@ class OrderController extends Controller
             abort(404);
         }
 
+        if ($order->status != Order::STATUS_PENDING) {
+            return redirect()->route('orders')->with('toast', [
+                'title' => 'Error',
+                'message' => 'You cannot cancel this order',
+                'type' => 'error',
+            ]);
+        }
+
+        CustomFieldManager::self_custom_to_attribute($order);
+
+        if ($order->cancellationStatus != null) {
+            abort(403);
+        }
+
         $total_items = 0;
         $total_discount = 0; // in cents
 
@@ -123,31 +148,31 @@ class OrderController extends Controller
 
         switch ($reason) {
             case 1:
-                $reason_text = 'Found cheaper elsewhere - ';
+                $reason_text = 'Found cheaper elsewhere';
                 break;
             case 2:
-                $reason_text = 'Changed my mind - ';
+                $reason_text = 'Changed my mind';
                 break;
             case 3:
-                $reason_text = 'Shipping takes too long - ';
+                $reason_text = 'Shipping takes too long';
                 break;
             case 4:
-                $reason_text = 'Ordered by mistake - ';
+                $reason_text = 'Ordered by mistake';
                 break;
         }
 
-        $reason_text .= $request->input('details');
-
-        // TODO: employee have to accept the cancellation, use the custom field for pending concalation, and cannot cancel again after cancel refused
-
         $order->update([
-            'status' => Order::STATUS_CANCELED,
             'cancel_reason' => $reason_text,
+            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
+                'cancellationStatus' => Order::CANCEL_STATUS_PENDING,
+                'cancellationTime' => now(),
+                'cancellationDetails' => $request->input('details'),
+            ])
         ]);
 
         return redirect()->route('orders')->with('toast', [
             'title' => 'Success',
-            'message' => 'Order canceled successfully',
+            'message' => 'Cancellation request sent successfully',
             'type' => 'success',
         ]);
     }
@@ -162,9 +187,12 @@ class OrderController extends Controller
             $query->where('created_at', '>=', now()->subDays($days));
         }
 
-        switch ($request->input('sort', 'newest')) {
+        switch ($request->input('sort', 'status')) {
             case 'oldest':
                 $query->orderBy('created_at');
+                break;
+            case 'newest':
+                $query->orderByDesc('created_at');
                 break;
             case 'price_asc':
                 $query->orderBy('total');
@@ -172,14 +200,11 @@ class OrderController extends Controller
             case 'price_desc':
                 $query->orderByDesc('total');
                 break;
-            case 'status':
+            default: // status
                 $query->orderBy('status');
-                break;
-            default: // newest
-                $query->orderByDesc('created_at');
         }
 
-        $perPage = $request->input('per_page', 5);
+        $perPage = $request->input('per_page', 20);
         return $query->paginate($perPage)
             ->appends($request->only(['date_range', 'sort', 'per_page']));
     }

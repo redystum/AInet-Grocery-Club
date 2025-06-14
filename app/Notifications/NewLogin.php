@@ -68,7 +68,7 @@ class NewLogin extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Login Detected on '.$this->appName)
+            ->subject('New Login Detected on ' . $this->appName)
             ->view('emails.pages.newLogin', [
                 'appName' => $this->appName,
                 'loginTime' => $this->loginTime,
