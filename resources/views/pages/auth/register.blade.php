@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('content')
 
@@ -51,7 +51,7 @@
                                     <input type="file" name="photo" id="photo" class="hidden" accept="image/*">
                                 </label>
                             </div>
-                            <span class="text-sm text-gray-500 dark:text-neutral-400">Upload a profile photo
+                            <span class="text-sm text-gray-500 dark:text-neutral-400">Upload a profile photo, max 10MB
                                 (optional)</span>
                             @error('photo')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -225,6 +225,42 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <!-- Payment reference and CVV fields -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                        <div class="col-span-2">
+                                            <label for="default_payment_reference"
+                                                   class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">Payment
+                                                Reference</label>
+                                            <input type="text" name="default_payment_reference"
+                                                   id="default_payment_reference"
+                                                   class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-neutral-700
+                                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
+                                                   dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
+                                                   @error('default_payment_reference') border-red-500 dark:border-red-500 @enderror"
+                                                   value="{{ old('default_payment_reference') }}"
+                                                   placeholder="Card number, email, phone number...">
+                                            @error('default_payment_reference')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div id="cvvContainer"
+                                             style="{{ old('default_payment_type') == 'Visa' ? '' : 'display: none;' }}">
+                                            <label for="cvv"
+                                                   class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">CVV</label>
+                                            <input type="text" name="cvv" id="cvv" maxlength="4"
+                                                   class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-neutral-700
+                                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-800
+                                                   dark:text-neutral-100 placeholder-gray-400 dark:placeholder-neutral-500
+                                                   @error('cvv') border-red-500 dark:border-red-500 @enderror"
+                                                   value="{{ old('cvv') }}"
+                                                   placeholder="123">
+                                            @error('cvv')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </details>
                         </div>
@@ -249,7 +285,7 @@
                         </div>
 
                         <button type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                                class="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
                             Create Account
                         </button>
 
@@ -285,6 +321,17 @@
             const preview = document.getElementById('profilePreview');
             preview.src = "{{ asset('storage/users/anonymous.png') }}";
             document.getElementById('photo').value = '';
+        });
+
+        // Show/hide CVV field based on payment type
+        document.getElementById('default_payment_type')?.addEventListener('change', function (e) {
+            const cvvContainer = document.getElementById('cvvContainer');
+            if (e.target.value === 'Visa') {
+                cvvContainer.style.display = '';
+            } else {
+                cvvContainer.style.display = 'none';
+                document.getElementById('cvv').value = '';
+            }
         });
     </script>
 @endsection

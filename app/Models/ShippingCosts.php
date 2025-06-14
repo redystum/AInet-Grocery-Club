@@ -15,6 +15,28 @@ class ShippingCosts extends Model
         'custom'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'min_value_threshold' => 'float',
+        'max_value_threshold' => 'float',
+        'shipping_cost' => 'float',
+        'custom' => 'array',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'max_value_threshold' => 9999999.99, // A very large number as default
+        'custom' => '{}',
+    ];
+
     // alias for min_value_threshold, usage: $shipping_cost->min
     public function getMinAttribute()
     {
@@ -32,6 +54,4 @@ class ShippingCosts extends Model
     {
         return $this->shipping_cost;
     }
-
-
 }

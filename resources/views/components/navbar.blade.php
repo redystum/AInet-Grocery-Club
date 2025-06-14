@@ -5,7 +5,7 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center">
-                        <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 w-8 rounded-full">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8 w-8">
                         <span
                                 class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
                     </a>
@@ -27,7 +27,7 @@
                     </a>
                     <a href="#{{-- {{ route('about') }}--}}"
                        class="{{ Route::currentRouteName() === 'about' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400' : 'text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition duration-300">
-                        Contacts
+                        About
                     </a>
                 </div>
             </div>
@@ -78,6 +78,18 @@
                                    class="flex items-center rounded-t-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
                                     Profile
+                                </a>
+                                @if(auth()->user()->isBoard())
+                                    <a href="{{ route('board.index') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                        <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                        Management
+                                    </a>
+                                @endif
+                                <a href="#"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                    <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400 w-4"></i>
+                                    Cart
                                 </a>
                                 <a href="{{ route("logout") }}"
                                    class="flex items-center rounded-b-xl px-4 py-2 text-sm text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
@@ -168,6 +180,18 @@
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
                         <i class="fas fa-user-circle mr-3 text-indigo-500 dark:text-indigo-400"></i>
                         Profile
+                    </a>
+                    @if(auth()->user()->isBoard())
+                        <a href="{{ route('board.index') }}"
+                           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                            <i class="fas fa-box mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                            Management
+                        </a>
+                    @endif
+                    <a href="#"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">
+                        <i class="fas fa-shopping-cart mr-3 text-indigo-500 dark:text-indigo-400"></i>
+                        Cart
                     </a>
                     <a href="{{ route('logout') }}"
                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-neutral-800">

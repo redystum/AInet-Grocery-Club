@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Profile')
 
@@ -30,12 +30,17 @@
                                 <i class="fas fa-crown mr-1"></i>
                                 Joined {{ $user->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}
                             </span>
-                            @unless(auth()->user()->isEmployee())
+                            @if(auth()->user()->isEmployee())
+                                <a href="{{ route('profile.edit') }}"
+                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                    <i class="fas fa-edit mr-2"></i> Change Password
+                                </a>
+                            @else
                                 <a href="{{ route('profile.edit') }}"
                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                                     <i class="fas fa-edit mr-2"></i> Edit Profile
                                 </a>
-                            @endunless
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -69,7 +74,9 @@
                 <!-- Account Details -->
                 <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Account Details</h2>
+                        <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">
+                            <i class="fas fa-user-circle mr-2 text-blue-600 dark:text-blue-400"></i>Account Details
+                        </h2>
                         <a href="{{ route('profile.edit') }}"
                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                             <i class="fas fa-edit mr-1"></i> Edit
@@ -79,8 +86,9 @@
                     <div class="space-y-4">
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Account Type</span>
-                            <span
-                                    class="font-medium text-neutral-800 dark:text-neutral-200">{{ ucfirst($user->type) }}</span>
+                            <span class="font-medium text-neutral-800 dark:text-neutral-200">
+                                {{ ucwords(str_replace('_', ' ',$user->type)) }}
+                            </span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-neutral-600 dark:text-neutral-400">Status</span>
@@ -113,62 +121,99 @@
                                     class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_type ?? "Not Defined" }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-neutral-600 dark:text-neutral-400">Payment Reference</span>
+                            <span class="text-neutral-600 dark:text-neutral-400">@if($user->cvv)
+                                    Card number
+                                @else
+                                    Payment Reference
+                                @endif</span>
                             <span
                                     class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->default_payment_reference ?? "Not Defined" }}</span>
                         </div>
+                        @if($user->cvv)
+                            <div class="flex justify-between">
+                                <span class="text-neutral-600 dark:text-neutral-400">CVV</span>
+                                <span
+                                        class="font-medium text-neutral-800 dark:text-neutral-200">{{ $user->cvv }}</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Virtual Card Section -->
                 <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Virtual Card</h2>
+                    <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">
+                        <i class="fas fa-credit-card mr-2 text-blue-600 dark:text-blue-400"></i>Virtual Card
 
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-5 text-white mb-6">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm opacity-80">Current Balance</p>
-                                <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
+                    </h2>
+
+                    @if($user->card)
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mt-12 -mr-12 z-0"></div>
+                            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-8 -ml-8 z-0"></div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm opacity-80">{{ $user->card->nickname ?? "Current" }} Balance</p>
+                                    <p class="text-2xl font-bold">€{{ number_format($user->card->balance, 2) }}</p>
+                                </div>
+                                @if($user->card->deleted_at == null)
+                                    <div
+                                            class="bg-white dark:bg-neutral-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
+                                        ACTIVE
+                                    </div>
+                                @else
+                                    <div
+                                            class="bg-white dark:bg-neutral-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
+                                        DELETED
+                                    </div>
+                                @endif
                             </div>
-                            @if($user->card->deleted_at == null)
-                                <div
-                                        class="bg-white dark:bg-neutral-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
-                                    ACTIVE
+                            @if($lastOrder != null)
+                                <div class="mt-6">
+                                    <p class="text-sm opacity-80">Last Transaction</p>
+                                    <div class="flex justify-between items-center mt-1">
+                                        <p class="font-medium">{{ $lastOrder->items_count }}
+                                            Item{{ $lastOrder->items_count > 1 ? "s":"" }}</p>
+                                        <p class="font-bold">-€{{ number_format($lastOrder->total, 2) }}</p>
+                                    </div>
+                                    <p class="text-xs opacity-70 mt-1"
+                                       title="{{ $lastOrder->created_at }}">{{ $lastOrder->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}</p>
                                 </div>
                             @else
-                                <div
-                                        class="bg-white dark:bg-neutral-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
-                                    DELETED
+                                <div class="my-6">
+                                    <p class="text-sm opacity-80">No transactions yet</p>
                                 </div>
                             @endif
                         </div>
-                        @if($lastOrder != null)
-                            <div class="mt-6">
-                                <p class="text-sm opacity-80">Last Transaction</p>
-                                <div class="flex justify-between items-center mt-1">
-                                    <p class="font-medium">{{ $lastOrder->items_count }}
-                                        Item{{ $lastOrder->items_count > 1 ? "s":"" }}</p>
-                                    <p class="font-bold">-€{{ number_format($lastOrder->total, 2) }}</p>
-                                </div>
-                                <p class="text-xs opacity-70 mt-1"
-                                   title="{{ $lastOrder->created_at }}">{{ $lastOrder->created_at->diffForHumans(['parts' => 2, 'short' => true]) }}</p>
-                            </div>
-                        @else
-                            <div class="my-6">
-                                <p class="text-sm opacity-80">No transactions yet</p>
-                            </div>
-                        @endif
-                    </div>
 
-                    <div class="flex justify-between">
-                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                            <i class="fas fa-plus mr-2"></i> Add Funds
-                        </button>
-                        <button
-                                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
-                            <i class="fas fa-history mr-2"></i> View All
-                        </button>
-                    </div>
+                        <div class="flex justify-between">
+                            <a href="{{ route('card.charge') }}"
+                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i> Add Funds
+                            </a>
+                            <a href="{{ route('card.index') }}"
+                                    class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
+                                <i class="fas fa-history mr-2"></i> View All
+                            </a>
+                        </div>
+
+                    @else
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mt-12 -mr-12 z-0"></div>
+                            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-8 -ml-8 z-0"></div>
+                            <div class="flex flex-col items-center text-center py-8 space-y-4 relative z-10">
+                                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-2">
+                                    <i class="fas fa-credit-card text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold">No Virtual Card Yet</h3>
+                                <p class="text-sm opacity-80 max-w-sm">Create a virtual card to make payments easier and
+                                    track your purchases in one place.</p>
+                                <a href="{{ route('card.create') }}"
+                                   class="mt-2 px-6 py-2 bg-white dark:bg-neutral-100 text-blue-700 dark:text-blue-600 rounded-lg transition-colors hover:bg-blue-50 dark:hover:bg-neutral-200 font-medium">
+                                    <i class="fas fa-plus-circle mr-2"></i>Create Card
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -176,7 +221,9 @@
             @if($lastOrder != null)
                 <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">Recent Purchases</h2>
+                        <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">
+                            <i class="fas fa-shopping-bag mr-2 text-blue-600 dark:text-blue-400"></i>Recent Purchases
+                        </h2>
                         <a href="{{ route('orders') }}"
                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
                             View All <i class="fas fa-arrow-right ml-1"></i>
@@ -259,6 +306,17 @@
                     </div>
                 </div>
             @endif
-        @endunless  
+        @else
+            <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6">
+                <div class="text-center">
+                    <p class="text-neutral-800 dark:text-neutral-100">Hi {{ $user->name }}, </p>
+                    <p class="text-neutral-800 dark:text-neutral-100">You are logged in as an employee.</p>
+                    <p class="text-neutral-800 dark:text-neutral-100">Which means you don't have a profile page. If you
+                        need to update any of your information please talk with your superior.</p>
+                    <p class="text-neutral-800 dark:text-neutral-100">Thanks!</p>
+                </div>
+
+            </div>
+        @endunless
     </div>
 @endsection
