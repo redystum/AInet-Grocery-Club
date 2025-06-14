@@ -2,11 +2,11 @@
 
 namespace App\Livewire;
 
-use App\Models\Card;
 use App\Models\Product;
-use Livewire\Component;
-
+use App\Models\ShippingCosts;
 use App\Models\User;
+use App\Utils\CustomFieldManager;
+use Livewire\Component;
 
 class CartTable extends Component
 {
@@ -29,13 +29,13 @@ class CartTable extends Component
 
             // Ensure custom field is an array
             if (!is_array($user->custom)) {
-                $user->custom = [];
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => []]);
             }
 
             // If there was a guest cart in session, merge it with the user's cart
             if (session()->has('guest_cart')) {
                 $guestCart = session('guest_cart', []);
-                $userCart = $user->custom;
+                $userCart = CustomFieldManager::get_field($user, 'card') ?? [];
 
                 // Merge guest cart items into user cart
                 foreach ($guestCart as $productId => $quantity) {
@@ -46,7 +46,7 @@ class CartTable extends Component
                     }
                 }
 
-                $user->custom = $userCart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $userCart]);
                 $user->save();
 
                 // Clear the guest cart from session
@@ -62,7 +62,7 @@ class CartTable extends Component
 
             // Create a virtual user object to maintain consistency
             $user = new User();
-            $user->custom = session('guest_cart', []);
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => session('guest_cart', [])]);
             return $user;
         }
     }
@@ -70,7 +70,7 @@ class CartTable extends Component
     private function refreshCart()
     {
         $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
         $this->cartItems = [];
         $this->subtotal = 0;
         $this->discounts = 0;
@@ -105,22 +105,22 @@ class CartTable extends Component
 
         $this->total = $this->subtotal - $this->discounts;
 
-        // Calculate shipping
-        if ($this->subtotal <= 50) {
-            $this->shipping = 10;
-        } elseif ($this->subtotal > 50 && $this->subtotal <= 100) {
-            $this->shipping = 5;
-        } else {
-            $this->shipping = 0;
-        }
+        $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
 
+        $this->shipping = 0;
+        foreach ($shippingRates as $rate) {
+            if ($this->subtotal >= $rate->min_value_threshold && $this->subtotal <= $rate->max_value_threshold) {
+                $this->shipping = $rate->shipping_cost;
+                break;
+            }
+        }
         $this->total_with_shipping = $this->total + $this->shipping;
     }
 
     public function updateQuantity($productId, $newQuantity)
     {
         $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
 
         // Validate quantity
         $newQuantity = max(0, intval($newQuantity));
@@ -139,7 +139,7 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $user->custom = $cart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
                 $user->save();
             } else {
                 session(['guest_cart' => $cart]);
@@ -152,7 +152,7 @@ class CartTable extends Component
     public function increment($productId)
     {
         $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
         $product = Product::find($productId);
 
         if ($product && isset($cart[$productId])) {
@@ -164,7 +164,7 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $user->custom = $cart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
                 $user->save();
             } else {
                 session(['guest_cart' => $cart]);
@@ -177,7 +177,7 @@ class CartTable extends Component
     public function decrement($productId)
     {
         $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
         $product = Product::find($productId);
 
         if (isset($cart[$productId]) && $product) {
@@ -193,7 +193,7 @@ class CartTable extends Component
             }
 
             if (auth()->check()) {
-                $user->custom = $cart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
                 $user->save();
             } else {
                 session(['guest_cart' => $cart]);
@@ -206,13 +206,13 @@ class CartTable extends Component
     public function removeItem($productId)
     {
         $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
 
         if (isset($cart[$productId])) {
             unset($cart[$productId]);
 
             if (auth()->check()) {
-                $user->custom = $cart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
                 $user->save();
             } else {
                 session(['guest_cart' => $cart]);

@@ -1,35 +1,35 @@
-@extends('layout')
+@extends('pages.layouts.admin')
 
-@section('title', ' - Edit Profile')
+@section('title', ' - Create User')
 
 @section('content')
+    @use('App\Models\User')
+
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Page Header -->
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Edit Your Profile</h1>
-            <a href="{{ route('profile') }}"
+            <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100">Create New User</h1>
+            <a href="{{ route('board.users.index') }}"
                class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i> Back to Profile
+                <i class="fas fa-arrow-left mr-2"></i> Back to Users
             </a>
         </div>
 
-        <!-- Profile Edit Form -->
-        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        <!-- User Creation Form -->
+        <form action="{{ route('board.users.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
 
             <!-- Profile Photo Section -->
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
                 <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Profile Photo</h2>
 
                 <div class="flex flex-col md:flex-row items-center gap-6">
-                    <!-- Current Photo -->
+                    <!-- Photo Preview -->
                     <div class="relative">
-                        <div
-                            class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
+                        <div class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden shadow-md">
                             <img id="profilePreview"
-                                 src="{{ $user->getImage() }}"
-                                 alt="Current Profile Photo"
+                                 src="{{ asset('storage/users/anonymous.png') }}"
+                                 alt="Profile Photo Preview"
                                  class="w-full h-full object-cover">
                         </div>
                         <button type="button" id="removePhoto"
@@ -44,7 +44,7 @@
                             <div>
                                 <label for="photo"
                                        class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                    Upload new photo
+                                    Upload profile photo
                                 </label>
                                 <input type="file" name="photo" id="photo"
                                        class="block w-full text-sm text-neutral-500 dark:text-neutral-400
@@ -60,7 +60,7 @@
                                 @enderror
                             </div>
                             <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                Recommended size: 500×500 pixels. Max file size: 2MB.
+                                Recommended size: 500×500 pixels. Max file size: 10MB.
                             </p>
                         </div>
                     </div>
@@ -74,7 +74,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Name -->
                     <div>
-                        <label for="name" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="name"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             Full Name *
                         </label>
                         <input type="text" name="name" id="name" required
@@ -82,7 +83,7 @@
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('name') border-red-500 dark:border-red-500 @enderror"
-                               value="{{ old('name', $user->name) }}">
+                               value="{{ old('name') }}">
                         @error('name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -99,7 +100,7 @@
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('email') border-red-500 dark:border-red-500 @enderror"
-                               value="{{ old('email', $user->email) }}">
+                               value="{{ old('email') }}">
                         @error('email')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -115,9 +116,9 @@
                                 class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                 dark:text-neutral-100 @error('gender') border-red-500 dark:border-red-500 @enderror">
-                            <option value="M" {{ old('gender', $user->gender) == 'M' ? 'selected' : '' }}>Male</option>
-                            <option value="F" {{ old('gender', $user->gender) == 'F' ? 'selected' : '' }}>Female
-                            </option>
+                            <option value="" disabled {{ old('gender') == '' ? 'selected' : '' }}>Select...</option>
+                            <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Male</option>
+                            <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>Female</option>
                         </select>
                         @error('gender')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -126,7 +127,8 @@
 
                     <!-- NIF -->
                     <div>
-                        <label for="nif" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        <label for="nif"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                             NIF Number
                         </label>
                         <input type="text" name="nif" id="nif" maxlength="9"
@@ -134,7 +136,7 @@
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('nif') border-red-500 dark:border-red-500 @enderror"
-                               value="{{ old('nif', $user->nif) }}">
+                               value="{{ old('nif') }}">
                         @error('nif')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -157,7 +159,7 @@
                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                   dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
-                                  @error('default_delivery_address') border-red-500 dark:border-red-500 @enderror">{{ old('default_delivery_address', $user->default_delivery_address) }}</textarea>
+                                  @error('default_delivery_address') border-red-500 dark:border-red-500 @enderror">{{ old('default_delivery_address') }}</textarea>
                         @error('default_delivery_address')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -174,22 +176,10 @@
                                     class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                     focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                     dark:text-neutral-100 @error('default_payment_type') border-red-500 dark:border-red-500 @enderror">
-                                <option
-                                    value="" {{ old('default_payment_type', $user->default_payment_type) == '' ? 'selected' : '' }}>
-                                    None selected
-                                </option>
-                                <option
-                                    value="Visa" {{ old('default_payment_type', $user->default_payment_type) == 'Visa' ? 'selected' : '' }}>
-                                    Visa
-                                </option>
-                                <option
-                                    value="PayPal" {{ old('default_payment_type', $user->default_payment_type) == 'PayPal' ? 'selected' : '' }}>
-                                    PayPal
-                                </option>
-                                <option
-                                    value="MB WAY" {{ old('default_payment_type', $user->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>
-                                    MB WAY
-                                </option>
+                                <option disabled value="" {{ old('default_payment_type') == '' ? 'selected' : '' }}>Select...</option>
+                                <option value="Visa" {{ old('default_payment_type') == 'Visa' ? 'selected' : '' }}>Visa</option>
+                                <option value="PayPal" {{ old('default_payment_type') == 'PayPal' ? 'selected' : '' }}>PayPal</option>
+                                <option value="MB WAY" {{ old('default_payment_type') == 'MB WAY' ? 'selected' : '' }}>MB WAY</option>
                             </select>
                             @error('default_payment_type')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -197,7 +187,7 @@
                         </div>
 
                         <!-- Payment Reference -->
-                        <div>
+                        <div id="paymentReferenceContainer">
                             <label for="default_payment_reference"
                                    class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                                 Payment Reference
@@ -207,8 +197,25 @@
                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                    dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                    @error('default_payment_reference') border-red-500 dark:border-red-500 @enderror"
-                                   value="{{ old('default_payment_reference', $user->default_payment_reference) }}">
+                                   value="{{ old('default_payment_reference') }}">
                             @error('default_payment_reference')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- CVV (for Visa) -->
+                        <div id="cvvContainer" style="{{ old('default_payment_type') == 'Visa' ? '' : 'display: none;' }}">
+                            <label for="cvv"
+                                   class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                CVV
+                            </label>
+                            <input type="text" name="cvv" id="cvv" maxlength="4"
+                                   class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
+                                   dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
+                                   @error('cvv') border-red-500 dark:border-red-500 @enderror"
+                                   value="{{ old('cvv') }}">
+                            @error('cvv')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -216,49 +223,63 @@
                 </div>
             </div>
 
-            <!-- Password Change Section (Optional) -->
+            <!-- Account Settings Section -->
             <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl shadow-sm p-6 mb-6">
-                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Change Password</h2>
-                <p class="text-neutral-600 dark:text-neutral-400 mb-4">Leave blank to keep current password</p>
+                <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Account Settings</h2>
 
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- User Type -->
                     <div>
-                        <label for="current_password"
+                        <label for="type"
                                class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            Current Password
+                            User Type *
                         </label>
-                        <input type="password" name="current_password" id="current_password"
-                               class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
-                               focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
-                               dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
-                               @error('current_password') border-red-500 dark:border-red-500 @enderror">
-                        @error('current_password')
+                        <select name="type" id="type" required
+                                class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
+                                dark:text-neutral-100 @error('type') border-red-500 dark:border-red-500 @enderror">
+                            <option value="" disabled {{ old('type') == '' ? 'selected' : '' }}>Select...</option>
+                            <option value="{{ User::TYPE_MEMBER }}" {{ old('type') == User::TYPE_MEMBER ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_MEMBER) }}
+                            </option>
+                            <option value="{{ User::TYPE_EMPLOYEE }}" {{ old('type') == User::TYPE_EMPLOYEE ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_EMPLOYEE) }}
+                            </option>
+                            <option value="{{ User::TYPE_BOARD }}" {{ old('type') == User::TYPE_BOARD ? 'selected' : '' }}>
+                                {{ ucfirst(User::TYPE_BOARD) }}
+                            </option>
+                        </select>
+                        @error('type')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    <!-- Password -->
                     <div>
                         <label for="password"
                                class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            New Password
+                            Password *
                         </label>
-                        <input type="password" name="password" id="password" minlength="8"
+                        <input type="password" name="password" id="password" required
                                class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500
                                @error('password') border-red-500 dark:border-red-500 @enderror">
-                        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Minimum 8 characters</p>
                         @error('password')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
+                        <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            Minimum 8 characters
+                        </p>
                     </div>
 
+                    <!-- Password Confirmation -->
                     <div>
                         <label for="password_confirmation"
                                class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                            Confirm New Password
+                            Confirm Password *
                         </label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" minlength="8"
+                        <input type="password" name="password_confirmation" id="password_confirmation" required
                                class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
                                focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-neutral-700/50
                                dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500">
@@ -268,13 +289,13 @@
 
             <!-- Form Actions -->
             <div class="flex flex-col sm:flex-row justify-end gap-4">
-                <button type="button" onclick="window.location.href='{{ route('profile') }}'"
+                <button type="button" onclick="window.location.href='{{ route('board.users.index') }}'"
                         class="px-6 py-3 cursor-pointer border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg font-medium transition-colors">
                     Cancel
                 </button>
                 <button type="submit"
                         class="px-6 py-3 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-md transition-colors">
-                    Save Changes
+                    Create User
                 </button>
             </div>
         </form>
@@ -283,7 +304,7 @@
     <script>
         // Profile photo preview
         const removePhotoInput = document.getElementById('removePhotoFlag');
-        document.getElementById('photo').addEventListener('change', function (e) {
+        document.getElementById('photo')?.addEventListener('change', function (e) {
             const [file] = e.target.files;
             if (file) {
                 const preview = document.getElementById('profilePreview');
@@ -293,11 +314,22 @@
         });
 
         // Remove photo
-        document.getElementById('removePhoto').addEventListener('click', function () {
+        document.getElementById('removePhoto')?.addEventListener('click', function () {
             const preview = document.getElementById('profilePreview');
             preview.src = "{{ asset('storage/users/anonymous.png') }}";
             document.getElementById('photo').value = '';
             removePhotoInput.value = '1';
+        });
+
+        // Show/hide CVV field based on payment type
+        document.getElementById('default_payment_type')?.addEventListener('change', function (e) {
+            const cvvContainer = document.getElementById('cvvContainer');
+            if (e.target.value === 'Visa') {
+                cvvContainer.style.display = '';
+            } else {
+                cvvContainer.style.display = 'none';
+                document.getElementById('cvv').value = '';
+            }
         });
     </script>
 @endsection

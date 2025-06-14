@@ -3,6 +3,7 @@
 use App\Http\Middleware\isBoard;
 use App\Http\Middleware\isEmployee;
 use App\Http\Middleware\isMember;
+use App\Http\Middleware\isNotBlocked;
 use App\Http\Middleware\isNotEmployee;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(isNotBlocked::class);
+
         $middleware->alias([
             'board' => isBoard::class,
             'member' => isMember::class,
