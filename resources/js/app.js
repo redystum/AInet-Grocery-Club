@@ -1,5 +1,125 @@
 import './bootstrap';
 
+// Check if product is in wishlist and update icon
+window.checkWishlistStatus = function() {
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        const productId = button.dataset.productId;
+        const icon = button.querySelector('.wishlist-icon');
+
+        fetch(`/wishlist/check/${productId}`, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.in_wishlist) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+                button.classList.remove('opacity-0');
+                button.classList.add('opacity-100');
+            }
+        })
+        .catch(error => console.error('Error checking wishlist status:', error));
+    });
+};
+
+// Toggle wishlist status
+window.toggleWishlist = function(productId, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const buttons = document.querySelectorAll(`.wishlist-btn[data-product-id="${productId}"]`);
+
+    fetch(`/wishlist/toggle/${productId}`, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            buttons.forEach(button => {
+                const icon = button.querySelector('.wishlist-icon');
+
+                if (data.in_wishlist) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-red-500');
+                } else {
+                    icon.classList.remove('fas', 'text-red-500');
+                    icon.classList.add('far');
+                }
+            });
+
+            window.showToast(data.message, 'success');
+        } else {
+            window.showToast('Failed to update wishlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        window.showToast('An error occurred while updating wishlist', 'error');
+    });
+};
+
+// Setup wishlist buttons
+window.setupWishlistButtons = function() {
+    // Regular wishlist toggle buttons
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        if (!button.classList.contains('remove-wishlist-btn')) {
+            button.addEventListener('click', function(event) {
+                const productId = this.dataset.productId;
+                toggleWishlist(productId, event);
+            });
+        }
+    });
+
+    // Special handling for remove buttons on wishlist page
+    document.querySelectorAll('.remove-wishlist-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const productId = this.dataset.productId;
+            const card = this.closest('.product-card').parentElement;
+
+            fetch(`/wishlist/toggle/${productId}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the card with animation
+                    card.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        card.remove();
+
+                        // Check if wishlist is now empty
+                        if (document.querySelectorAll('.product-card').length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast('Failed to update wishlist', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.showToast('An error occurred', 'error');
+            });
+        });
+    });
+
+    // Check wishlist status for all products
+    checkWishlistStatus();
+};
+
 // Global toast notification functionality
 window.showToast = function(message, type = 'success') {
     const container = document.getElementById('toast-container');

@@ -170,7 +170,12 @@
     </button>
 
     <script>
-        // Toast notification and quickAddToCart functions are now available globally from app.js
+        // Toast notification, quickAddToCart, and wishlist functions are now available globally from app.js
+
+        // Initialize wishlist functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            setupWishlistButtons();
+        });
 
         // Carousel functionality
         const carousel = document.getElementById('carousel');

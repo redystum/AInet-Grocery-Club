@@ -66,7 +66,29 @@ class ProductController extends Controller
         // TODO: replce this with the custom column
         $images = [$product->photo, $relatedProducts->first()->photo, $relatedProducts->last()->photo, $product->photo];
 
-        return view('pages.product', compact('product', 'delivery_prices', 'relatedProducts', 'images'));
+        // Get wishlist status
+        $inWishlist = false;
+        if (auth()->check()) {
+            $user = auth()->user();
+            $inWishlist = isset($user->custom['wishlist']) && in_array($product->id, $user->custom['wishlist']);
+        } else if (session()->has('guest_wishlist')) {
+            $inWishlist = in_array($product->id, session('guest_wishlist', []));
+        }
+
+        // Get wishlist status for related products
+        $relatedProductsWishlist = [];
+        foreach ($relatedProducts as $relatedProduct) {
+            $isInWishlist = false;
+            if (auth()->check()) {
+                $user = auth()->user();
+                $isInWishlist = isset($user->custom['wishlist']) && in_array($relatedProduct->id, $user->custom['wishlist']);
+            } else if (session()->has('guest_wishlist')) {
+                $isInWishlist = in_array($relatedProduct->id, session('guest_wishlist', []));
+            }
+            $relatedProductsWishlist[$relatedProduct->id] = $isInWishlist;
+        }
+
+        return view('pages.product', compact('product', 'delivery_prices', 'relatedProducts', 'images', 'inWishlist', 'relatedProductsWishlist'));
     }
 
 }

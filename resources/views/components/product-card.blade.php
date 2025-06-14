@@ -1,10 +1,10 @@
 <a href="{{ route('product.show', $product->id) }}"
    class="product-card bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md relative group">
-    <!-- Wishlist Button (shown on hover) -->
+    <!-- Wishlist Button -->
     <button
-            class="absolute top-3 right-3 z-10 w-8 h-8 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center shadow-md hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors wishlist-btn opacity-0 group-hover:opacity-100 cursor-pointer"
+            class="absolute top-3 right-3 z-10 w-8 h-8 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center shadow-md hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors wishlist-btn {{ isset($inWishlist) && $inWishlist ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} cursor-pointer {{ isset($wishlistPage) && $wishlistPage ? 'remove-wishlist-btn' : '' }}"
             data-product-id="{{ $product->id }}">
-        <i class="far fa-heart text-neutral-600 dark:text-neutral-300"></i>
+        <i class="{{ isset($inWishlist) && $inWishlist ? 'fas ' : 'far ' }} text-neutral-600 dark:text-neutral-300 fa-heart wishlist-icon"></i>
     </button>
 
     <!-- Product Image -->
