@@ -6,13 +6,13 @@
             <div>
                 <h3 class="text-xl font-bold text-white mb-4">{{ config('app.name') }}</h3>
                 <div class="flex space-x-4">
-                    <a href="#" class="text-neutral-300 hover:text-white">
+                    <a href="https://www.ipleiria.pt/" class="text-neutral-300 hover:text-white">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="text-neutral-300 hover:text-white">
+                    <a href="https://www.ipleiria.pt/" class="text-neutral-300 hover:text-white">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="text-neutral-300 hover:text-white">
+                    <a href="https://www.ipleiria.pt/" class="text-neutral-300 hover:text-white">
                         <i class="fab fa-twitter"></i>
                     </a>
                 </div>
