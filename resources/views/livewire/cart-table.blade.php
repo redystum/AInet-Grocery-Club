@@ -160,7 +160,8 @@
                             @if(auth()->user()->card?->balance < $total_with_shipping)
                                 <div class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
                                     <p>Insufficient balance to complete the purchase.</p>
-                                    <a href="{{ auth()->user()->card ? route('card.charge') : route('card.create') }}" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                                    <a href="{{ auth()->user()->card ? route('card.charge') : route('card.create') }}"
+                                       class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
                                         Add funds to your virtual card
                                     </a>
                                 </div>
@@ -178,8 +179,10 @@
                                 <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                                 @enderror
 
-                                <button type="submit"
-                                        class="cursor-pointer w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors flex items-center justify-center">
+                                <button type="submit" @disabled(auth()->user()->card?->balance < $total_with_shipping)
+                                class="cursor-pointer w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white
+                                        font-medium rounded-lg text-center transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed
+                                        justify-center">
                                     Pay using virtual card
                                     <i class="fas fa-arrow-right ml-2"></i>
                                 </button>

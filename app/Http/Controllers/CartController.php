@@ -225,21 +225,11 @@ class CartController extends Controller
         }
 
         return DB::transaction(function () use ($request, $user, $cart) {
-
-            $order = Order::create([
-                'member_id' => $user->id,
-                'status' => Order::STATUS_PENDING,
-                'date' => now()->format('Y-m-d'),
-                'total_items' => count($cart),
-                'shipping_cost' => 0,
-                'total' => 0,
-                'nif' => $request->input('nif', ''),
-                'delivery_address' => $user->default_delivery_address,
-            ]);
-
             $total = 0;
             $delayed = false;
             $products = [];
+            
+            // Calculate total cost of products first
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
                 if (!$product) {
@@ -251,7 +241,42 @@ class CartController extends Controller
                 }
 
                 $total += $product->price * $quantity - $product->discount * $quantity;
+            }
+            
+            // Calculate shipping cost
+            $shipping = 0;
+            $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
 
+            foreach ($shippingRates as $rate) {
+                if ($total >= $rate->min_value_threshold && $total <= $rate->max_value_threshold) {
+                    $shipping = $rate->shipping_cost;
+                    break;
+                }
+            }
+            
+            $orderTotal = $total + $shipping;
+            
+            // Check if user has enough balance
+            $card = Card::where('id', $user->id)->first();
+            if (!$card || $card->balance < $orderTotal) {
+                DB::rollBack();
+                return back()->with('error', 'Insufficient funds to complete this purchase.');
+            }
+
+            $order = Order::create([
+                'member_id' => $user->id,
+                'status' => Order::STATUS_PENDING,
+                'date' => now()->format('Y-m-d'),
+                'total_items' => count($cart),
+                'shipping_cost' => $shipping,
+                'total' => $orderTotal,
+                'nif' => $request->input('nif', ''),
+                'delivery_address' => $user->default_delivery_address,
+            ]);
+
+            foreach ($cart as $productId => $quantity) {
+                $product = Product::find($productId);
+                
                 if ($quantity > $product->stock) {
                     $delayed = true;
                 }
@@ -273,26 +298,12 @@ class CartController extends Controller
                 ];
             }
 
-            $shipping = 0;
-            $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
-
-            foreach ($shippingRates as $rate) {
-                if ($total >= $rate->min_value_threshold && $total <= $rate->max_value_threshold) {
-                    $shipping = $rate->shipping_cost;
-                    break;
-                }
-            }
-
-            $order->shipping_cost = $shipping;
-            $order->total = $total + $shipping;
-            $order->save();
-
-            Card::where('id', $user->id)->decrement('balance', $total + $shipping);
+            Card::where('id', $user->id)->decrement('balance', $orderTotal);
 
             Operations::create([
                 'card_id' => $user->id,
                 'type' => Operations::TYPE_DEBIT,
-                'value' => $total + $shipping,
+                'value' => $orderTotal,
                 'date' => now()->format('Y-m-d'),
                 'debit_type' => Operations::TYPE_DEBIT_ORDER,
                 'credit_type' => null,
