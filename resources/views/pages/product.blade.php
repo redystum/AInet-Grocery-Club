@@ -113,7 +113,7 @@
                                     class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 cursor-pointer">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity"
+                            <input type="number" value="1" min="1" max="{{ $product->stock_upper_limit }}" name="quantity"
                                    id="quantity" autocomplete="off"
                                    class="appearance-textfield w-12 text-center border-0 bg-transparent text-neutral-800 dark:text-neutral-200 focus:ring-0">
                             <button id="plus"
@@ -195,7 +195,7 @@
             const finalDiscountPrice = document.getElementById('finalDiscountPrice');
             const discountMinQty = {{ $product->discount_min_qty ?? 999999999 }};
 
-            const maxVal = {{ $product->stock }};
+            const maxVal = {{ $product->stock_upper_limit }};
 
             // on lostfocus, verify if the value is less than 1 or greater than the stock
             quantityInput.addEventListener('blur', function () {
@@ -270,9 +270,16 @@
         // Toast functions now available globally from app.js
 
         function addToCart(productId) {
-            let quantity = document.getElementById('quantity').value;
+            let quantity = parseInt(document.getElementById('quantity').value);
+            const maxStock = {{ $product->stock_upper_limit }};
             const addToCartBtn = document.querySelector('button[onclick^="addToCart"]');
             const originalBtnText = addToCartBtn.innerHTML;
+
+            // Check if requested quantity exceeds available stock
+            if (quantity > maxStock) {
+                window.showToast(`Cannot add to cart. Maximum available stock is ${maxStock}`, 'error');
+                return;
+            }
 
             // Show loading state
             addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
