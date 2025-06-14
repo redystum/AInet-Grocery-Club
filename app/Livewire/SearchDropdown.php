@@ -37,13 +37,13 @@ class SearchDropdown extends Component
         $pages = [
             ['name' => 'Home', 'url' => route('home'), 'icon' => 'fa-home'],
             ['name' => 'Products', 'url' => route('products.index'), 'icon' => 'fa-box'],
-            ['name' => 'About Us', 'url' => "#" /*route('about')*/, 'icon' => 'fa-info-circle'],
-            ['name' => 'Contact Us', 'url' => "#" /*route('contact')*/, 'icon' => 'fa-phone'],
-            ['name' => 'Cart', 'url' => "#", 'icon' => 'fa-shopping-cart'],
+            ['name' => 'Cart', 'url' => route('cart'), 'icon' => 'fa-shopping-cart'],
         ];
 
         if (Auth()->check()) {
             $pages[] = ['name' => 'Profile', 'url' => route('profile'), 'icon' => 'fa-user-circle'];
+            $pages[] = ['name' => 'Dashboard', 'url' => route('dashboard'), 'icon' => 'fa-dashboard'];
+            $pages[] = ['name' => 'Card', 'url' => route('card.index'), 'icon' => 'fa-card'];
             if (Auth()->user()->isBoard()) {
                 $pages[] = ['name' => 'Management', 'url' => "#" /*route('dashboard')*/, 'icon' => 'fa-boxes'];
             }

@@ -203,7 +203,7 @@ class OrdersTable extends Component
 
             foreach ($order->items as $item) {
                 $items_count += $item->quantity;
-                if ($item->product->stock < $item->quantity) {
+                if ($item->product && $item->product->stock < $item->quantity) {
                     $can_be_delivered = false;
                 }
             }

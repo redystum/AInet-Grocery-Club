@@ -56,6 +56,7 @@
                     </a>
                 </li>
             @endcan
+            @can('admin-categories')
                 <li>
                     <a href="{{ route('board.categories.index') }}"
                        class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.categories', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
@@ -63,6 +64,7 @@
                         <span class="whitespace-nowrap transition-all duration-300">Category</span>
                     </a>
                 </li>
+            @endcan
             <li>
                 <a href="{{ route('board.stock') }}"
                    class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.stock', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">

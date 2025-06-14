@@ -19,7 +19,9 @@
 
 <x-navbar/>
 
+@can('cart')
 <livewire:cart-offcanvas/>
+@endcan
 
 <!-- Toast Notification Container -->
 <div id="toast-container" class="fixed right-4 bottom-4 z-50"></div>

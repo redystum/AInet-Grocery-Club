@@ -69,6 +69,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('admin-users', function (User $user) {
             return $user->isBoard();
         });
+
+        Gate::define('admin-categories', function (User $user) {
+            return $user->isBoard();
+        });
     }
 
     /**

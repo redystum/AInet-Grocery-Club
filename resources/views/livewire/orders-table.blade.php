@@ -290,20 +290,22 @@
                                                 </a>
                                             @endif
                                             @if($order->status == Order::STATUS_PENDING)
-                                                @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
-                                                    <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
+                                                @can('admin-cancel-orders')
+                                                    @if($order->cancellationStatus && $order->cancellationStatus == Order::CANCEL_STATUS_PENDING)
+                                                        <a href="{{ route('board.orders.show', $order->id) }}#cancellation?search={{ $search }}&tab={{ $tab }}&orderBy={{ $orderBy }}&dateRange={{ $dateRange }}"
+                                                           class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                           role="menuitem">
+                                                            <i class="fas fa-scroll mr-3 text-red-400"></i>
+                                                            View cancellation request
+                                                        </a>
+                                                    @endif
+                                                    <a href="{{ route('board.orders.cancel.show', $order->id) }}"
                                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                                                        role="menuitem">
-                                                        <i class="fas fa-scroll mr-3 text-red-400"></i>
-                                                        View cancellation request
+                                                        <i class="fas fa-times mr-3 text-red-400"></i>
+                                                        Cancel Order
                                                     </a>
-                                                @endif
-                                                <a href="{{ route('board.orders.cancel.show', $order->id) }}"
-                                                   class="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
-                                                    <i class="fas fa-times mr-3 text-red-400"></i>
-                                                    Cancel Order
-                                                </a>
+                                                @endcan
                                                 @if($order->can_be_delivered)
                                                     <button
                                                             @click="
