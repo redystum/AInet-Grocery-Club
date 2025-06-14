@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -86,6 +88,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 */
 Route::middleware('auth')->group(function () {
     Route::get('profile', [UserController::class, 'show'])->name('profile');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
     Route::name('orders')->prefix('orders')->group(function () {
@@ -118,9 +121,14 @@ Route::middleware('auth')->group(function () {
     |
     */
     Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
-        Route::get('/', function () {
-            return view('pages.admin.dash');
-        })->name('index');
+        Route::name('dashboard.')->prefix('dashboard/')->group(function () {
+            Route::get('/', [AdminDashboardController::class, 'index'])->name('index');
+            Route::name('export.')->prefix('export/')->group(function () {
+                Route::get('orders', [AdminDashboardController::class, 'exportOrders'])->name('orders');
+                Route::get('products', [AdminDashboardController::class, 'exportProducts'])->name('products');
+                Route::get('users', [AdminDashboardController::class, 'exportMembers'])->name('users');
+            });
+        });
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
