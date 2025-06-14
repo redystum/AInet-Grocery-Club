@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Product;
 use Livewire\Component;
 
 class CartOffcanvas extends Component
@@ -14,31 +15,51 @@ class CartOffcanvas extends Component
 
     public function mount()
     {
-        // replace with session
-        $this->cartItems = [
-            [
-                'id' => 1, 
-                'name' => 'Organic Avocado', 
-                'price' => 3.99, 
-                'quantity' => 1, 
-                'image' => 'https://via.placeholder.com/80',
-                'description' => '250g each'
-            ],
-            [
-                'id' => 2, 
-                'name' => 'Fresh Milk', 
-                'price' => 4.50, 
-                'quantity' => 2, 
-                'image' => 'https://via.placeholder.com/80',
-                'description' => '1 Liter'
-            ],
-        ];
-        
+        $this->loadCartItems();
+    }
+
+    private function loadCartItems()
+    {
+        // Read the cart format from session or user.custom
+        $cart = auth()->check()
+            ? auth()->user()->custom ?? []
+            : session('guest_cart', []);
+
+        $this->cartItems = [];
+
+        // The cart format in controller is [product_id => quantity]
+        foreach ($cart as $productId => $quantity) {
+            $product = Product::find($productId);
+            if ($product) {
+                // Calculate discount if applicable
+                $discountedPrice = $product->price;
+                $discountPercentage = 0;
+
+                if ($product->discount > 0) {
+                    $discountPercentage = $product->discount;
+                    $discountedPrice = round($product->price * (1 - $product->discount / 100), 2);
+                }
+
+                $this->cartItems[] = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'discounted_price' => $discountedPrice,
+                    'discount_percentage' => $discountPercentage,
+                    'quantity' => $quantity,
+                    'photo' => $product->getImage(),
+                    'upper_limit' => $product->stock_upper_limit,
+                ];
+            }
+        }
+
         $this->calculateTotal();
     }
 
     public function openCart()
     {
+        // Refresh cart items when opening to ensure data is current
+        $this->loadCartItems();
         $this->open = true;
     }
 
@@ -47,28 +68,55 @@ class CartOffcanvas extends Component
         $this->open = false;
     }
 
+    // Sync cart changes to session/database
+    private function syncCart()
+    {
+        $cart = [];
+        foreach ($this->cartItems as $item) {
+            $cart[$item['id']] = $item['quantity'];
+        }
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $user->custom = $cart;
+            $user->save();
+        } else {
+            session(['guest_cart' => $cart]);
+        }
+
+        $this->calculateTotal();
+    }
+
     public function updateCartItem($itemId, $quantity)
     {
         foreach ($this->cartItems as $index => $item) {
             if ($item['id'] == $itemId) {
+                // Respect the upper_limit if it exists
+                if (isset($item['upper_limit'])) {
+                    $quantity = min($quantity, $item['upper_limit']);
+                }
                 $this->cartItems[$index]['quantity'] = max(1, $quantity);
                 break;
             }
         }
-        
-        $this->calculateTotal();
+
+        $this->syncCart();
     }
 
     public function incrementQuantity($itemId)
     {
         foreach ($this->cartItems as $index => $item) {
             if ($item['id'] == $itemId) {
-                $this->cartItems[$index]['quantity']++;
+                if (!isset($item['upper_limit']) || $item['quantity'] < $item['upper_limit']) {
+                    $this->cartItems[$index]['quantity']++;
+                } else if (isset($item['upper_limit']) && $item['quantity'] > $item['upper_limit']) {
+                    $this->cartItems[$index]['quantity'] = $item['upper_limit'];
+                }
                 break;
             }
         }
-        
-        $this->calculateTotal();
+
+        $this->syncCart();
     }
 
     public function decrementQuantity($itemId)
@@ -76,28 +124,34 @@ class CartOffcanvas extends Component
         foreach ($this->cartItems as $index => $item) {
             if ($item['id'] == $itemId) {
                 if ($this->cartItems[$index]['quantity'] > 1) {
-                    $this->cartItems[$index]['quantity']--;
+                    if (isset($item['upper_limit']) && $this->cartItems[$index]['quantity'] > $item['upper_limit']) {
+                        $this->cartItems[$index]['quantity'] = max(1, $this->cartItems[$index]['quantity'] - 1);
+                    } else {
+                        $this->cartItems[$index]['quantity']--;
+                    }
                 }
                 break;
             }
         }
-        
-        $this->calculateTotal();
+
+        $this->syncCart();
     }
 
     public function removeCartItem($itemId)
     {
-        $this->cartItems = array_filter($this->cartItems, function($item) use ($itemId) {
+        $this->cartItems = array_filter($this->cartItems, function ($item) use ($itemId) {
             return $item['id'] != $itemId;
         });
-        
-        $this->calculateTotal();
+
+        $this->syncCart();
     }
 
     private function calculateTotal()
     {
-        $this->totalAmount = array_reduce($this->cartItems, function($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
+        $this->totalAmount = array_reduce($this->cartItems, function ($carry, $item) {
+            // Use discounted price if available
+            $price = isset($item['discounted_price']) ? $item['discounted_price'] : $item['price'];
+            return $carry + ($price * $item['quantity']);
         }, 0);
     }
 

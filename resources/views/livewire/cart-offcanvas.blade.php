@@ -50,9 +50,9 @@
                 </div>
             @else
                 <div class="space-y-4">
-                    @foreach($cartItems as $item)
+                    @forelse($cartItems as $item)
                         <div class="flex items-start space-x-4 py-4 border-b border-neutral-200 dark:border-neutral-800">
-                            <img src="{{ $item['image'] }}" class="w-20 h-20 object-cover rounded-lg"
+                            <img src="{{ $item['photo'] }}" class="w-20 h-20 object-cover rounded-lg"
                                  alt="{{ $item['name'] }}">
                             <div class="flex-1">
                                 <div class="flex justify-between">
@@ -62,7 +62,20 @@
                                         <i class="fas fa-trash-alt text-sm"></i>
                                     </button>
                                 </div>
-                                <p class="text-neutral-500 dark:text-neutral-400 text-sm">{{ $item['description'] }}</p>
+                                
+                                <!-- Price and discount section -->
+                                <div class="mt-1">
+                                    @if($item['discount_percentage'] > 0)
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-green-500 font-medium">-{{ $item['discount_percentage'] }}%</span>
+                                            <span class="line-through text-neutral-500 text-sm">€{{ number_format($item['price'], 2) }}</span>
+                                            <span class="font-medium">€{{ number_format($item['discounted_price'], 2) }}</span>
+                                        </div>
+                                    @else
+                                        <span class="font-medium">€{{ number_format($item['price'], 2) }}</span>
+                                    @endif
+                                </div>
+                                
                                 <div class="flex items-center mt-2">
                                     <button wire:click="decrementQuantity({{ $item['id'] }})"
                                             class="w-8 h-8 flex items-center justify-center border border-neutral-300 dark:border-neutral-700 rounded-l-md hover:bg-neutral-100 dark:hover:bg-neutral-800">
@@ -70,14 +83,28 @@
                                     </button>
                                     <span class="w-10 h-8 flex items-center justify-center border-t border-b border-neutral-300 dark:border-neutral-700">{{ $item['quantity'] }}</span>
                                     <button wire:click="incrementQuantity({{ $item['id'] }})"
-                                            class="w-8 h-8 flex items-center justify-center border border-neutral-300 dark:border-neutral-700 rounded-r-md hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                            class="w-8 h-8 flex items-center justify-center border border-neutral-300 dark:border-neutral-700 rounded-r-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                            {{ $item['quantity'] >= $item['upper_limit'] ? 'disabled' : '' }}
+                                            {{ $item['quantity'] >= $item['upper_limit'] ? 'class="opacity-50 cursor-not-allowed"' : '' }}>
                                         +
                                     </button>
-                                    <span class="ml-auto font-medium">€{{ number_format($item['price'], 2) }}</span>
+                                    
+                                    <!-- Max quantity indicator -->
+                                    <span class="ml-2 text-xs text-neutral-500">
+                                        (Max: {{ $item['upper_limit'] }})
+                                    </span>
+                                    
+                                    <span class="ml-auto font-medium">
+                                        €{{ number_format($item['discount_percentage'] > 0 ? $item['discounted_price'] * $item['quantity'] : $item['price'] * $item['quantity'], 2) }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="text-center text-neutral-500 dark:text-neutral-400">
+                            <p>No items in your cart</p>
+                        </div>
+                    @endforelse
                 </div>
             @endif
         </div>
@@ -92,9 +119,9 @@
                         class="px-6 py-3 border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-300 font-medium rounded-xl transition hover:bg-neutral-100 dark:hover:bg-neutral-800 text-center">
                     Continue
                 </button>
-                <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition text-center">
+                <a href="{{ route('cart') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition text-center">
                     Checkout
-                </button>
+                </a>
             </div>
         </div>
     </div>

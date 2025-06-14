@@ -65,9 +65,18 @@ class CartController extends Controller
 
     public function add($productId, Request $request)
     {
+        $product = Product::find($productId);
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product not found',
+            ], 404);
+        }
+
         $user = $this->getCard();
         $cart = $user->custom ?? [];
         $quantity = intval($request->input('quantity', 1));
+        
         if (isset($cart[$productId])) {
             $cart[$productId] += $quantity;
         } else {
@@ -81,12 +90,9 @@ class CartController extends Controller
             session(['guest_cart' => $cart]);
         }
 
-        $product = Product::find($productId);
-        $productName = $product ? $product->name : 'Product';
-
         return response()->json([
             'success' => true,
-            'message' => "$productName added to your cart",
+            'message' => "{$product->name} added to your cart",
             'quantity' => $quantity
         ]);
     }
