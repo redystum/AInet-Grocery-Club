@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,13 +19,13 @@ class UpdateProfileRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.Auth::id(),
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
             'password' => 'nullable|string|min:8|confirmed',
             'password_confirmation' => 'nullable|required_with:password|string|min:8',
             'current_password' => 'nullable|required_with:password|string',
@@ -34,6 +35,7 @@ class UpdateProfileRequest extends FormRequest
             'default_delivery_address' => 'nullable|string|max:255',
             'default_payment_type' => 'nullable|string|in:Visa,PayPal,MB WAY',
             'default_payment_reference' => 'nullable|string|max:255',
+            'cvv' => 'nullable|required_if:default_payment_type,Visa|string|max:3',
             'remove_photo' => 'nullable|string|in:0,1',
         ];
     }
