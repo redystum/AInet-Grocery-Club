@@ -19,6 +19,11 @@
 
 <x-navbar/>
 
+<livewire:cart-offcanvas/>
+
+<!-- Toast Notification Container -->
+<div id="toast-container" class="fixed right-4 bottom-4 z-50"></div>
+
 <x-toast/>
 
 <main class="h-main">
@@ -26,6 +31,7 @@
 </main>
 
 <x-footer/>
+
 
 @livewireScripts
 </body>

@@ -113,7 +113,7 @@
                                     class="px-3 py-2 h-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 cursor-pointer">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <input type="number" value="1" min="1" max="{{ $product->stock }}" name="quantity"
+                            <input type="number" value="1" min="1" max="{{ $product->stock_upper_limit }}" name="quantity"
                                    id="quantity" autocomplete="off"
                                    class="appearance-textfield w-12 text-center border-0 bg-transparent text-neutral-800 dark:text-neutral-200 focus:ring-0">
                             <button id="plus"
@@ -123,7 +123,8 @@
                         </div>
 
                         <!-- Add to Cart Button -->
-                        <button
+                        <button type="button"
+                                onclick="addToCart({{ $product->id }})"
                                 class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center cursor-pointer">
                             <i class="fas fa-shopping-cart mr-2"></i> <span class="block md:hidden lg:block">Add to
                                 Cart</span>
@@ -194,7 +195,7 @@
             const finalDiscountPrice = document.getElementById('finalDiscountPrice');
             const discountMinQty = {{ $product->discount_min_qty ?? 999999999 }};
 
-            const maxVal = {{ $product->stock }};
+            const maxVal = {{ $product->stock_upper_limit }};
 
             // on lostfocus, verify if the value is less than 1 or greater than the stock
             quantityInput.addEventListener('blur', function () {
@@ -265,5 +266,51 @@
             element.parentElement.classList.remove('border', 'border-neutral-200', 'dark:border-neutral-700', 'hover:border-blue-500');
             element.parentElement.classList.add('border-2', 'border-blue-500');
         }
+
+        // Toast functions now available globally from app.js
+
+        function addToCart(productId) {
+            let quantity = parseInt(document.getElementById('quantity').value);
+            const maxStock = {{ $product->stock_upper_limit }};
+            const addToCartBtn = document.querySelector('button[onclick^="addToCart"]');
+            const originalBtnText = addToCartBtn.innerHTML;
+
+            // Check if requested quantity exceeds available stock
+            if (quantity > maxStock) {
+                window.showToast(`Cannot add to cart. Maximum available stock is ${maxStock}`, 'error');
+                return;
+            }
+
+            // Show loading state
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            addToCartBtn.disabled = true;
+
+            fetch(`/cart/add/${productId}?quantity=${quantity}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.showToast(`${data.message} (${data.quantity}x)`, 'success');
+                } else {
+                    window.showToast('Failed to add product to cart', 'error');
+                }
+
+                // Reset button state
+                addToCartBtn.innerHTML = originalBtnText;
+                addToCartBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.showToast('An error occurred while adding to cart', 'error');
+
+                // Reset button state
+                addToCartBtn.innerHTML = originalBtnText;
+                addToCartBtn.disabled = false;
+            });
+        }
+
     </script>
 @endsection

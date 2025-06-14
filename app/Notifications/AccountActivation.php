@@ -22,7 +22,7 @@ class AccountActivation extends Notification
     public function __construct($url)
     {
         $this->appName = config('app.name');
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
         $this->url = $url;
     }
 
@@ -46,7 +46,7 @@ class AccountActivation extends Notification
 
         return (new MailMessage)
             ->subject('Account Activation')
-            ->view('emails.pages.activateAccount', [
+            ->view('emails.build.activateAccount', [
                 'url' => $this->url,
                 'appName' => $this->appName,
                 'userName' => $userName,

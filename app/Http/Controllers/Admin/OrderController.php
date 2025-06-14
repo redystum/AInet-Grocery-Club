@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Operations;
 use App\Models\Order;
 use App\Notifications\CancelledOrder;
 use App\Notifications\OrderCompleted;
 use App\Notifications\RefusedCancellationOrder;
 use App\Utils\CustomFieldManager;
 use Barryvdh\DomPDF\Facade\Pdf;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -178,15 +180,32 @@ class OrderController extends Controller
                 break;
         }
 
-        $order->update([
-            'status' => Order::STATUS_CANCELED,
-            'cancel_reason' => $reason_text,
-            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
-                'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
-                'cancellationTime' => now(),
-                'cancellationDetails' => $request->input('details'),
-            ])
-        ]);
+        DB::transaction(function () use ($order, $reason_text, $request) {
+            $order->update([
+                'status' => Order::STATUS_CANCELED,
+                'cancel_reason' => $reason_text,
+                'custom' => CustomFieldManager::update_or_create_array($order->custom, [
+                    'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
+                    'cancellationTime' => now(),
+                    'cancellationDetails' => $request->input('details'),
+                ])
+            ]);
+
+            $user = $order->user;
+            $user->card->increment('balance', $order->total);
+            Operations::create([
+                'card_id' => $user->id,
+                'type' => Operations::TYPE_CREDIT,
+                'value' => $order->total,
+                'date' => now()->format('Y-m-d'),
+                'debit_type' => null,
+                'credit_type' => Operations::TYPE_CREDIT_ORDER_CANCEL,
+                'payment_type' => null,
+                'payment_reference' => null,
+                'order_id' => $order->id
+            ]);
+
+        });
 
         $order->user->notify(new CancelledOrder(
             $order->id,
@@ -213,13 +232,30 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->update([
-            'status' => Order::STATUS_CANCELED,
-            'custom' => CustomFieldManager::update_or_create_array($order->custom, [
-                'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
-                'cancellationTime' => now(),
-            ])
-        ]);
+        DB::transaction(function () use ($order) {
+
+            $order->update([
+                'status' => Order::STATUS_CANCELED,
+                'custom' => CustomFieldManager::update_or_create_array($order->custom, [
+                    'cancellationStatus' => Order::CANCEL_STATUS_ACCEPTED,
+                    'cancellationTime' => now(),
+                ])
+            ]);
+
+            $user = $order->user;
+            $user->card->increment('balance', $order->total);
+            Operations::create([
+                'card_id' => $user->id,
+                'type' => Operations::TYPE_CREDIT,
+                'value' => $order->total,
+                'date' => now()->format('Y-m-d'),
+                'debit_type' => null,
+                'credit_type' => Operations::TYPE_CREDIT_ORDER_CANCEL,
+                'payment_type' => null,
+                'payment_reference' => null,
+                'order_id' => $order->id
+            ]);
+        });
 
         $order->user->notify(new CancelledOrder(
             $order->id,

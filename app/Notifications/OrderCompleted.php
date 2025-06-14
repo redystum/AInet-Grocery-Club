@@ -34,7 +34,7 @@ class OrderCompleted extends Notification
     )
     {
         $this->appName = config('app.name');
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
         $this->orderId = $orderId;
         $this->deliveryDate = $deliveryDate;
         $this->deliveryLocation = $deliveryLocation;
@@ -64,7 +64,7 @@ class OrderCompleted extends Notification
 
         $mailMessage = (new MailMessage)
             ->subject('Order Completion Notification')
-            ->view('emails.pages.OrderDelivered', [
+            ->view('emails.build.OrderDelivered', [
                 'logoUrl' => $this->logoUrl,
                 'appName' => $this->appName,
                 'orderId' => $this->orderId,

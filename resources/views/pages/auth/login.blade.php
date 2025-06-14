@@ -1,7 +1,7 @@
 @extends('pages.layouts.public')
 
 @section('content')
-    <div class="flex min-h-full">
+    <div class="flex min-h-screen items-center">
         <!-- Left Column - Form -->
         <div class="w-full lg:w-1/2 flex flex-col justify-center p-8">
             <div class="max-w-md mx-auto w-full">
@@ -99,6 +99,5 @@
 
         <img src="{{ asset('assets/loginImage.png') }}" alt="Login Image"
              class="h-screen fixed right-0 -z-10 opacity-30 lg:opacity-50 xl:opacity-100 transition-opacity min-w-fit dark:opacity-20 dark:lg:opacity-30 dark:xl:opacity-40"/>
-
     </div>
 @endsection

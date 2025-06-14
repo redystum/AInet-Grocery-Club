@@ -13,9 +13,10 @@
 
             <div class="flex gap-3">
                 @can('manage-product')
-                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center cursor-pointer">
+                    <a href="{{ route('board.stock.create') }}"
+                       class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center cursor-pointer">
                         <i class="fas fa-plus mr-2"></i> Add New Product
-                    </button>
+                    </a>
                 @endcan
                 <a href="{{ route("board.restock.auto") }}"
                    class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center">

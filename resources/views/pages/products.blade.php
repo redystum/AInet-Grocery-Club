@@ -165,42 +165,18 @@
 
     <!-- Back to Top Button -->
     <button id="backToTop"
-            class="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 invisible">
+            class="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 invisible cursor-pointer">
         <i class="fas fa-chevron-up"></i>
     </button>
 
     <script>
-        // Carousel functionality
-        const carousel = document.getElementById('carousel');
-        const slides = document.getElementsByClassName('carouselSlide');
-        const indicators = document.querySelectorAll('#carouselIndicators button');
-        let currentIndex = 0;
+        // Toast notification, quickAddToCart, and wishlist functions are now available globally from app.js
 
-        function updateCarousel() {
-            const offset = -currentIndex * 100;
-            carousel.querySelector('.flex').style.transform = `translateX(${offset}%)`;
-
-            indicators.forEach((indicator, index) => {
-                if (index === currentIndex) {
-                    indicator.classList.remove('opacity-70');
-                } else {
-                    indicator.classList.add('opacity-70');
-                }
-            });
-        }
-
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                currentIndex = index;
-                updateCarousel();
-            });
+        // Initialize wishlist functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            setupWishlistStatus();
         });
 
-        // Auto-rotate carousel
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % slides.length;
-            updateCarousel();
-        }, 5000);
 
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');

@@ -35,7 +35,7 @@ class ResetPassword extends Notification
         $this->appName = config('app.name');
         $this->loginTime = now()->format('F j, Y \a\t g:i A T');
         $this->ipAddress = app()->isProduction() ? request()->ip() : '194.210.216.34';
-        $this->logoUrl = asset('assets/logo.jpg');
+        $this->logoUrl = asset('assets/logo.png');
 
         $agent = new Agent;
         $this->deviceInfo = [
@@ -79,7 +79,7 @@ class ResetPassword extends Notification
 
         return (new MailMessage)
             ->subject('Reset Your Password')
-            ->view('emails.pages.resetPassword', [
+            ->view('emails.build.resetPassword', [
                 'url' => $url,
                 'expirationTime' => 1, // 1 hour
                 'appName' => $this->appName,

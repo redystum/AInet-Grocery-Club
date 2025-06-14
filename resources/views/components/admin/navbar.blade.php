@@ -2,7 +2,7 @@
 <nav class="lg:hidden fixed w-full bg-white dark:bg-neutral-800 shadow-sm z-50">
     <div class="flex items-center justify-between p-4">
         <a href="{{ route('home') }}" class="flex items-center">
-            <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 rounded-full">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8">
             <span
                     class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
                 {{ config('app.name') }}
@@ -27,7 +27,7 @@
     <!-- Logo -->
     <div class="flex items-center justify-center p-6 border-b border-neutral-200 dark:border-neutral-700">
         <a href="{{ route('home') }}" class="flex items-center">
-            <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 transition-all duration-300 rounded-full">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8 transition-all duration-300">
             <span id="LogoText"
                   class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
                 {{ config('app.name') }}
@@ -40,9 +40,9 @@
         <ul class="space-y-2">
             @can('admin-dash')
                 <li>
-                    <a href="{{ route('board.index') }}"
-                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.index') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                        <i class="fas fa-home mr-3 {{ request()->routeIs('board.index') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                    <a href="{{ route('board.dashboard.index') }}"
+                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.dashboard.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                        <i class="fas fa-home mr-3 {{ request()->routeIs('board.dashboard.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
                         <span class="whitespace-nowrap transition-all duration-300">Dashboard</span>
                     </a>
                 </li>
@@ -56,6 +56,13 @@
                     </a>
                 </li>
             @endcan
+                <li>
+                    <a href="{{ route('board.categories.index') }}"
+                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.categories', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                        <i class="fas fa-object-group mr-3 {{ request()->routeIs('board.categories', 'board.restock.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                        <span class="whitespace-nowrap transition-all duration-300">Category</span>
+                    </a>
+                </li>
             <li>
                 <a href="{{ route('board.stock') }}"
                    class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.stock', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
