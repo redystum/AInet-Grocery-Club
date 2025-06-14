@@ -4,7 +4,7 @@
         <a href="{{ route('home') }}" class="flex items-center">
             <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 rounded-full">
             <span
-                  class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
+                    class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
                 {{ config('app.name') }}
             </span>
         </a>
@@ -38,20 +38,24 @@
     <!-- Navigation Links -->
     <div class="p-4 overflow-y-auto" id="navigationLinks">
         <ul class="space-y-2">
-            <li>
-                <a href="{{ route('board.index') }}"
-                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.index') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                    <i class="fas fa-home mr-3 {{ request()->routeIs('board.index') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
-                    <span class="whitespace-nowrap transition-all duration-300">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('board.users.index') }}"
-                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.users.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                    <i class="fas fa-user mr-3 {{ request()->routeIs('board.users.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
-                    <span class="whitespace-nowrap transition-all duration-300">Users</span>
-                </a>
-            </li>
+            @can('admin-dash')
+                <li>
+                    <a href="{{ route('board.index') }}"
+                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.index') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                        <i class="fas fa-home mr-3 {{ request()->routeIs('board.index') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                        <span class="whitespace-nowrap transition-all duration-300">Dashboard</span>
+                    </a>
+                </li>
+            @endcan
+            @can('admin-users')
+                <li>
+                    <a href="{{ route('board.users.index') }}"
+                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.users.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                        <i class="fas fa-user mr-3 {{ request()->routeIs('board.users.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                        <span class="whitespace-nowrap transition-all duration-300">Users</span>
+                    </a>
+                </li>
+            @endcan
             <li>
                 <a href="{{ route('board.stock') }}"
                    class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.stock', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
@@ -73,13 +77,15 @@
                     <span class="whitespace-nowrap transition-all duration-300">Orders</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('board.settings') }}"
-                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.settings.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
-                    <i class="fas fa-cog mr-3 {{ request()->routeIs('board.settings.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
-                    <span class="whitespace-nowrap transition-all duration-300">Settings</span>
-                </a>
-            </li>
+            @can('admin-settings')
+                <li>
+                    <a href="{{ route('board.settings') }}"
+                       class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.settings.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                        <i class="fas fa-cog mr-3 {{ request()->routeIs('board.settings.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                        <span class="whitespace-nowrap transition-all duration-300">Settings</span>
+                    </a>
+                </li>
+            @endcan
         </ul>
     </div>
 

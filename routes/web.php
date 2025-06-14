@@ -8,8 +8,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -90,16 +90,20 @@ Route::middleware('auth')->group(function () {
         Route::put('/update', [CardController::class, 'update'])->name('.update');
     });
 
+
     /*--------------------------------------------------------------------------
-    | Admin routes
+    | Employee routes
     |---------------------------------------------------------------------------
-    | Routes that are accessible only to authenticated users with admin role.
+    | Routes that are accessible to authenticated users with employee role.
     |
     */
-    Route::middleware('board')->name('board.')->prefix('board/')->group(function () {
-        Route::get('/', function () {
-            return view('pages.admin.dash');
-        })->name('index');
+    Route::middleware('employee')->name('board.')->prefix('board/')->group(function () {
+
+        Route::name('orders.')->prefix('orders/')->group(function () {
+            Route::get('/', [AdminOrderController::class, 'index'])->name('index');
+            Route::get('{order}', [AdminOrderController::class, 'show'])->name('show');
+            Route::put('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
+        });
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock');
         Route::put('/stock/{product}/update', [StockController::class, 'update'])->name('stock.update');
@@ -118,29 +122,38 @@ Route::middleware('auth')->group(function () {
             Route::get('{order}/receipt', [SupplyController::class, 'receipt'])->name('receipt');
         });
 
-        Route::name('orders.')->prefix('orders/')->group(function () {
-            Route::get('/', [AdminOrderController::class, 'index'])->name('index');
-            Route::get('{order}', [AdminOrderController::class, 'show'])->name('show');
-            Route::put('{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
-            Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel.show');
-            Route::post('{order}/cancel', [AdminOrderController::class, 'cancelByAdmin'])->name('cancel.store');
-            Route::put('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
-            Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
-            Route::get('{order}/receipt', [AdminOrderController::class, 'receipt'])->name('receipt');
-        });
+        /*--------------------------------------------------------------------------
+        | Admin routes
+        |---------------------------------------------------------------------------
+        | Routes that are accessible only to authenticated users with admin role.
+        |
+        */
+        Route::middleware('board')->group(function () {
+            Route::get('/', function () {
+                return view('pages.admin.dash');
+            })->name('index');
 
-        Route::resource('users', AdminUserController::class);
-        Route::name('users.')->prefix('users/{user}/')->group(function () {
-            Route::patch('unblock', [AdminUserController::class, 'unblock'])->name('unblock');
-            Route::patch('block', [AdminUserController::class, 'block'])->name('block');
-            Route::get('transactions', [AdminUserController::class, 'transactions'])->name('transactions');
-            Route::get('resetPassword', [AdminUserController::class, 'resetPwd'])->name('resetPwd');
-        });
+            Route::name('orders.')->prefix('orders/')->group(function () {
+                Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel.show');
+                Route::post('{order}/cancel', [AdminOrderController::class, 'cancelByAdmin'])->name('cancel.store');
+                Route::put('{order}/cancel/confirm', [AdminOrderController::class, 'cancelConfirm'])->name('cancel.confirm');
+                Route::put('{order}/cancel/reject', [AdminOrderController::class, 'cancelReject'])->name('cancel.reject');
+            });
 
-        Route::get('/settings', function () {
-            return view('pages.admin.settings');
-        })->name('settings');
+            Route::resource('users', AdminUserController::class);
+            Route::name('users.')->prefix('users/{user}/')->group(function () {
+                Route::patch('unblock', [AdminUserController::class, 'unblock'])->name('unblock');
+                Route::patch('block', [AdminUserController::class, 'block'])->name('block');
+                Route::get('transactions', [AdminUserController::class, 'transactions'])->name('transactions');
+                Route::get('resetPassword', [AdminUserController::class, 'resetPwd'])->name('resetPwd');
+            });
+
+            Route::get('/settings', function () {
+                return view('pages.admin.settings');
+            })->name('settings');
+        });
     });
+
 });
 
 /*!--------------------------------------------------------------------------

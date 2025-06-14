@@ -84,12 +84,25 @@ class OrdersTable extends Component
 
     public function updatedTab()
     {
-        $this->validateOnly('tab');
+        $this->validateOnly('tab'); // Validate 'tab' field on update
+
+        // Restrict access to tabs based on user permissions
+        if ($this->tab === 'pending' && !auth()->user()->can('admin-pending-orders')) {
+            $this->tab = 'pending'; // Default to 'pending' if unauthorized
+        } elseif ($this->tab === 'cancellation' && !auth()->user()->can('admin-cancel-orders')) {
+            $this->tab = 'pending'; // Default to 'pending' if unauthorized
+        } elseif ($this->tab === 'received' && !auth()->user()->can('admin-complete-orders')) {
+            $this->tab = 'pending'; // Default to 'pending' if unauthorized
+        } elseif ($this->tab === 'all' && !auth()->user()->can(['admin-pending-orders', 'admin-cancel-orders', 'admin-complete-orders'])) {
+            $this->tab = 'pending'; // Default to 'pending' if unauthorized
+        }
+
         if ($this->tab == 'cancellation') {
             $this->orderBy = 'requests';
         } elseif ($this->orderBy == 'requests') {
             $this->orderBy = 'date_desc';
         }
+
         $this->resetPage();
     }
 
@@ -100,7 +113,7 @@ class OrdersTable extends Component
 
     public function render()
     {
-        $this->validateInputs();
+        $this->validateInputs(); // Ensure inputs are valid before rendering
 
         $query = Order::query()->select('orders.*')->with(['user', 'items.product']);
 

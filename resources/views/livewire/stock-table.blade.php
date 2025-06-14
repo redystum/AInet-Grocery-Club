@@ -65,7 +65,8 @@
                                            required min="1" :max="maxQuantity"
                                            x-effect="if(showEditModal) $nextTick(() => $el.focus())"
                                            class="appearance-textfield w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
-                                    <div x-show="editQuantity < 0 || editQuantity > maxQuantity" class="mt-1 text-sm text-red-600 dark:text-red-400">
+                                    <div x-show="editQuantity < 0 || editQuantity > maxQuantity"
+                                         class="mt-1 text-sm text-red-600 dark:text-red-400">
                                         Quantity must be between 0 and <span x-text="maxQuantity"></span>.
                                     </div>
                                 </div>
@@ -268,12 +269,14 @@
                                             <i class="fas fa-eye mr-3 text-neutral-400"></i>
                                             View Details
                                         </a>
-                                        <a href="#"
-                                           class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                           role="menuitem">
-                                            <i class="fas fa-edit mr-3 text-blue-400"></i>
-                                            Edit Product
-                                        </a>
+                                        @can('manage-product')
+                                            <a href="#"
+                                               class="flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                               role="menuitem">
+                                                <i class="fas fa-edit mr-3 text-blue-400"></i>
+                                                Edit Product
+                                            </a>
+                                        @endcan
                                         <button @click="
                                                     editProductId = '{{ $product->id }}';
                                                     editQuantity = {{ $product->stock }};
