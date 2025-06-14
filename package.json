@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build:email": "cd maizzle && maizzle build production"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.1.3",

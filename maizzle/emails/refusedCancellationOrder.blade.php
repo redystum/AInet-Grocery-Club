@@ -1,25 +1,26 @@
-@extends('emails.layout')
+---
+page:
+title: 'Cancellation Request Denied'
+---
 
-@section('title', 'Cancellation Request Denied')
-
-@section('content')
+<x-main>
     <!-- Header with Logo -->
     <div class="bg-gradient-to-r from-amber-600 to-yellow-600 p-6 text-white text-center relative">
         <div class="flex justify-center mb-4">
-            <img src="{{ $logoUrl }}" alt="{{ $appName }} Logo" class="h-10">
+            <img src="@{{ $logoUrl }}" alt="@{{ $appName }} Logo" class="h-10">
         </div>
         <h1 class="text-2xl font-bold">Cancellation Request Not Approved</h1>
-        <p class="opacity-90 mt-1">Your request to cancel order #{{ $orderId }} was not approved</p>
+        <p class="opacity-90 mt-1">Your request to cancel order #@{{ $orderId }} was not approved</p>
     </div>
 
     <div class="p-6">
         <!-- User Greeting -->
         <div class="flex items-center mb-6">
             <div class="w-16 h-16 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 overflow-hidden shadow-md mr-4">
-                <img src="{{ asset('storage/users/' . $userPhoto) }}" class="w-full h-full object-cover" alt="User Photo">
+                <img src="@{{ asset('storage/users/' . $userPhoto) }}" class="w-full h-full object-cover" alt="User Photo">
             </div>
             <div>
-                <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-100">Hello, {{ $userName }}</h2>
+                <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-100">Hello, @{{ $userName }}</h2>
                 <p class="text-neutral-600 dark:text-neutral-400">We've reviewed your cancellation request</p>
             </div>
         </div>
@@ -35,10 +36,10 @@
                         Your cancellation request was not approved
                     </h3>
                     <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        Reason: {{ $cancellationReason }}
+                        Reason: @{{ $cancellationReason }}
                     </p>
                     <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        Details: {{ $cancellationDetails }}
+                        Details: @{{ $cancellationDetails }}
                     </p>
                 </div>
             </div>
@@ -58,7 +59,7 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-neutral-600 dark:text-neutral-400">Order Number</p>
-                        <p class="text-neutral-800 dark:text-neutral-200">#{{ $orderId }}</p>
+                        <p class="text-neutral-800 dark:text-neutral-200">#@{{ $orderId }}</p>
                     </div>
                 </div>
 
@@ -90,7 +91,7 @@
 
         <!-- Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <a href="{{ $orderLink }}"
+            <a href="@{{ $orderLink }}"
                class="px-4 py-3 bg-amber-600 hover:bg-amber-700 text-white text-center rounded-lg font-medium transition-colors">
                 <i class="fas fa-receipt mr-2"></i> View Order Details
             </a>
@@ -107,8 +108,8 @@
             </h4>
             <p class="text-sm text-neutral-600 dark:text-neutral-400">
                 You'll receive another email with tracking information once your order ships.
-                Expected shipping date: {{ $expectedShipDate }}
+                Expected shipping date: @{{ $expectedShipDate }}
             </p>
         </div>
     </div>
-@endsection
+</x-main>

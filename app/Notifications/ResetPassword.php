@@ -79,7 +79,7 @@ class ResetPassword extends Notification
 
         return (new MailMessage)
             ->subject('Reset Your Password')
-            ->view('emails.pages.resetPassword', [
+            ->view('emails.build.resetPassword', [
                 'url' => $url,
                 'expirationTime' => 1, // 1 hour
                 'appName' => $this->appName,
