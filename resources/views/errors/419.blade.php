@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('title', ' - Expired')
 

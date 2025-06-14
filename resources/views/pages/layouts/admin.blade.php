@@ -17,17 +17,17 @@
 
 <body class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-100">
 
-<x-navbar/>
+<x-toast/>
 
-<!-- Toast Notification Container -->
-<div id="toast-container" class="fixed right-4 bottom-4 z-50"></div>
+<x-admin.navbar/>
 
-<main class="h-main">
+<main class="lg:ml-64 pt-16 lg:pt-0 transition-all duration-300" id="mainContent">
     @yield('content')
 </main>
 
 {{--    <x-footer/>--}}
 
+@vite(['resources/js/adminNavBar.js'])
 @livewireScripts
 </body>
 

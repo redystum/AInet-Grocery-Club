@@ -1,7 +1,7 @@
-@extends('layout')
+@extends('pages.layouts.public')
 
 @section('content')
-    <div class="flex min-h-full">
+    <div class="flex min-h-screen items-center">
         <!-- Left Column - Form -->
         <div class="w-full lg:w-1/2 flex flex-col justify-center p-8">
             <div class="max-w-md mx-auto w-full">
@@ -12,7 +12,7 @@
 
                 @if (session('status'))
                     <div
-                        class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
+                            class="mb-6 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-gradient-to-br from-green-50/70 to-green-100/30 dark:from-green-900/20 dark:to-green-900/10 shadow-sm">
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-0.5">
                                 <i class="fas fa-check-circle text-green-500 dark:text-green-400 fa-lg"></i>
@@ -99,6 +99,5 @@
 
         <img src="{{ asset('assets/loginImage.png') }}" alt="Login Image"
              class="h-screen fixed right-0 -z-10 opacity-30 lg:opacity-50 xl:opacity-100 transition-opacity min-w-fit dark:opacity-20 dark:lg:opacity-30 dark:xl:opacity-40"/>
-
     </div>
 @endsection
