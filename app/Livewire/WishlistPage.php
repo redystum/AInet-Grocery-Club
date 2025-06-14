@@ -5,9 +5,15 @@ namespace App\Livewire;
 use App\Models\Product;
 use Livewire\Component;
 
-class WishlistPreview extends Component
+class WishlistPage extends Component
 {
-    protected $listeners = ['productRemovedFromWishlist' => '$refresh'];
+    protected $listeners = ['productRemovedFromWishlist' => 'refreshWishlist'];
+
+    public function refreshWishlist()
+    {
+        // This method will be called when a product is removed from wishlist
+        // The render method will be called automatically
+    }
 
     public function getWishlistItems()
     {
@@ -19,9 +25,6 @@ class WishlistPreview extends Component
         } else {
             $wishlistIds = session('guest_wishlist', []);
         }
-
-        // Limit to 4 items for preview
-        $wishlistIds = array_slice($wishlistIds, 0, 4);
 
         return Product::whereIn('id', $wishlistIds)->get();
     }
@@ -63,7 +66,7 @@ class WishlistPreview extends Component
     public function render()
     {
         $products = $this->getWishlistItems();
-        return view('livewire.wishlist-preview', [
+        return view('livewire.wishlist-page', [
             'products' => $products
         ]);
     }

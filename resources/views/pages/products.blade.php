@@ -174,7 +174,7 @@
 
         // Initialize wishlist functionality
         document.addEventListener('DOMContentLoaded', function() {
-            setupWishlistButtons();
+            setupWishlistStatus();
         });
 
         // Carousel functionality

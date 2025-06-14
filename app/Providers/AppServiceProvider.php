@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Livewire\WishlistPage;
 use App\Livewire\WishlistPreview;
 use Illuminate\Support\ServiceProvider;
 

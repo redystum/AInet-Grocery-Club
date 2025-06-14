@@ -15,7 +15,7 @@ window.checkWishlistStatus = function() {
         .then(data => {
             if (data.in_wishlist) {
                 icon.classList.remove('far');
-                icon.classList.add('fas', 'text-red-500');
+                icon.classList.add('fas');
                 button.classList.remove('opacity-0');
                 button.classList.add('opacity-100');
             }
@@ -46,12 +46,20 @@ window.toggleWishlist = function(productId, event) {
 
                 if (data.in_wishlist) {
                     icon.classList.remove('far');
-                    icon.classList.add('fas', 'text-red-500');
+                    icon.classList.add('fas');
                 } else {
-                    icon.classList.remove('fas', 'text-red-500');
+                    icon.classList.remove('fas');
                     icon.classList.add('far');
                 }
             });
+
+            // If product was removed from wishlist, dispatch event to update Livewire components
+            if (!data.in_wishlist) {
+                // Use Livewire's dispatch method if available in the current context
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('productRemovedFromWishlist');
+                }
+            }
 
             window.showToast(data.message, 'success');
         } else {
@@ -64,57 +72,8 @@ window.toggleWishlist = function(productId, event) {
     });
 };
 
-// Setup wishlist buttons
-window.setupWishlistButtons = function() {
-    // Regular wishlist toggle buttons
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        if (!button.classList.contains('remove-wishlist-btn')) {
-            button.addEventListener('click', function(event) {
-                const productId = this.dataset.productId;
-                toggleWishlist(productId, event);
-            });
-        }
-    });
-
-    // Special handling for remove buttons on wishlist page
-    document.querySelectorAll('.remove-wishlist-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const productId = this.dataset.productId;
-            const card = this.closest('.product-card').parentElement;
-
-            fetch(`/wishlist/toggle/${productId}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove the card with animation
-                    card.classList.add('scale-95', 'opacity-0');
-                    setTimeout(() => {
-                        card.remove();
-
-                        // Check if wishlist is now empty
-                        if (document.querySelectorAll('.product-card').length === 0) {
-                            location.reload();
-                        }
-                    }, 300);
-
-                    window.showToast(data.message, 'success');
-                } else {
-                    window.showToast('Failed to update wishlist', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.showToast('An error occurred', 'error');
-            });
-        });
-    });
+// Setup for checking wishlist status when page loads
+window.setupWishlistStatus = function() {
 
     // Check wishlist status for all products
     checkWishlistStatus();
@@ -127,8 +86,8 @@ window.showToast = function(message, type = 'success') {
 
     // Set classes based on type
     const baseClasses = 'flex items-center p-4 mb-3 rounded-lg shadow-md transition-all duration-300 transform translate-x-full';
-    const typeClasses = type === 'success' 
-        ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
+    const typeClasses = type === 'success'
+        ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200'
         : 'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
 
     toast.className = `${baseClasses} ${typeClasses}`;
