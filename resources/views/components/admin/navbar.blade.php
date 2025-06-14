@@ -2,7 +2,7 @@
 <nav class="lg:hidden fixed w-full bg-white dark:bg-neutral-800 shadow-sm z-50">
     <div class="flex items-center justify-between p-4">
         <a href="{{ route('home') }}" class="flex items-center">
-            <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 rounded-full">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8">
             <span
                   class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
                 {{ config('app.name') }}
@@ -27,7 +27,7 @@
     <!-- Logo -->
     <div class="flex items-center justify-center p-6 border-b border-neutral-200 dark:border-neutral-700">
         <a href="{{ route('home') }}" class="flex items-center">
-            <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 transition-all duration-300 rounded-full">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8 transition-all duration-300">
             <span id="LogoText"
                   class="ml-2 text-xl font-semibold text-neutral-800 dark:text-neutral-100 whitespace-nowrap transition-all duration-300">
                 {{ config('app.name') }}
