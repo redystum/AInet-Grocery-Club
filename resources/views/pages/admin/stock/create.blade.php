@@ -21,32 +21,47 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Product Name *</label>
-                            <input type="text" name="name" required
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="text" name="name" value="{{ old('name') }}" required
+                                   class="w-full px-4 py-2 border @error('name') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Category *</label>
                             <select name="category_id" required
-                                    class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                    class="w-full px-4 py-2 border @error('category_id') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                                 @endforeach
                             </select>
+                            @error('category_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Price (€) *</label>
-                            <input type="number" name="price" step="0.01" min="0" required
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="price" step="0.01" min="0" value="{{ old('price') }}" required
+                                   class="w-full px-4 py-2 border @error('price') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('price')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Initial Stock *</label>
-                            <input type="number" name="stock" min="0" required
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="stock" min="0" value="{{ old('stock') }}" required
+                                   class="w-full px-4 py-2 border @error('stock') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('stock')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Description</label>
                             <textarea name="description" rows="3" maxlength="255"
-                                      class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"></textarea>
+                                      class="w-full px-4 py-2 border @error('description') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -67,13 +82,16 @@
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Upload Product Photo</label>
                             <input type="file" name="photo" id="photo-input" accept="image/*"
-                                   class="block w-full text-sm text-neutral-600 dark:text-neutral-400
+                                   class="block w-full text-sm @error('photo') text-red-500 @else text-neutral-600 dark:text-neutral-400 @enderror
                                       file:mr-4 file:py-2 file:px-4
                                       file:rounded-lg file:border-0
                                       file:text-sm file:font-semibold
-                                      file:bg-blue-50 dark:file:bg-neutral-700 file:text-blue-700 dark:file:text-blue-400
-                                      hover:file:bg-blue-100 dark:hover:file:bg-neutral-600">
+                                      @error('photo') file:bg-red-100 file:text-red-700 @else file:bg-blue-50 dark:file:bg-neutral-700 file:text-blue-700 dark:file:text-blue-400 @enderror
+                                      @error('photo') hover:file:bg-red-200 @else hover:file:bg-blue-100 dark:hover:file:bg-neutral-600 @enderror">
                             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">JPG, PNG or GIF (Max 2MB)</p>
+                            @error('photo')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -84,13 +102,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Minimum Quantity for Discount</label>
-                            <input type="number" name="discount_min_qty" min="1"
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="discount_min_qty" min="1" value="{{ old('discount_min_qty') }}"
+                                   class="w-full px-4 py-2 border @error('discount_min_qty') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('discount_min_qty')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Discount Amount (€)</label>
-                            <input type="number" name="discount" step="0.01" min="0"
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="discount" step="0.01" min="0" value="{{ old('discount') }}"
+                                   class="w-full px-4 py-2 border @error('discount') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            @error('discount')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -101,15 +125,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Stock Lower Limit</label>
-                            <input type="number" name="stock_lower_limit" min="0"
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="stock_lower_limit" min="0" value="{{ old('stock_lower_limit') }}"
+                                   class="w-full px-4 py-2 border @error('stock_lower_limit') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Alert when stock reaches this level</p>
+                            @error('stock_lower_limit')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Stock Upper Limit</label>
-                            <input type="number" name="stock_upper_limit" min="0"
-                                   class="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <input type="number" name="stock_upper_limit" min="0" value="{{ old('stock_upper_limit') }}"
+                                   class="w-full px-4 py-2 border @error('stock_upper_limit') border-red-500 @else border-neutral-300 dark:border-neutral-600 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Maximum desired stock level</p>
+                            @error('stock_upper_limit')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
