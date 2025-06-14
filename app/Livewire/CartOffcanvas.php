@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Product;
+use App\Utils\CustomFieldManager;
 use Livewire\Component;
 
 class CartOffcanvas extends Component
@@ -22,7 +23,7 @@ class CartOffcanvas extends Component
     {
         // Read the cart format from session or user.custom
         $cart = auth()->check()
-            ? auth()->user()->custom ?? []
+            ? CustomFieldManager::get_field(auth()->user(), 'card') ?? []
             : session('guest_cart', []);
 
         $this->cartItems = [];
@@ -78,7 +79,8 @@ class CartOffcanvas extends Component
 
         if (auth()->check()) {
             $user = auth()->user();
-            $user->custom = $cart;
+            // Fix: properly set the cart structure with CustomFieldManager
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
             $user->save();
         } else {
             session(['guest_cart' => $cart]);
@@ -162,6 +164,7 @@ class CartOffcanvas extends Component
 
     public function render()
     {
+        $this->dispatch('cartUpdated');
         return view('livewire.cart-offcanvas');
     }
 }

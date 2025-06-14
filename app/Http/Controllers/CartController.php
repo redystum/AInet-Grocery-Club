@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Utils\CustomFieldManager;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
@@ -10,20 +11,20 @@ use App\Models\User;
 class CartController extends Controller
 {
     // Helper to get card data for both authenticated and guest users
-    private function getCard()
+    private function getCart()
     {
         if (auth()->check()) {
             $user = auth()->user();
 
             // Ensure the custom field is an array
             if (!is_array($user->custom)) {
-                $user->custom = [];
+                CustomFieldManager::update_or_create_array($user->custom, ['card' => []]);
             }
 
             // If there was a guest cart in session, merge it with the user's cart
             if (session()->has('guest_cart')) {
                 $guestCart = session('guest_cart', []);
-                $userCart = $user->custom;
+                $userCart = CustomFieldManager::get_field($user, 'card') ?? [];
 
                 // Merge guest cart items into user cart
                 foreach ($guestCart as $productId => $quantity) {
@@ -34,7 +35,7 @@ class CartController extends Controller
                     }
                 }
 
-                $user->custom = $userCart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $userCart]);
                 $user->save();
 
                 // Clear the guest cart from session
@@ -50,9 +51,38 @@ class CartController extends Controller
 
             // Create a virtual user object to maintain consistency
             $user = new User();
-            $user->custom = session('guest_cart', []);
+            $user->custom = ['card' => session('guest_cart', [])];
             return $user;
         }
+    }
+
+    // Public method to merge guest cart with user cart
+    public function mergeGuestCartWithUserCart()
+    {
+        if (auth()->check() && session()->has('guest_cart')) {
+            $user = auth()->user();
+            $guestCart = session('guest_cart', []);
+            $userCart = CustomFieldManager::get_field($user, 'card') ?? [];
+
+            // Merge guest cart items into user cart
+            foreach ($guestCart as $productId => $quantity) {
+                if (isset($userCart[$productId])) {
+                    $userCart[$productId] += $quantity;
+                } else {
+                    $userCart[$productId] = $quantity;
+                }
+            }
+
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $userCart]);
+            $user->save();
+
+            // Clear the guest cart from session
+            session()->forget('guest_cart');
+            
+            return true;
+        }
+        
+        return false;
     }
 
     public function index()
@@ -82,8 +112,8 @@ class CartController extends Controller
             ]);
         }
 
-        $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $user = $this->getCart();
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
 
         if (isset($cart[$productId])) {
             // Check if the current cart quantity plus new quantity exceeds stock
@@ -99,7 +129,7 @@ class CartController extends Controller
         }
 
         if (auth()->check()) {
-            $user->custom = $cart;
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
             $user->save();
         } else {
             session(['guest_cart' => $cart]);
@@ -118,8 +148,8 @@ class CartController extends Controller
 
     public function changeQuantity($id, Request $request)
     {
-        $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $user = $this->getCart();
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
         $quantity = max(0, intval($request->input('quantity')));
         if (isset($cart[$id])) {
             // If quantity is zero, remove the item from cart
@@ -130,7 +160,7 @@ class CartController extends Controller
             }
 
             if (auth()->check()) {
-                $user->custom = $cart;
+                $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
                 $user->save();
             } else {
                 session(['guest_cart' => $cart]);
@@ -142,14 +172,14 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $items = $request->input('items', []);
-        $user = $this->getCard();
+        $user = $this->getCart();
         $cart = [];
         foreach ($items as $item) {
             $cart[$item['id']] = max(1, intval($item['quantity']));
         }
 
         if (auth()->check()) {
-            $user->custom = $cart;
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
             $user->save();
         } else {
             session(['guest_cart' => $cart]);
@@ -160,12 +190,12 @@ class CartController extends Controller
 
     public function remove($id)
     {
-        $user = $this->getCard();
-        $cart = $user->custom ?? [];
+        $user = $this->getCart();
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
         unset($cart[$id]);
 
         if (auth()->check()) {
-            $user->custom = $cart;
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
             $user->save();
         } else {
             session(['guest_cart' => $cart]);

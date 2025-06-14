@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -59,6 +60,9 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             Auth::user()->notify(new NewLogin());
+
+            $cartController = new CartController();
+            $cartController->mergeGuestCartWithUserCart();
             return redirect()->route('home')->with('success', 'Logged in successfully.');
         }
 

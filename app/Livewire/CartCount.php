@@ -10,7 +10,9 @@ class CartCount extends Component
     
     public function render()
     {
-        $count = 5; // replace with session
+        $count = session('guest_cart', [])
+            ? count(session('guest_cart'))
+            : (auth()->check() ? count(auth()->user()->custom['card'] ?? []) : 0);
         
         return view('livewire.cart-count', [
             'count' => $count
