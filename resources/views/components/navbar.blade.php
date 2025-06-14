@@ -5,7 +5,7 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center">
-                        <img src="{{ asset('assets/logo.jpg') }}" alt="Logo" class="h-8 w-8 rounded-full">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-8 w-8">
                         <span
                                 class="ml-2 font-medium text-gray-900 dark:text-neutral-100">{{ config('app.name') }}</span>
                     </a>
