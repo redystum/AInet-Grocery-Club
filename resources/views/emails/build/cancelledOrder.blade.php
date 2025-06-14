@@ -28,7 +28,7 @@
     </style>
     <![endif]-->
 
-  <title>Password Reset Request</title>
+  <title>Order Cancellation</title>
   <style>
     .last-border-0:last-child {
       border-width: 0px !important
@@ -165,133 +165,119 @@
 
 
     <!-- Header with Logo -->
-    <div class="from-blue-600 to-purple-600" style="position: relative; background-image: undefined; padding: 24px; text-align: center; color: #fffffe">
+    <div class="from-red-600 to-orange-600" style="position: relative; background-image: undefined; padding: 24px; text-align: center; color: #fffffe">
       <div style="margin-bottom: 16px; display: flex; justify-content: center">
         <img src="{{ $logoUrl }}" alt="{{ $appName }} Logo" style="height: 40px" height="40">
       </div>
-      <h1 style="font-size: 24px; font-weight: 700">Password Reset Request</h1>
-      <p style="margin-top: 4px; opacity: 0.9">We received a request to reset your {{ $appName }} password</p>
+      <h1 style="font-size: 24px; font-weight: 700">Order Cancellation Notice</h1>
+      <p style="margin-top: 4px; opacity: 0.9">Your recent order has been canceled</p>
     </div>
 
     <div style="padding: 24px">
       <!-- User Greeting -->
       <div style="margin-bottom: 24px; display: flex; align-items: center">
-        <div class="from-blue-500 to-purple-500" style="margin-right: 16px; height: 64px; width: 64px; overflow: hidden; border-radius: 9999px; background-image: undefined; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)">
-          <img src="{{ asset(&#039;storage/users/&#039; . $userPhoto) }}" alt="User Photo" style="height: 100%; width: 100%; object-fit: cover">
+        <div class="from-red-500 to-orange-500" style="margin-right: 16px; height: 64px; width: 64px; overflow: hidden; border-radius: 9999px; background-image: undefined; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)">
+          <img src="{{ asset('storage/users/' . $userPhoto) }}" alt="User Photo" style="height: 100%; width: 100%; object-fit: cover">
         </div>
         <div>
           <h2 class="dark-text-neutral-100" style="font-size: 20px; font-weight: 700; color: #262626">Hello, {{ $userName }}</h2>
-          <p class="dark-text-neutral-400" style="color: #525252">You requested to reset your password</p>
+          <p class="dark-text-neutral-400" style="color: #525252">We're sorry to inform you that your order has been
+            canceled</p>
         </div>
       </div>
 
-      <!-- Security Alert -->
-      <div class="dark-bg-blue-900-30" style="margin-bottom: 24px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-left-width: 4px; border-color: #3b82f6; background-color: #eff6ff; padding: 16px">
+      <!-- Cancellation Alert -->
+      <div class="dark-bg-red-900-30" style="margin-bottom: 24px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-left-width: 4px; border-color: #ef4444; background-color: #fef2f2; padding: 16px">
         <div style="display: flex">
-          <div class="dark-text-blue-400" style="flex-shrink: 0; color: #3b82f6">
-            <span class="material-symbols-outlined">security</span>
+          <div class="dark-text-red-400" style="flex-shrink: 0; color: #ef4444">
+            <i class="fas fa-exclamation-circle fa-lg"></i>
           </div>
           <div style="margin-left: 12px">
-            <p class="dark-text-blue-300" style="font-size: 14px; color: #1d4ed8">
-              If you didn't request this, please ignore this email or contact support immediately.
+            <h3 class="dark-text-red-300" style="font-size: 14px; font-weight: 500; color: #b91c1c">
+              Order #{{ $orderId }} has been canceled
+            </h3>
+            <p class="dark-text-red-300" style="margin-top: 4px; font-size: 14px; color: #b91c1c">
+              {{ $cancellationReason }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Reset Details Card -->
+      <!-- Order Details Card -->
       <div class="dark-bg-neutral-700-30" style="margin-bottom: 24px; border-radius: 8px; background-color: #fafafa; padding: 20px">
         <h3 class="dark-text-neutral-100" style="margin-bottom: 16px; font-size: 18px; font-weight: 600; color: #262626">
-          <span class="material-symbols-outlined" style="margin-right: 8px; color: #3b82f6">vpn_key</span> Reset Request Information
+          <i class="fas fa-info-circle" style="margin-right: 8px; color: #ef4444"></i> Cancellation Details
         </h3>
 
         <div class="space-y-4">
-          <!-- Request Time -->
+          <!-- Order Number -->
           <div style="display: flex; align-items: flex-start">
             <div class="dark-text-neutral-400" style="margin-top: 4px; flex-shrink: 0; color: #737373">
-              <span class="material-symbols-outlined">schedule</span>
+              <i class="fas fa-hashtag"></i>
             </div>
             <div style="margin-left: 12px">
-              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Request Time</p>
-              <p class="dark-text-neutral-200" style="color: #262626">{{ now()-&gt;format(&#039;F j, Y \a\t g:i A T&#039;) }}</p>
+              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Order Number</p>
+              <p class="dark-text-neutral-200" style="color: #262626">#{{ $orderId }}</p>
             </div>
           </div>
 
-          <!-- Request Device -->
+          <!-- Order Date -->
           <div style="display: flex; align-items: flex-start; margin-top: 16px; margin-bottom: 0">
             <div class="dark-text-neutral-400" style="margin-top: 4px; flex-shrink: 0; color: #737373">
-              @if($deviceInfo['is_mobile'])
-              <span class="material-symbols-outlined">smartphone</span>
-              @else
-              <span class="material-symbols-outlined">laptop</span>
-              @endif
+              <i class="far fa-calendar-alt"></i>
             </div>
             <div style="margin-left: 12px">
-              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Request Device</p>
-              <div class="dark-text-neutral-200" style="color: #262626">
-                <p>{{ $deviceInfo[&#039;platform&#039;] }} • {{ $deviceInfo[&#039;browser&#039;] }}</p>
-                <p class="dark-text-neutral-400" style="margin-top: 4px; font-size: 14px; color: #737373">
-                  {{ $deviceInfo[&#039;device&#039;] }}
-                </p>
-              </div>
+              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Order Date</p>
+              <p class="dark-text-neutral-200" style="color: #262626">{{ $orderDate }}</p>
             </div>
           </div>
 
-          <!-- Location -->
+          <!-- Cancellation Details -->
           <div style="display: flex; align-items: flex-start; margin-top: 16px; margin-bottom: 0">
             <div class="dark-text-neutral-400" style="margin-top: 4px; flex-shrink: 0; color: #737373">
-              <span class="material-symbols-outlined">location_on</span>
+              <i class="fas fa-comment-alt"></i>
             </div>
             <div style="margin-left: 12px">
-              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Approximate Location</p>
+              <p class="dark-text-neutral-400" style="font-size: 14px; font-weight: 500; color: #525252">Additional Information</p>
               <p class="dark-text-neutral-200" style="color: #262626">
-                {{ $loginLocation ?: &#039;Could not determine location&#039; }}
+                {{ $cancellationDetails }}
               </p>
-              @if($loginLocation)
-              <p class="dark-text-neutral-400" style="margin-top: 4px; font-size: 12px; color: #737373">
-                (Based on IP: {{ $ipAddress }})
-              </p>
-              @endif
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Reset Button -->
-      <div style="margin-bottom: 24px; text-align: center">
-        <a href="{{ $url }}" class="hover-bg-blue-700" style="display: inline-block; border-radius: 8px; background-color: #2563eb; padding: 12px 24px; font-weight: 500; color: #fffffe; transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)">
-          <span class="material-symbols-outlined" style="margin-right: 8px">refresh</span> Reset Password
-        </a>
-        <p class="dark-text-neutral-400" style="margin-top: 12px; font-size: 14px; color: #737373">
-          This link will expire in {{ $expirationTime }} hour{{ $expirationTime &gt; 1 ? &#039;s&#039; : &#039;&#039; }}.
+      <div class="dark-bg-green-900-20 dark-border-green-800" style="margin-bottom: 24px; border-radius: 8px; border-width: 1px; border-color: #bbf7d0; background-color: #f0fdf4; padding: 16px">
+        <h4 class="dark-text-green-200" style="margin-bottom: 8px; font-weight: 500; color: #166534">
+          <i class="fas fa-dollar-sign" style="margin-right: 8px; color: #22c55e"></i> Refund Information
+        </h4>
+        <p class="dark-text-green-300" style="font-size: 14px; color: #15803d">
+          A refund of {{ $refundAmount }} has been issued to your original payment method.
+          Please allow 3-5 business days for the refund to process.
         </p>
       </div>
 
-      <!-- Security Tips -->
-      <div class="dark-bg-neutral-700-30 dark-border-neutral-700" style="border-radius: 8px; border-width: 1px; border-color: #e5e5e5; background-color: #fafafa; padding: 16px">
-        <h4 class="dark-text-neutral-200" style="margin-bottom: 8px; font-weight: 500; color: #262626">
-          <span class="material-symbols-outlined" style="margin-right: 8px; color: #eab308">lightbulb</span> Creating a Strong Password
-        </h4>
-        <ul class="dark-text-neutral-400 space-y-2" style="font-size: 14px; color: #525252">
-          <li style="display: flex; align-items: flex-start">
-            <span class="material-symbols-outlined" style="margin-right: 8px; margin-top: 4px; font-size: 12px; color: #22c55e">check_circle</span>
-            <span>Use at least 12 characters with a mix of letters, numbers and symbols</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; margin-top: 8px; margin-bottom: 0">
-            <span class="material-symbols-outlined" style="margin-right: 8px; margin-top: 4px; font-size: 12px; color: #22c55e">check_circle</span>
-            <span>Avoid personal information or common words</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; margin-top: 8px; margin-bottom: 0">
-            <span class="material-symbols-outlined" style="margin-right: 8px; margin-top: 4px; font-size: 12px; color: #22c55e">check_circle</span>
-            <span>Consider using a password manager to generate and store passwords</span>
-          </li>
-        </ul>
+      <!-- Action Buttons -->
+      <div class="sm-grid-cols-2" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 16px">
+        <a href="{{ $orderLink }}" class="hover-bg-red-700" style="border-radius: 8px; background-color: #dc2626; padding: 12px 16px; text-align: center; font-weight: 500; color: #fffffe; transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms">
+          <i class="fas fa-receipt" style="margin-right: 8px"></i> View Order Details
+        </a>
+        <a href="{{ route('home') }}" class="dark-border-neutral-600 hover-bg-neutral-50 dark-hover-bg-neutral-700 dark-text-neutral-200" style="border-radius: 8px; border-width: 1px; border-color: #d4d4d4; padding: 12px 16px; text-align: center; font-weight: 500; color: #404040; transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms">
+          <i class="fas fa-store" style="margin-right: 8px"></i> Visit Our Store
+        </a>
       </div>
 
-      <!-- Support Info -->
-      <div class="dark-text-neutral-400" style="margin-top: 24px; text-align: center; font-size: 14px; color: #737373">
-        <p>If you're having trouble with the button above, copy and paste this link into your browser:</p>
-        <p class="dark-text-blue-400" style="margin-top: 8px; word-break: break-all; color: #2563eb">{{ $url }}</p>
+      <!-- Customer Support -->
+      <div class="dark-bg-neutral-700-30 dark-border-neutral-700" style="border-radius: 8px; border-width: 1px; border-color: #e5e5e5; background-color: #fafafa; padding: 16px">
+        <h4 class="dark-text-neutral-200" style="margin-bottom: 8px; font-weight: 500; color: #262626">
+          <i class="fas fa-headset" style="margin-right: 8px; color: #3b82f6"></i> Need Help?
+        </h4>
+        <p class="dark-text-neutral-400" style="margin-bottom: 8px; font-size: 14px; color: #525252">
+          If you have any questions about this cancellation or need assistance, our support team is here to help.
+        </p>
+        <a href="#" class="dark-text-blue-400 hover-text-blue-800 dark-hover-text-blue-300" style="font-size: 14px; color: #2563eb">
+          Contact Customer Support
+        </a>
       </div>
     </div>
 

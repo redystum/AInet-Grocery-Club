@@ -30,11 +30,26 @@
 
   <title>New Login Detected</title>
   <style>
+    .last-border-0:last-child {
+      border-width: 0px !important
+    }
+    .last-pb-0:last-child {
+      padding-bottom: 0 !important
+    }
+    .hover-bg-amber-700:hover {
+      background-color: #b45309 !important
+    }
     .hover-bg-blue-700:hover {
       background-color: #1d4ed8 !important
     }
+    .hover-bg-green-700:hover {
+      background-color: #15803d !important
+    }
     .hover-bg-neutral-50:hover {
       background-color: #fafafa !important
+    }
+    .hover-bg-red-700:hover {
+      background-color: #b91c1c !important
     }
     .hover-text-blue-800:hover {
       color: #1e40af !important
@@ -48,17 +63,32 @@
       }
     }
     @media (prefers-color-scheme: dark) {
+      .dark-border-blue-800 {
+        border-color: #1e40af !important
+      }
+      .dark-border-green-800 {
+        border-color: #166534 !important
+      }
       .dark-border-neutral-600 {
         border-color: #525252 !important
       }
       .dark-border-neutral-700 {
         border-color: #404040 !important
       }
+      .dark-bg-amber-900-30 {
+        background-color: rgb(120 53 15 / 0.3) !important
+      }
+      .dark-bg-blue-900-20 {
+        background-color: rgb(30 58 138 / 0.2) !important
+      }
       .dark-bg-blue-900-30 {
         background-color: rgb(30 58 138 / 0.3) !important
       }
       .dark-bg-green-900-20 {
         background-color: rgb(20 83 45 / 0.2) !important
+      }
+      .dark-bg-green-900-30 {
+        background-color: rgb(20 83 45 / 0.3) !important
       }
       .dark-bg-neutral-700 {
         background-color: #404040 !important
@@ -72,11 +102,26 @@
       .dark-bg-neutral-900 {
         background-color: #171717 !important
       }
+      .dark-bg-red-900-30 {
+        background-color: rgb(127 29 29 / 0.3) !important
+      }
+      .dark-text-amber-300 {
+        color: #fcd34d !important
+      }
+      .dark-text-amber-400 {
+        color: #fbbf24 !important
+      }
+      .dark-text-blue-200 {
+        color: #bfdbfe !important
+      }
       .dark-text-blue-300 {
         color: #93c5fd !important
       }
       .dark-text-blue-400 {
         color: #60a5fa !important
+      }
+      .dark-text-green-200 {
+        color: #bbf7d0 !important
       }
       .dark-text-green-300 {
         color: #86efac !important
@@ -92,6 +137,12 @@
       }
       .dark-text-neutral-400 {
         color: #a3a3a3 !important
+      }
+      .dark-text-red-300 {
+        color: #fca5a5 !important
+      }
+      .dark-text-red-400 {
+        color: #f87171 !important
       }
       .dark-hover-bg-neutral-700:hover {
         background-color: #404040 !important

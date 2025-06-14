@@ -1,25 +1,26 @@
-@extends('emails.layout')
+---
+page:
+title: 'Order Delivered'
+---
 
-@section('title', 'Order Delivered')
-
-@section('content')
+<x-main>
     <!-- Header with Logo -->
     <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-6 text-white text-center relative">
         <div class="flex justify-center mb-4">
-            <img src="{{ $logoUrl }}" alt="{{ $appName }} Logo" class="h-10">
+            <img src="@{{ $logoUrl }}" alt="@{{ $appName }} Logo" class="h-10">
         </div>
         <h1 class="text-2xl font-bold">Your Order Has Arrived!</h1>
-        <p class="opacity-90 mt-1">Order #{{ $orderId }} was successfully delivered</p>
+        <p class="opacity-90 mt-1">Order #@{{ $orderId }} was successfully delivered</p>
     </div>
 
     <div class="p-6">
         <!-- User Greeting -->
         <div class="flex items-center mb-6">
             <div class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 overflow-hidden shadow-md mr-4">
-                <img src="{{ asset('storage/users/' . $userPhoto) }}" class="w-full h-full object-cover" alt="User Photo">
+                <img src="@{{ asset('storage/users/' . $userPhoto) }}" class="w-full h-full object-cover" alt="User Photo">
             </div>
             <div>
-                <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-100">Hello, {{ $userName }}</h2>
+                <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-100">Hello, @{{ $userName }}</h2>
                 <p class="text-neutral-600 dark:text-neutral-400">Your package has been delivered. The receipt is attached to this email.</p>
             </div>
         </div>
@@ -32,10 +33,10 @@
                 </div>
                 <div class="ml-3">
                     <h3 class="text-sm font-medium text-green-700 dark:text-green-300">
-                        Delivery confirmed on {{ $deliveryDate }}
+                        Delivery confirmed on @{{ $deliveryDate }}
                     </h3>
                     <p class="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Delivered to: {{ $deliveryLocation }}
+                        Delivered to: @{{ $deliveryLocation }}
                     </p>
                 </div>
             </div>
@@ -51,11 +52,11 @@
                 @foreach($items as $item)
                     <div class="flex items-start border-b border-neutral-200 dark:border-neutral-700 pb-4 last:border-0 last:pb-0">
                         <div class="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-white dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600">
-                            <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-full h-full object-contain">
+                            <img src="@{{ $item['image'] }}" alt="@{{ $item['name'] }}" class="w-full h-full object-contain">
                         </div>
                         <div class="ml-3 flex-1">
-                            <p class="text-neutral-800 dark:text-neutral-200 font-medium">{{ $item['name'] }}</p>
-                            <p class="text-neutral-600 dark:text-neutral-400 text-sm">Quantity: {{ $item['quantity'] }}</p>
+                            <p class="text-neutral-800 dark:text-neutral-200 font-medium">@{{ $item['name'] }}</p>
+                            <p class="text-neutral-600 dark:text-neutral-400 text-sm">Quantity: @{{ $item['quantity'] }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -81,11 +82,11 @@
 
         <!-- Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <a href="{{ $orderLink }}"
+            <a href="@{{ $orderLink }}"
                class="px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-center rounded-lg font-medium transition-colors">
                 <i class="fas fa-eye mr-2"></i> View Order Details
             </a>
-            <a href="{{ route('home') }}"
+            <a href="@{{ route('home') }}"
                class="px-4 py-3 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 text-center rounded-lg font-medium transition-colors">
                 <i class="fas fa-store mr-2"></i> Shop Again
             </a>
@@ -104,4 +105,4 @@
             </a>
         </div>
     </div>
-@endsection
+</x-main>
