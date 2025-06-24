@@ -127,6 +127,14 @@ class StockController extends Controller
     {
         $validated = $request->validated();
 
+        if ($request->input('remove_photo')) {
+            // Delete old image
+            if ($product->photo && Storage::disk('public')->exists('products/' . $product->photo)) {
+                Storage::disk('public')->delete('products/' . $product->photo);
+            }
+            $validated['photo'] = null;
+        }
+
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = Carbon::now()->format('dmYHis') . '_' . Str::random(10) . '.' . $request['photo']->getClientOriginalExtension();
@@ -146,7 +154,7 @@ class StockController extends Controller
 
     public function edit(Product $product)
     {
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
         return view('pages.admin.stock.edit', compact('product', 'categories'));
     }
 

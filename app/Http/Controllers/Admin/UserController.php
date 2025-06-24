@@ -91,11 +91,20 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if (auth()->user()->cannot('admin-edit-user', $user)) {
+            ToastCreator::error('You do not have permission to edit this user.');
+            return redirect()->route('board.users.index');
+        }
         return view('pages.admin.user.edit', compact('user'));
     }
 
     public function update(User $user, UpdateProfileRequest $request)
     {
+        if (auth()->user()->cannot('admin-edit-user', $user)) {
+            ToastCreator::error('You do not have permission to edit this user.');
+            return redirect()->route('board.users.index');
+        }
+
         $request->validated();
 
         $toUpdate = [

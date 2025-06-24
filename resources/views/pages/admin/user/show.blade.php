@@ -20,10 +20,12 @@
                 </a>
 
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('board.users.edit', $user->id) }}"
-                       class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
-                        <i class="fas fa-user-edit mr-2"></i> Edit User
-                    </a>
+                    @if($user->isEmployee())
+                        <a href="{{ route('board.users.edit', $user->id) }}"
+                           class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-user-edit mr-2"></i> Edit User
+                        </a>
+                    @endif
                     @if($user->type == User::TYPE_MEMBER || $user->type == User::TYPE_PENDING_MEMBER)
                         @if($user->blocked)
                             <button @click="showUnblockModal = true" type="button"
