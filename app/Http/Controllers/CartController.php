@@ -12,9 +12,10 @@ use App\Models\User;
 use App\Notifications\OrderPlaced;
 use App\Utils\CustomFieldManager;
 use DB;
+use FontLib\Table\Type\name;
 use Illuminate\Http\Request;
 
-class CartController extends Controller
+class   CartController extends Controller
 {
     // Helper to get card data for both authenticated and guest users
     private function getCart()
@@ -108,6 +109,18 @@ class CartController extends Controller
             ]);
         }
 
+        //verificar se o produto  é uma maçã e substituir por uma banana
+        if ($product->name === 'Apple') {
+
+
+            $banana = Product::where('name', 'like', '%banana%')->first();
+
+            if ($banana) {
+                $product = $banana;
+                $productId = $banana->id;
+            }
+        }
+
         $quantity = intval($request->input('quantity', 1));
 
         // Check if the requested quantity exceeds available stock
@@ -194,6 +207,22 @@ class CartController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function remove2($id)
+    {
+        $user = $this->getCart();
+        $cart = CustomFieldManager::get_field($user, 'card') ?? [];
+        unset($cart[$id]);
+
+        if (auth()->check()) {
+            $user->custom = CustomFieldManager::update_or_create_array($user->custom, ['card' => $cart]);
+            $user->save();
+        } else {
+            session(['guest_cart' => $cart]);
+        }
+
+        return redirect()->back();
+    }
+
     public function remove($id)
     {
         $user = $this->getCart();
@@ -228,7 +257,7 @@ class CartController extends Controller
             $total = 0;
             $delayed = false;
             $products = [];
-            
+
             // Calculate total cost of products first
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
@@ -242,7 +271,7 @@ class CartController extends Controller
 
                 $total += $product->price * $quantity - $product->discount * $quantity;
             }
-            
+
             // Calculate shipping cost
             $shipping = 0;
             $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
@@ -253,9 +282,9 @@ class CartController extends Controller
                     break;
                 }
             }
-            
+
             $orderTotal = $total + $shipping;
-            
+
             // Check if user has enough balance
             $card = Card::where('id', $user->id)->first();
             if (!$card || $card->balance < $orderTotal) {
@@ -276,7 +305,7 @@ class CartController extends Controller
 
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
-                
+
                 if ($quantity > $product->stock) {
                     $delayed = true;
                 }

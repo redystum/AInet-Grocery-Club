@@ -68,6 +68,19 @@
                     {{ $product->stock <= 0 ? 'disabled' : '' }}>
                 <i class="fas fa-shopping-cart mr-1"></i> Add
             </button>
+            <form
+                action="{{ route('cart.remove', $product->id) }}"
+                method="POST"
+                >
+                @csrf
+                @method('DELETE')
+                <button
+                    type="submit"
+                    class="text-red-600 hover:text-red-800 font-medium text-sm remove-from-cart-btn"
+                    {{ $product->stock <= 0 ? 'disabled' : '' }}>
+                    <i class="fas fa-trash-alt mr-1"></i> Remove
+                </button>
+            </form>
         </div>
     </div>
 </a>

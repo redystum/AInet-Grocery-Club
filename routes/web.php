@@ -44,6 +44,7 @@ Route::middleware('notEmployee')->group(function () {
     Route::put('/cart/checkout', [CartController::class, 'store'])->name('cart.store')->middleware('auth');
     Route::put('/cart/{id}', [CartController::class, 'changeQuantity']);
     Route::delete('/cart/{id}', [CartController::class, 'remove']);
+    Route::delete('/cartDelete/{id}', [CartController::class, 'remove2'])->name('cart.remove');
     Route::get('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 });
 
