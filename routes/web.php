@@ -213,7 +213,7 @@ Route::middleware('auth')->group(function () {
 if (!app()->isProduction()) {
     Route::get('force_login/{user}', function (User $user) {
         auth()->logout();
-        auth()->loginUsingId($user->id, true);
+        auth()->loginUsingId($user->id);
         \App\Utils\ToastCreator::success('Logged in as ' . $user->name);
 
         $user->notify(new \App\Notifications\NewLogin());
