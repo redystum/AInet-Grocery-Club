@@ -9,6 +9,11 @@ export default {
       path: '../resources/views/emails/build',
       extension: 'php',
     },
+    templates: {
+      options: {
+        autoescape: false,
+      },
+    }
   },
   css: {
     inline: true,

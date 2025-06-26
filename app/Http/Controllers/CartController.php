@@ -228,7 +228,7 @@ class CartController extends Controller
             $total = 0;
             $delayed = false;
             $products = [];
-            
+
             // Calculate total cost of products first
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
@@ -240,9 +240,14 @@ class CartController extends Controller
                     return back()->with('error', 'Cannot add more items. Maximum available stock is ' . $product->stock_upper_limit);
                 }
 
-                $total += $product->price * $quantity - $product->discount * $quantity;
+                if ($quantity >= $product->discount_min_qty) {
+                    $total += $product->price * $quantity - $product->discount * $quantity;
+                } else {
+                    $total += $product->price * $quantity;
+                }
+
             }
-            
+
             // Calculate shipping cost
             $shipping = 0;
             $shippingRates = ShippingCosts::orderBy('min_value_threshold')->get();
@@ -253,9 +258,9 @@ class CartController extends Controller
                     break;
                 }
             }
-            
+
             $orderTotal = $total + $shipping;
-            
+
             // Check if user has enough balance
             $card = Card::where('id', $user->id)->first();
             if (!$card || $card->balance < $orderTotal) {
@@ -276,7 +281,7 @@ class CartController extends Controller
 
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
-                
+
                 if ($quantity > $product->stock) {
                     $delayed = true;
                 }

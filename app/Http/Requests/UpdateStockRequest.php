@@ -32,6 +32,7 @@ class UpdateStockRequest extends FormRequest
             'discount' => 'nullable|numeric|min:0',
             'stock_lower_limit' => 'nullable|integer|min:0',
             'stock_upper_limit' => 'nullable|integer|min:0',
+            'remove_photo' => 'nullable|in:1,on',
         ];
     }
 }

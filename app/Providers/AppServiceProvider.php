@@ -50,8 +50,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->isBoard();
         });
 
-        Gate::define('cart', function (User $user) {
-            return !$user->isEmployee();
+        Gate::define('cart', function (?User $user) {
+            return !$user || !$user->isEmployee();
         });
 
         Gate::define('admin-dash', function (User $user) {
@@ -68,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('admin-users', function (User $user) {
             return $user->isBoard();
+        });
+
+        Gate::define('admin-edit-user', function (User $user, User $targetUser) {
+            return $user->isBoard() && $targetUser->isEmployee();
         });
 
         Gate::define('admin-categories', function (User $user) {

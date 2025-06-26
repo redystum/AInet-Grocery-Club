@@ -15,7 +15,8 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-neutral-400"></i>
                     </div>
-                    <input wire:model.live.debounce.300ms="search" type="text" id="search" placeholder="Search by name or email"
+                    <input wire:model.live.debounce.300ms="search" type="text" id="search"
+                           placeholder="Search by name or email"
                            class="pl-10 w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
                 </div>
             </div>
@@ -68,25 +69,32 @@
             <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                 <thead class="bg-neutral-50 dark:bg-neutral-700">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         User
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Type
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Status
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Orders
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Payment Method
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Joined
                     </th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
+                    <th scope="col"
+                        class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
@@ -103,7 +111,8 @@
                                          alt="{{ $user->name }}">
                                 </div>
                                 <div class="ml-4">
-                                    <a href="{{ route('board.users.show', $user->id) }}" class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $user->name }}</a>
+                                    <a href="{{ route('board.users.show', $user->id) }}"
+                                       class="text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ $user->name }}</a>
                                     <div class="text-sm text-neutral-600 dark:text-neutral-400">{{ $user->email }}</div>
                                 </div>
                             </div>
@@ -141,11 +150,11 @@
                                         $blockReason = App\Utils\CustomFieldManager::get_field($user, 'block_reason');
                                     @endphp
                                     @if($blockReason)
-                                        <button @click="$dispatch('open-tooltip', {id: 'block-reason-{{ $user->id }}'})" 
+                                        <button @click="$dispatch('open-tooltip', {id: 'block-reason-{{ $user->id }}'})"
                                                 class="cursor-pointer ml-2 text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <div x-data="{ open: false }" 
+                                        <div x-data="{ open: false }"
                                              @open-tooltip.window="if ($event.detail.id === 'block-reason-{{ $user->id }}') open = true"
                                              @click.away="open = false"
                                              x-show="open"
@@ -179,7 +188,8 @@
                                 @if($user->default_payment_type)
                                     <span class="capitalize">{{ $user->default_payment_type }}</span>
                                     @if($user->default_payment_reference)
-                                        <span class="text-xs text-neutral-500 dark:text-neutral-400 block">({{ $user->default_payment_reference }})</span>
+                                        <span class="text-xs text-neutral-500 dark:text-neutral-400 block">({{ $user->default_payment_reference }}
+                                            )</span>
                                     @endif
                                 @else
                                     <span class="text-neutral-500 dark:text-neutral-400">Not set</span>
@@ -220,30 +230,32 @@
                                             <i class="fas fa-eye mr-3 text-blue-400"></i>
                                             View Profile
                                         </a>
-                                        <a href="{{ route('board.users.edit', $user->id) }}"
-                                           class="cursor-pointer flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                           role="menuitem">
-                                            <i class="fas fa-user-edit mr-3 text-blue-400"></i>
-                                            Edit User
-                                        </a>
+                                        @if($user->isEmployee())
+                                            <a href="{{ route('board.users.edit', $user->id) }}"
+                                               class="cursor-pointer flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                               role="menuitem">
+                                                <i class="fas fa-user-edit mr-3 text-blue-400"></i>
+                                                Edit User
+                                            </a>
+                                        @endif
                                         @if($user->blocked)
                                             <button wire:click="openUnblockModal({{ $user->id }})"
-                                                   class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
+                                                    class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                    role="menuitem">
                                                 <i class="fas fa-lock-open mr-3 text-green-400"></i>
                                                 Unblock User
                                             </button>
                                         @else
                                             <button wire:click="openBlockModal({{ $user->id }})"
-                                                   class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                                   role="menuitem">
+                                                    class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                    role="menuitem">
                                                 <i class="fas fa-user-lock mr-3 text-orange-400"></i>
                                                 Block User
                                             </button>
                                         @endif
                                         <button wire:click="openDeleteModal({{ $user->id }})"
-                                               class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                               role="menuitem">
+                                                class="cursor-pointer w-full text-left flex items-center px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                                                role="menuitem">
                                             <i class="fas fa-user-minus mr-3 text-red-400"></i>
                                             Delete User
                                         </button>
@@ -259,7 +271,8 @@
                                 <i class="fas fa-users text-4xl mb-3 text-neutral-400 dark:text-neutral-600"></i>
                                 <p>No users found</p>
                                 @if($search || $userType || $status)
-                                    <button wire:click="clearFilters" class="mt-2 text-sm text-blue-500 hover:underline">
+                                    <button wire:click="clearFilters"
+                                            class="mt-2 text-sm text-blue-500 hover:underline">
                                         Clear all filters
                                     </button>
                                 @endif
@@ -324,94 +337,101 @@
 
     <!-- Block Modal -->
     @if($showBlockModal)
-    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div @click.outside="$wire.closeModals()" class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-                    <i class="fas fa-user-lock text-orange-500 mr-2"></i>Block User {{ $selectedUserName }}
-                </h3>
-                <p class="mb-4 text-neutral-600 dark:text-neutral-400">
-                    Are you sure you want to block this user? They will not be able to access their account until unblocked.
-                </p>
-                <div class="mb-4">
-                    <label for="block-reason" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                        Block Reason <span class="text-red-500">*</span>
-                    </label>
-                    <textarea wire:model="blockReason" id="block-reason" rows="3" 
-                              class="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
-                              placeholder="Please specify why this user is being blocked"></textarea>
-                </div>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button wire:click="closeModals" class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="blockUser"
-                            class="cursor-pointer px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        Block User
-                    </button>
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div @click.outside="$wire.closeModals()"
+                 class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                        <i class="fas fa-user-lock text-orange-500 mr-2"></i>Block User {{ $selectedUserName }}
+                    </h3>
+                    <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                        Are you sure you want to block this user? They will not be able to access their account until
+                        unblocked.
+                    </p>
+                    <div class="mb-4">
+                        <label for="block-reason"
+                               class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                            Block Reason <span class="text-red-500">*</span>
+                        </label>
+                        <textarea wire:model="blockReason" id="block-reason" rows="3"
+                                  class="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
+                                  placeholder="Please specify why this user is being blocked"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button wire:click="closeModals"
+                                class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button wire:click="blockUser"
+                                class="cursor-pointer px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Block User
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     <!-- Unblock Modal -->
     @if($showUnblockModal)
-    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div @click.outside="$wire.closeModals()" class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-                    <i class="fas fa-lock-open text-green-500 mr-2"></i>Unblock User {{ $selectedUserName }}
-                </h3>
-                <p class="mb-4 text-neutral-600 dark:text-neutral-400">
-                    Are you sure you want to unblock this user? They will regain access to their account.
-                </p>
-                @if($currentBlockReason)
-                <div class="mb-4 p-3 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
-                    <h4 class="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1">
-                        Current Block Reason:
-                    </h4>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">
-                        {{ $currentBlockReason }}
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div @click.outside="$wire.closeModals()"
+                 class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                        <i class="fas fa-lock-open text-green-500 mr-2"></i>Unblock User {{ $selectedUserName }}
+                    </h3>
+                    <p class="mb-4 text-neutral-600 dark:text-neutral-400">
+                        Are you sure you want to unblock this user? They will regain access to their account.
                     </p>
-                </div>
-                @endif
-                <div class="flex justify-end gap-3 mt-6">
-                    <button wire:click="closeModals" class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="unblockUser" 
-                            class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
-                        Unblock User
-                    </button>
+                    @if($currentBlockReason)
+                        <div class="mb-4 p-3 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+                            <h4 class="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                                Current Block Reason:
+                            </h4>
+                            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                {{ $currentBlockReason }}
+                            </p>
+                        </div>
+                    @endif
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button wire:click="closeModals"
+                                class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button wire:click="unblockUser"
+                                class="cursor-pointer px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            Unblock User
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     <!-- Delete Modal -->
     @if($showDeleteModal)
-    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div @click.outside="$wire.closeModals()" class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full">
-            <div class="p-6">
-                <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Delete User {{ $selectedUserName }}
-                </h3>
-                <p class="mb-2 text-neutral-600 dark:text-neutral-400">
-                    Are you sure you want to delete this user? This action cannot be undone.
-                </p>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button wire:click="closeModals" class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="deleteUser" 
-                            class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-                        Delete
-                    </button>
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div @click.outside="$wire.closeModals()" class="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Delete User {{ $selectedUserName }}
+                    </h3>
+                    <p class="mb-2 text-neutral-600 dark:text-neutral-400">
+                        Are you sure you want to delete this user? This action cannot be undone.
+                    </p>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button wire:click="closeModals"
+                                class="cursor-pointer px-4 py-2 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button wire:click="deleteUser"
+                                class="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 </div>
