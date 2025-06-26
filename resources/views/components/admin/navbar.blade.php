@@ -73,6 +73,13 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('board.products.stats') }}"
+                   class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.stock', 'board.restock.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
+                    <i class="fas fa-boxes-stacked mr-3 {{ request()->routeIs('board.stock', 'board.restock.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>
+                    <span class="whitespace-nowrap transition-all duration-300">Products</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('board.supply.index') }}"
                    class="flex items-center p-3 rounded-lg {{ request()->routeIs('board.supply.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700' }} group transition-colors">
                     <i class="fas fa-parachute-box mr-3 {{ request()->routeIs('board.supply.*') ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }} transition-all duration-300"></i>

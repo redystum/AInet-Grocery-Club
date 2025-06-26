@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\ProductStatsController;
 use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 | Routes that are accessible to everyone, guests and authenticated users.
 |
 */
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -178,6 +180,13 @@ Route::middleware('auth')->group(function () {
                 });
             });
 
+            Route::name('products.')->prefix('products/')->group(function () {
+                Route::get('stats', [ProductStatsController::class, 'index'])->name('stats');
+            });
+
+            Route::resource('products', ProductController::class)->except(['show']);
+
+
             Route::name('orders.')->prefix('orders/')->group(function () {
                 Route::get('{order}/cancel', [AdminOrderController::class, 'cancel'])->name('cancel.show');
                 Route::post('{order}/cancel', [AdminOrderController::class, 'cancelByAdmin'])->name('cancel.store');
@@ -200,7 +209,6 @@ Route::middleware('auth')->group(function () {
             })->name('settings');
         });
     });
-
 });
 
 /*!--------------------------------------------------------------------------
